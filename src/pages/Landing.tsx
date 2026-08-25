@@ -285,7 +285,7 @@ function Hero() {
         <Reveal delay={250}>
           <div className="relative select-none" ref={tiltRef} onMouseMove={handleTilt} onMouseLeave={handleTiltLeave}>
             <div className="absolute -inset-6 -z-10 bg-gradient-to-tr from-cyan-500/20 via-violet-600/20 to-fuchsia-500/20 blur-2xl rounded-[3rem]"></div>
-            <div className="tilt glass border border-white/10 rounded-2xl p-5 relative overflow-hidden">
+            <div ref={tiltCardRef} className="tilt glass border border-white/10 rounded-2xl p-5 relative overflow-hidden">
               <div className="scanline"></div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
