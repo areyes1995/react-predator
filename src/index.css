@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens (Dark default) ── */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg-app: #121316;
+  --bg-main: #16171B;
+  --bg-panel: #1A1B20;
+  --bg-surface: #23252B;
+  --bg-surface-soft: rgba(35, 37, 43, 0.4);
+  --bg-surface-hover: rgba(35, 37, 43, 0.6);
+  --bg-hover: #1F2026;
+  --border: #23252B;
+  --border-active: #32353E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #9A9CA5;
+  --text-muted: #565963;
+  --hover-overlay: rgba(255, 255, 255, 0.03);
+  --active-overlay: rgba(255, 255, 255, 0.06);
+  --bg-main-80: rgba(22, 23, 27, 0.8);
+  --bg-panel-80: rgba(26, 27, 32, 0.8);
+  --border-50: rgba(35, 37, 43, 0.5);
+  --text-muted-60: rgba(86, 89, 99, 0.6);
+  --text-primary-80: rgba(255, 255, 255, 0.8);
+  --scrollbar-track: #16171B;
+  --scrollbar-thumb: #3A3D47;
+  --scrollbar-thumb-hover: #4A4E5A;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg-app: #F3F4F6;
+  --bg-main: #FFFFFF;
+  --bg-panel: #F9FAFB;
+  --bg-surface: #E5E7EB;
+  --bg-surface-soft: rgba(229, 231, 235, 0.5);
+  --bg-surface-hover: rgba(229, 231, 235, 0.7);
+  --bg-hover: #E5E7EB;
+  --border: #E5E7EB;
+  --border-active: #D1D5DB;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6B7280;
+  --hover-overlay: rgba(0, 0, 0, 0.04);
+  --active-overlay: rgba(0, 0, 0, 0.06);
+  --bg-main-80: rgba(255, 255, 255, 0.8);
+  --bg-panel-80: rgba(249, 250, 251, 0.8);
+  --border-50: rgba(229, 231, 235, 0.5);
+  --text-muted-60: rgba(107, 114, 128, 0.6);
+  --text-primary-80: rgba(17, 24, 39, 0.8);
+  --scrollbar-track: #F3F4F6;
+  --scrollbar-thumb: #C7CBD4;
+  --scrollbar-thumb-hover: #AEB4BF;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-app);
+  color: var(--text-secondary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Themed scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: 2px solid var(--scrollbar-track);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #f2a93b, #d18e2a);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* ── Smooth scrolling containers ── */
+.overflow-auto,
+.overflow-y-auto,
+.overflow-x-auto {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* ── Hide scrollbar (used in small overflow rows) ── */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Focus ring ── */
+*:focus-visible {
+  outline: none;
+  ring: 2px solid rgba(242, 169, 59, 0.5);
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(242, 169, 59, 0.3);
+  color: #fff;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out;
+}
+.animate-scale-in {
+  animation: scaleIn 0.25s ease-out;
+}
+
+/* ── Loading spinner ── */
+.app-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 0.9375rem;
+}
+.spinner-lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #f2a93b;
+  border-radius: 50%;
+  animation: app-spin 0.6s linear infinite;
+}
+@keyframes app-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Skeleton shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #23252B 25%, #2C2E36 50%, #23252B 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
