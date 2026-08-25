@@ -217,12 +217,12 @@ function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-grid"></div>
+      <div className="absolute inset-0 -z-10 w-full h-full">
+        <div className="absolute inset-0 w-full h-full bg-grid"></div>
         <div className="orb absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-violet-600/40"></div>
         <div className="orb absolute top-40 right-0 w-[420px] h-[420px] rounded-full bg-cyan-500/30"></div>
         <div className="orb absolute bottom-0 left-1/3 w-[380px] h-[380px] rounded-full bg-fuchsia-500/20"></div>
-        <div className="hero-floor bg-grid-floor"></div>
+        <div className="hero-floor bg-grid-floor absolute w-full h-full"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink-950"></div>
       </div>
       <div className="max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-2 gap-14 items-center w-full">
@@ -295,7 +295,7 @@ function Hero() {
                 <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] text-emerald-400"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400">LIVE × {liveVisitors}</span></span>
               </div>
               <div className="relative rounded-xl bg-ink-950/80 border border-white/5 p-4 h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-grid opacity-40"></div>
+                <div className="absolute inset-0 w-full h-full bg-grid opacity-40"></div>
                 {stands.map((s, i) => (
                   <div key={i} className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2" style={{ left: s.x + '%', top: s.y + '%' }}>
                     <span className={`block w-2.5 h-2.5 rounded-full mx-auto ${s.on ? 'bg-cyan-400' : 'bg-slate-600'}`}></span>
