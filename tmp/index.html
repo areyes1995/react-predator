@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UAPAverse — La feria tecnológica de CADESOFT en un universo virtual</title>
+<meta name="description" content="UAPAverse: plataforma virtual inmersiva que centraliza la gestión de proyectos, stands y actividades de la feria tecnológica de CADESOFT, potenciada con inteligencia artificial." />
+
+<!-- FAVICON -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🪐</text></svg>" />
+
+<!-- FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+<!-- TAILWIND CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:   { DEFAULT: '#05070f', 900: '#080c1a', 800: '#0b1022', 700: '#101733' },
+          neon:  { cyan: '#22d3ee', violet: '#8b5cf6', pink: '#e879f9', amber: '#fbbf24' }
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          sans:    ['Inter', 'ui-sans-serif', 'system-ui'],
+          mono:    ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+
+<!-- ALPINE.JS -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+
+<style>
+  :root { --cy:#22d3ee; --vi:#8b5cf6; --pk:#e879f9; }
+  body{ font-family:Inter,sans-serif; }
+  ::selection{ background:rgba(139,92,246,.45); color:#fff; }
+  ::-webkit-scrollbar{ width:10px }
+  ::-webkit-scrollbar-track{ background:#05070f }
+  ::-webkit-scrollbar-thumb{ background:linear-gradient(#22d3ee,#8b5cf6); border-radius:8px }
+
+  /* ---------- TEXT FX ---------- */
+  .grad-text{
+    background:linear-gradient(92deg,#67e8f9 0%,#a78bfa 45%,#f0abfc 90%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-size:200% auto; animation:gradShift 7s ease-in-out infinite alternate;
+  }
+  @keyframes gradShift{ to{ background-position:100% 0 } }
+  .mono-eyebrow{ letter-spacing:.28em; font-size:11px }
+
+  /* ---------- REVEAL ON SCROLL ---------- */
+  [data-reveal]{ opacity:0; transform:translateY(28px); transition:opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1); }
+  [data-reveal].revealed{ opacity:1; transform:none }
+
+  /* ---------- BACKGROUND FX ---------- */
+  .bg-grid{
+    background-image:
+      linear-gradient(rgba(148,163,184,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148,163,184,.07) 1px, transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+            mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+  }
+  .bg-grid-floor{
+    background-image:
+      linear-gradient(rgba(56,189,248,.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,.18) 1px, transparent 1px);
+    background-size:44px 44px;
+    transform:perspective(600px) rotateX(62deg);
+    -webkit-mask-image:linear-gradient(to top, black 20%, transparent 95%);
+            mask-image:linear-gradient(to top, black 20%, transparent 95%);
+  }
+  .glass{ background:rgba(13,18,38,.62); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px) }
+  .neon-card{ position:relative; border:1px solid rgba(148,163,184,.14); transition:border-color .4s, box-shadow .4s, transform .4s }
+  .neon-card:hover{ border-color:rgba(139,92,246,.55); box-shadow:0 0 0 1px rgba(139,92,246,.2), 0 20px 60px -20px rgba(139,92,246,.35) }
+  .clip-corner{ clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%) }
+
+  /* ---------- KEYFRAMES ---------- */
+  @keyframes floatY{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  @keyframes spinSlow{ to{transform:rotate(360deg)} }
+  @keyframes blink{ 50%{opacity:0} }
+  @keyframes marquee{ to{transform:translateX(-50%)} }
+  @keyframes wave{ 0%,100%{transform:scaleY(.25)} 50%{transform:scaleY(1)} }
+  @keyframes pulseDot{ 0%{box-shadow:0 0 0 0 rgba(34,211,238,.5)} 100%{box-shadow:0 0 0 12px rgba(34,211,238,0)} }
+  @keyframes dashDraw{ to{stroke-dashoffset:0} }
+  @keyframes scan{ 0%{top:-20%} 100%{top:110%} }
+
+  .anim-float{ animation:floatY 6s ease-in-out infinite }
+  .anim-spin-slow{ animation:spinSlow 22s linear infinite }
+  .cursor-blink{ animation:blink 1s step-end infinite }
+
+  /* marquee */
+  .marquee-track{ animation:marquee 28s linear infinite; will-change:transform }
+  .marquee:hover .marquee-track{ animation-play-state:paused }
+
+  /* assistant waveform */
+  .wave-bars span{
+    width:4px; border-radius:99px; height:34px; transform:scaleY(.22);
+    background:linear-gradient(180deg,var(--cy),var(--vi)); opacity:.35;
+    transition:opacity .3s;
+  }
+  .wave-bars.on span{ opacity:1; animation:wave 1s ease-in-out infinite }
+  .wave-bars.on span:nth-child(1){animation-delay:0s}    .wave-bars.on span:nth-child(2){animation-delay:.12s}
+  .wave-bars.on span:nth-child(3){animation-delay:.24s}  .wave-bars.on span:nth-child(4){animation-delay:.06s}
+  .wave-bars.on span:nth-child(5){animation-delay:.3s}   .wave-bars.on span:nth-child(6){animation-delay:.15s}
+  .wave-bars.on span:nth-child(7){animation-delay:.02s}  .wave-bars.on span:nth-child(8){animation-delay:.22s}
+  .wave-bars.on span:nth-child(9){animation-delay:.36s}  .wave-bars.on span:nth-child(10){animation-delay:.1s}
+  .wave-bars.on span:nth-child(11){animation-delay:.28s} .wave-bars.on span:nth-child(12){animation-delay:.18s}
+
+  /* orbs / aurora */
+  .orb{ filter:blur(90px); opacity:.5; pointer-events:none }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition-duration:.01ms !important }
+    [data-reveal]{ opacity:1 !important; transform:none !important }
+  }
+
+  /* svg line draw */
+  .draw-line{ stroke-dasharray:600; stroke-dashoffset:600 }
+  .revealed .draw-line{ animation:dashDraw 2.2s ease forwards }
+
+  /* chat log */
+  .chat-log{ scrollbar-width:thin }
+
+  /* spotlight cursor */
+  #spotlight{
+    position:fixed; inset:0; pointer-events:none; z-index:1; mix-blend-mode:screen;
+    background:radial-gradient(560px circle at var(--sx,50%) var(--sy,40%), rgba(120,120,255,.10), transparent 60%);
+    transition:opacity .4s;
+  }
+
+  /* hero floor */
+  .hero-floor{ position:absolute; left:-10%; right:-10%; bottom:-4%; height:42%; z-index:0 }
+  .scanline{ position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(56,189,248,.55),transparent); animation:scan 5s linear infinite }
+
+  .tilt{ transform-style:preserve-3d; will-change:transform }
+  .nav-link{ position:relative }
+  .nav-link::after{ content:''; position:absolute; left:0; bottom:-4px; height:2px; width:0; background:linear-gradient(90deg,var(--cy),var(--vi)); transition:width .3s }
+  .nav-link:hover::after{ width:100% }
+</style>
+</head>
+
+<body class="bg-ink text-slate-300 antialiased overflow-x-hidden"
+      x-data="site()"
+      x-init="init()">
+
+<!-- ══════════════ PRELOADER ══════════════ -->
+<div class="fixed inset-0 z-[100] bg-ink flex items-center justify-center transition-opacity duration-700"
+     :class="booted ? 'opacity-0 pointer-events-none' : 'opacity-100'" x-cloak>
+  <div class="text-center">
+    <div class="text-5xl mb-6 anim-float inline-block">🪐</div>
+    <p class="font-mono text-xs tracking-[0.35em] text-cyan-300/80 mb-4">INICIALIZANDO UAPAVERSE</p>
+    <div class="w-56 h-[3px] bg-slate-800 rounded-full overflow-hidden mx-auto">
+      <div class="h-full bg-gradient-to-r from-cyan-400 to-violet-500 rounded-full transition-all duration-[900ms]"
+           :style="booted ? 'width:100%' : 'width:0%'"></div>
+    </div>
+    <p class="font-mono text-[10px] text-slate-600 mt-3">STANDS · IA CORE · ROLLOUT v2.0</p>
+  </div>
+</div>
+
+<!-- SPOTLIGHT -->
+<div id="spotlight"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="fixed top-0 left-0 h-[3px] z-[90] bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-400"
+     :style="'width:' + scrollPct + '%'"></div>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<header class="fixed top-0 inset-x-0 z-[80] transition-all duration-500"
+        :class="scrolled ? 'glass border-b border-white/5 py-3' : 'py-5 border-b border-transparent'">
+  <nav class="max-w-7xl mx-auto px-5 lg:px-8 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-3 group">
+      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center font-display font-bold text-ink text-sm shadow-lg shadow-violet-500/30 group-hover:rotate-6 transition-transform">
+        U
+        <span class="absolute -inset-1 rounded-xl bg-gradient-to-br from-cyan-400/40 to-violet-500/40 blur-md -z-10"></span>
+      </div>
+      <span class="font-display font-semibold tracking-tight text-white">UAPA<span class="grad-text">verse</span></span>
+    </a>
+
+    <div class="hidden lg:flex items-center gap-8 text-sm font-medium">
+      <a href="#plataforma"   class="nav-link text-slate-300 hover:text-white transition">Plataforma</a>
+      <a href="#recorrido"    class="nav-link text-slate-300 hover:text-white transition">Recorrido</a>
+      <a href="#asistente"    class="nav-link text-slate-300 hover:text-white transition">Asistente IA</a>
+      <a href="#analitica"    class="nav-link text-slate-300 hover:text-white transition">Analítica</a>
+      <a href="#arquitectura" class="nav-link text-slate-300 hover:text-white transition">Arquitectura</a>
+    </div>
+
+    <div class="hidden lg:flex items-center gap-3">
+      <a href="#" class="text-sm font-medium text-slate-300 hover:text-cyan-300 transition px-3 py-2">Ingresar</a>
+      <a href="#final"
+         class="text-sm font-semibold text-ink bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 px-5 py-2.5 rounded-lg shadow-lg shadow-violet-600/30 transition hover:-translate-y-0.5">
+        Crear cuenta
+      </a>
+    </div>
+
+    <!-- mobile burger -->
+    <button @click="menuOpen = !menuOpen" class="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[5px]" aria-label="Menú">
+      <span class="block w-6 h-[2px] bg-white rounded transition" :class="menuOpen && 'rotate-45 translate-y-[7px]'"></span>
+      <span class="block w-6 h-[2px] bg-white rounded transition" :class="menuOpen && '-rotate-45 -translate-y-[1px]'"></span>
+    </button>
+  </nav>
+
+  <!-- mobile menu -->
+  <div x-show="menuOpen" x-transition.opacity x-cloak
+       class="lg:hidden glass border-b border-white/5 mt-2">
+    <div class="px-6 py-6 space-y-4 text-base font-medium flex flex-col" x-cloak>
+      <a @click="menuOpen=false" href="#plataforma" class="hover:text-cyan-300 transition">Plataforma</a>
+      <a @click="menuOpen=false" href="#recorrido"  class="hover:text-cyan-300 transition">Recorrido</a>
+      <a @click="menuOpen=false" href="#asistente"  class="hover:text-cyan-300 transition">Asistente IA</a>
+      <a @click="menuOpen=false" href="#analitica"  class="hover:text-cyan-300 transition">Analítica</a>
+      <a @click="menuOpen=false" href="#arquitectura" class="hover:text-cyan-300 transition">Arquitectura</a>
+      <a @click="menuOpen=false" href="#final" class="mt-2 text-center font-semibold text-ink bg-gradient-to-r from-cyan-400 to-violet-500 py-3 rounded-lg">Crear cuenta</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden">
+
+  <!-- bg -->
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-grid"></div>
+    <div class="orb absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-violet-600/40"></div>
+    <div class="orb absolute top-40 right-0 w-[420px] h-[420px] rounded-full bg-cyan-500/30"></div>
+    <div class="orb absolute bottom-0 left-1/3 w-[380px] h-[380px] rounded-full bg-fuchsia-500/20"></div>
+    <div class="hero-floor bg-grid-floor"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-2 gap-14 items-center w-full">
+
+    <!-- COPY -->
+    <div>
+      <div data-reveal class="inline-flex items-center gap-2.5 glass border border-white/10 rounded-full px-4 py-1.5 mb-7">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-60"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" style="animation:pulseDot 2s infinite"></span>
+        </span>
+        <span class="font-mono mono-eyebrow text-cyan-300">CADESOFT · FERIA TECNOLÓGICA 2025</span>
+      </div>
+
+      <h1 data-reveal style="transition-delay:.1s"
+          class="font-display text-white font-bold leading-[1.02] text-5xl sm:text-6xl xl:text-7xl tracking-tight">
+        El futuro de la feria<br class="hidden sm:block" />
+        tecnológica vive en
+        <span class="grad-text block mt-2 min-h-[1.1em]" id="scramble" data-words="el UAPAverse,|tu stand. tu mundo.|la voz.">el UAPAverse</span>
+      </h1>
+
+      <p data-reveal style="transition-delay:.2s"
+         class="mt-6 text-lg text-slate-400 max-w-xl leading-relaxed">
+        La plataforma inmersiva que centraliza <strong class="text-slate-200">proyectos, stands virtuales y actividades</strong> de CADESOFT.
+        Recorrela, explórala y deja que la IA la narre por ti.
+      </p>
+
+      <div data-reveal style="transition-delay:.3s" class="mt-9 flex flex-wrap items-center gap-4">
+        <a href="#recorrido"
+           class="group relative overflow-hidden font-semibold text-ink bg-gradient-to-r from-cyan-400 to-violet-500 px-7 py-3.5 rounded-xl shadow-xl shadow-violet-600/30 hover:shadow-violet-500/50 transition hover:-translate-y-0.5">
+          <span class="relative z-10">Explorar la feria →</span>
+          <span class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>
+        </a>
+        <a href="#asistente"
+           class="font-medium glass border border-white/15 hover:border-cyan-400/50 rounded-xl px-7 py-3.5 transition hover:-translate-y-0.5">
+          🎙 Prueba la IA
+        </a>
+      </div>
+
+      <!-- quick stats -->
+      <div data-reveal style="transition-delay:.4s" class="mt-12 grid grid-cols-3 max-w-md divide-x divide-white/10">
+        <div class="pr-4">
+          <p class="font-display text-3xl font-bold text-white" data-count="48">0</p>
+          <p class="font-mono text-[11px] text-slate-500 mt-1 tracking-wider">STANDS VIRTUALES</p>
+        </div>
+        <div class="px-4">
+          <p class="font-display text-3xl font-bold text-white" data-count="120">0</p>
+          <p class="font-mono text-[11px] text-slate-500 mt-1 tracking-wider">PROYECTOS</p>
+        </div>
+        <div class="pl-4">
+          <p class="font-display text-3xl font-bold text-white" data-count="5400" data-suffix="+">0</p>
+          <p class="font-mono text-[11px] text-slate-500 mt-1 tracking-wider">VISITANTES</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO VISUAL : tilt mock -->
+    <div data-reveal style="transition-delay:.25s" class="relative select-none" id="tiltZone">
+      <div class="absolute -inset-6 -z-10 bg-gradient-to-tr from-cyan-500/20 via-violet-600/20 to-fuchsia-500/20 blur-2xl rounded-[3rem]"></div>
+
+      <div class="tilt glass border border-white/10 rounded-2xl p-5 relative overflow-hidden" id="tiltCard">
+        <div class="scanline"></div>
+
+        <!-- window bar -->
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span>
+          <span class="ml-3 font-mono text-[10px] text-slate-500 tracking-widest">UAPAVERSE.HUB — PAVILLÓN PRINCIPAL</span>
+          <span class="ml-auto flex items-center gap-1.5 font-mono text-[10px] text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400" x-text="'LIVE × ' + liveVisitors"></span></span>
+        </div>
+
+        <!-- booth map -->
+        <div class="relative rounded-xl bg-ink-900/80 border border-white/5 p-4 h-56 overflow-hidden">
+          <div class="absolute inset-0 bg-grid opacity-40"></div>
+          <!-- nodes -->
+          <template x-for="(s, i) in stands" :key="i">
+            <div class="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2" :style="`left:${s.x}%;top:${s.y}%`">
+              <span :class="s.on ? 'bg-cyan-400' : 'bg-slate-600'" class="block w-2.5 h-2.5 rounded-full mx-auto"></span>
+              <span x-show="s.on" class="absolute inset-0 -m-2 rounded-full bg-cyan-400/40" style="animation:pulseDot 2.2s infinite" :style="`animation-delay:${i * .3}s`"></span>
+            </div>
+          </template>
+          <div class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-300/80 tracking-wider">▸ 32/48 STANDS ACTIVOS</div>
+        </div>
+
+        <!-- bottom row -->
+        <div class="mt-4 grid grid-cols-3 gap-3">
+          <div class="col-span-1 rounded-lg bg-ink/70 border border-white/5 p-3">
+            <p class="font-mono text-[9px] text-slate-500 mb-1.5">TOP PROYECTO</p>
+            <p class="text-[11px] font-semibold text-white leading-tight">AgroSense · IoT</p>
+            <p class="font-mono text-[10px] text-amber-300 mt-1.5">★ 4.9 · 312 pts</p>
+          </div>
+          <div class="col-span-2 rounded-lg bg-ink/70 border border-white/5 p-3 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 shrink-0 flex items-center justify-center text-ink font-bold text-xs">IA</div>
+            <div>
+              <p class="font-mono text-[9px] text-slate-500">ASISTENTE VIRTUAL</p>
+              <p class="text-[11px] text-slate-300">“¿Cuál stand tiene drones?” <span class="cursor-blink text-cyan-400">▍</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- floating chips -->
+      <div class="anim-float absolute -left-6 top-10 hidden md:block" style="animation-delay:.5s">
+        <div class="glass border border-cyan-400/30 rounded-xl px-4 py-2.5 shadow-lg shadow-cyan-500/10">
+          <p class="font-mono text-[10px] text-cyan-300">🎙 VOZ ACTIVA</p>
+          <p class="text-xs text-slate-300 mt-0.5">“Guíame al pabellón IoT”</p>
+        </div>
+      </div>
+      <div class="anim-float absolute -right-4 bottom-16 hidden md:block" style="animation-delay:1.4s">
+        <div class="glass border border-fuchsia-400/30 rounded-xl px-4 py-2.5 shadow-lg shadow-fuchsia-500/10">
+          <p class="font-mono text-[10px] text-fuchsia-300">📊 EN VIVO</p>
+          <p class="text-xs text-slate-300">+127 visitas hoy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- hero scroll cue -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500">
+    <span class="font-mono text-[10px] tracking-[0.3em]">SCROLL</span>
+    <span class="w-[1px] h-8 bg-gradient-to-b from-slate-500 to-transparent animate-pulse"></span>
+  </div>
+</section>
+
+<!-- ══════════════ MARQUEE ══════════════ -->
+<div class="marquee relative border-y border-white/5 bg-ink-900/60 py-4 overflow-hidden" x-cloak>
+  <div class="marquee-track flex whitespace-nowrap gap-10 w-max font-mono text-sm text-slate-500" x-data>
+    <template x-for="n in 2" :key="n">
+      <span class="px-2">STANDS VIRTUALES <span class="text-cyan-500">◆</span></span>
+      <span class="px-2">GESTIÓN DE PROYECTOS <span class="text-violet-500">◆</span></span>
+      <span class="px-2">ASISTENTE IA CON VOZ <span class="text-fuchsia-500">◆</span></span>
+      <span class="px-2">ROL &amp; PERMISOS <span class="text-cyan-500">◆</span></span>
+      <span class="px-2">REPORTE &amp; ESTADÍSTICAS <span class="text-violet-500">◆</span></span>
+      <span class="px-2">ACCESO SEGURO REMOTO <span class="text-fuchsia-500">◆</span></span>
+    </template>
+  </div>
+</div>
+
+<!-- ══════════════ OBJETIVOS / BENTO ══════════════ -->
+<section id="plataforma" class="relative py-28">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto" data-reveal>
+      <p class="font-mono mono-eyebrow text-cyan-400 mb-4">// 01 · LA PLATAFORMA</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">Seis objetivos.<br /><span class="grad-text">Un solo universo.</span></h2>
+      <p class="mt-5 text-slate-400 text-lg">UAPAverse fue diseñada para resolver de forma integral cada reto organizativo de la feria CADESOFT.</p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- 01 arquitectura (big) -->
+      <article data-reveal class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 md:col-span-2 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-48 h-48 bg-violet-600/20 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 01</span>
+        <h3 class="mt-3 font-display text-2xl font-semibold text-white">Arquitectura de gestión</h3>
+        <p class="mt-2 text-slate-400 leading-relaxed">Una arquitectura de software modular que administra <strong class="text-slate-200">usuarios, proyectos, stands y actividades</strong> como un ecosistema conectado, escalable y fácil de extender.</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">Usuarios</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">Proyectos</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">Stands</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">Actividades</span>
+        </div>
+      </article>
+
+      <!-- 02 CRUD -->
+      <article data-reveal style="transition-delay:.08s" class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-cyan-500/15 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 02</span>
+        <h3 class="mt-3 font-display text-xl font-semibold text-white">Proyectos vivos</h3>
+        <p class="mt-2 text-sm text-slate-400 leading-relaxed">Registro, consulta, actualización y administración de proyectos y participantes con datos siempre frescos.</p>
+      </article>
+
+      <!-- 03 immersive -->
+      <article data-reveal style="transition-delay:.16s" class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-fuchsia-500/15 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 03</span>
+        <h3 class="mt-3 font-display text-xl font-semibold text-white">Entorno inmersivo</h3>
+        <p class="mt-2 text-sm text-slate-400 leading-relaxed">Recorre la feria, explora stands y consume información técnica y multimedia sin salir de casa.</p>
+      </article>
+
+      <!-- 04 IA -->
+      <article data-reveal class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 md:col-span-2 relative overflow-hidden" style="transition-delay:.24s">
+        <div class="absolute -right-10 -top-10 w-48 h-48 bg-fuchsia-600/20 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 04</span>
+        <h3 class="mt-3 font-display text-2xl font-semibold text-white">Inteligencia con voz</h3>
+        <p class="mt-2 text-slate-400 leading-relaxed">Asistentes virtuales con <strong class="text-slate-200">reconocimiento y síntesis de voz</strong> que conversan contigo sobre cada proyecto, stand y actividad del evento.</p>
+        <div class="mt-4 h-1 rounded-full bg-white/5 overflow-hidden">
+          <div class="h-full w-4/5 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500"></div>
+        </div>
+        <p class="mt-1.5 font-mono text-[10px] text-slate-500 mt-3">STRETCH GOAL · VOICE CORE v1.2</p>
+      </article>
+
+      <!-- 05 analytics -->
+      <article data-reveal class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 05</span>
+        <h3 class="mt-3 font-display text-xl font-semibold text-white">Datos que deciden</h3>
+        <p class="mt-2 text-sm text-slate-400 leading-relaxed">Mecanismos de administración, reportes y estadísticas para medir participación, interés y desempeño general.</p>
+      </article>
+
+      <!-- 06 security -->
+      <article data-reveal style="transition-delay:.08s" class="neon-card clip-corner bg-ink-800/60 rounded-2xl p-7 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl"></div>
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest">OBJETIVO 06</span>
+        <h3 class="mt-3 font-display text-xl font-semibold text-white">Acceso por roles</h3>
+        <p class="mt-2 text-sm text-slate-400 leading-relaxed">Autenticación segura y control de permisos por rol: cada usuario ve exactamente lo que le corresponde.</p>
+      </article>
+
+      <!-- filler decorative tile -->
+      <article data-reveal style="transition-delay:.16s" class="clip-corner rounded-2xl p-7 bg-gradient-to-br from-cyan-500/10 to-violet-600/10 border border-white/10 relative overflow-hidden hidden lg:block">
+        <p class="font-display text-5xl font-bold grad-text">100%</p>
+        <p class="mt-2 text-sm text-slate-300">del proceso organizativo, digitalizado y medible.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ RECORRIDO / ROLES TABS ══════════════ -->
+<section id="recorrido" class="relative py-28 bg-ink-900/40 border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto" data-reveal>
+      <p class="font-mono mono-eyebrow text-cyan-400 mb-4">// 02 · UN UNIVERSO, TRES EXPERIENCIAS</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">Tu rol define <span class="grad-text">tu dimensión</span></h2>
+      <p class="mt-5 text-slate-400 text-lg">Mismo universo, perspectivas diferentes. Selecciona tu dimensión.</p>
+    </div>
+
+    <div class="mt-12" x-data="{ tab: 0 }">
+      <!-- tabs -->
+      <div class="flex justify-center gap-3 flex-wrap mb-12" data-reveal>
+        <template x-for="(t, i) in [{l:'🧑‍🎓 Visitante',d:'Explora'}, {l:'🚀 Creador',d:'Exhibe'}, {l:'🛡️ Organizador',d:'Mide'}]" :key="i">
+          <button @click="tab = i"
+                  class="relative px-6 py-3 rounded-xl font-medium text-sm transition border"
+                  :class="tab === i ? 'text-ink bg-gradient-to-r from-cyan-400 to-violet-500 border-transparent shadow-lg shadow-violet-600/30'
+                                     : 'text-slate-300 border-white/10 hover:border-cyan-400/40 bg-ink/40'">
+            <span x-text="t.l"></span>
+          </button>
+        </template>
+      </div>
+
+      <!-- panels -->
+      <div class="grid lg:grid-cols-2 gap-8 items-start" data-reveal>
+
+        <!-- text side -->
+        <div>
+          <!-- 0 -->
+          <div x-show="tab===0" x-transition.opacity>
+            <p class="font-mono mono-eyebrow text-cyan-400 mb-3">DIMENSIÓN 01 · VISITANTE</p>
+            <h3 class="font-display text-3xl font-bold text-white">Recorre. Toca. Pregunta.</h3>
+            <p class="mt-4 text-slate-400 leading-relaxed">Entra al pabellón virtual, navega stand a stand, abre demos, descarga recursos y conversa con el asistente de voz sobre cualquier proyecto del evento.</p>
+          </div>
+          <div x-show="tab===1" x-transition.opacity>
+            <p class="font-mono mono-eyebrow text-fuchsia-400 mb-3">DIMENSIÓN 02 · CREADOR</p>
+            <h3 class="font-display text-3xl font-bold text-white">Tu stand. Tu narrativa.</h3>
+            <p class="mt-4 text-slate-400 leading-relaxed">Registra tu proyecto, carga demos, videos, documentación técnica y coordina a tu equipo. Todo editable en tiempo real hasta el día del evento.</p>
+          </div>
+          <div x-show="tab===2" x-transition.opacity>
+            <p class="font-mono mono-eyebrow text-amber-400 mb-3">DIMENSIÓN 03 · ORGANIZER</p>
+            <h3 class="font-display text-3xl font-bold text-white">El control total.</h3>
+            <p class="mt-4 text-slate-400 leading-relaxed">Vigila métricas en vivo, administra stands, modera contenidos y descarga informes listos para informe de gestión.</p>
+          </div>
+        </div>
+
+        <!-- UI mock side -->
+        <div class="glass border border-white/10 rounded-2xl p-5 relative overflow-hidden h-full min-h-[320px]">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span>
+            <span class="ml-3 font-mono text-[10px] text-slate-500 tracking-widest">
+              <template x-if="tab===0"><span>VISITOR.VIEW</span></template>
+              <template x-if="tab===1"><span>CREATOR.CP</span></template>
+              <template x-if="tab===2"><span>ADMIN.ROOT</span></template>
+            </span>
+          </div>
+
+          <!-- visitor mock -->
+          <div x-show="tab===0" class="space-y-3">
+            <div class="rounded-lg bg-ink/70 border border-cyan-400/20 p-4 flex items-center justify-between">
+              <div><p class="text-sm font-semibold text-white">Stand A-07 · AgroSense</p><p class="font-mono text-[10px] text-slate-500">IOT · AGRICULTURA · ★ 4.9</p></div>
+              <span class="text-xs font-semibold text-cyan-300 border border-cyan-400/40 rounded-lg px-3 py-1.5">Entrar →</span>
+            </div>
+            <div class="rounded-lg bg-ink/70 border border-white/5 p-4 flex items-center justify-between opacity-80">
+              <div><p class="text-sm font-semibold text-white">Stand B-03 · NeuroLink UI</p><p class="font-mono text-[10px] text-slate-500">IA · UX · ★ 4.7</p></div>
+              <span class="text-xs text-slate-400">Entrar →</span>
+            </div>
+            <div class="rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-600/10 border border-fuchsia-400/30 p-3">
+              <p class="text-xs text-slate-300"><span class="text-fuchsia-300 font-semibold">IA:</span> “¿Quieres que te guíe al pabellón de drones?”</p>
+            </div>
+          </div>
+
+          <!-- creator mock -->
+          <div x-show="tab===1" class="space-y-3">
+            <div class="rounded-lg bg-ink/70 border border-white/5 p-4">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-semibold text-white">Mi proyecto</p>
+                <span class="font-mono text-[10px] text-emerald-400 border border-emerald-400/40 rounded px-2 py-0.5">● EN LÍNEA</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-3">AgroSense — riego inteligente con IoT y LLM</p>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-ink/60 rounded-md py-2"><p class="text-lg font-bold text-white">4</p><p class="font-mono text-[9px] text-slate-500">MEDIA</p></div>
+                <div class="bg-ink/60 rounded-md py-2"><p class="text-lg font-bold text-white">3</p><p class="font-mono text-[9px] text-slate-500">EQUIPO</p></div>
+                <div class="bg-ink/60 rounded-md py-2"><p class="text-lg font-bold text-white">312</p><p class="font-mono text-[9px] text-slate-500">PUNTOS</p></div>
+              </div>
+            </div>
+            <button class="w-full text-xs font-semibold text-ink bg-gradient-to-r from-fuchsia-400 to-violet-500 rounded-lg py-2.5">⚡ Editar stand</button>
+          </div>
+
+          <!-- admin mock -->
+          <div x-show="tab===2" class="space-y-3">
+            <div class="grid grid-cols-3 gap-2 text-center mb-1">
+              <div class="rounded-lg bg-ink/70 border border-white/5 p-3"><p class="text-xl font-bold text-white">23</p><p class="font-mono text-[9px] text-slate-500">STANDS OK</p></div>
+              <div class="rounded-lg bg-ink/70 border border-amber-400/20 p-3"><p class="text-xl font-bold text-amber-300">2</p><p class="font-mono text-[9px] text-slate-500">EN REVISIÓN</p></div>
+              <div class="rounded-lg bg-ink/70 border border-white/5 p-3"><p class="text-xl font-bold text-white">98%</p><p class="font-mono text-[9px] text-slate-500">SLA</p></div>
+            </div>
+            <div class="rounded-lg bg-ink/70 border border-white/5 p-4 space-y-2">
+              <p class="font-mono text-[10px] text-slate-500 mb-1">PERMISOS ACTIVOS</p>
+              <div class="flex justify-between text-xs text-slate-300"><span>org_admin</span><span class="text-emerald-400">✓ total</span></div>
+              <div class="flex justify-between text-xs text-slate-300"><span>project_lead</span><span class="text-cyan-300">✓ edit proyecto</span></div>
+              <div class="flex justify-between text-xs text-slate-300"><span>visitor</span><span class="text-slate-400">✓ read</span></div>
+            </div>
+            <button class="w-full text-xs font-semibold text-amber-200 bg-amber-400/10 border border-amber-400/40 rounded-lg py-2.5">📄 Generar informe PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ASISTENTE IA ══════════════ -->
+<section id="asistente" class="relative py-28 overflow-hidden">
+  <div class="orb absolute top-20 -right-32 w-[420px] h-[420px] rounded-full bg-fuchsia-600/25"></div>
+  <div class="orb absolute bottom-0 -left-32 w-[380px] h-[380px] rounded-full bg-cyan-500/20"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-2 gap-14 items-center relative">
+
+    <!-- copy -->
+    <div data-reveal>
+      <p class="font-mono mono-eyebrow text-fuchsia-400 mb-4">// 03 · NÚCLEO DE INTELIGENCIA</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight leading-tight">Háblale a la feria.<br /><span class="grad-text">Ella te responde.</span></h2>
+      <p class="mt-5 text-slate-400 text-lg leading-relaxed">
+        Un asistente virtual con <strong class="text-slate-200">reconocimiento y síntesis de voz</strong>: pregúntale qué stand tiene drones, pide recomendaciones o navega la feria completamente manos-free.
+      </p>
+
+      <div class="mt-8 grid grid-cols-2 gap-4">
+        <div class="neon-card bg-ink-800/60 rounded-xl p-5">
+          <p class="text-2xl mb-2">🎙</p>
+          <p class="font-semibold text-white text-sm">Reconocimiento de voz</p>
+          <p class="text-xs text-slate-400 mt-1">Escúchate, transcríbete, respóndete.</p>
+        </div>
+        <div class="neon-card bg-ink-800/60 rounded-xl p-5">
+          <p class="text-2xl mb-2">🔊</p>
+          <p class="font-semibold text-white text-sm">Síntesis de voz</p>
+          <p class="text-xs text-slate-400 mt-1">Respuestas habladas en español.</p>
+        </div>
+        <div class="neon-card bg-ink-800/60 rounded-xl p-5">
+          <p class="text-2xl mb-2">🧠</p>
+          <p class="font-semibold text-white text-sm">Conocimiento contextual</p>
+          <p class="text-xs text-slate-400 mt-1">Sabe qué hay en cada stand y actividad.</p>
+        </div>
+        <div class="neon-card bg-ink-800/60 rounded-xl p-5">
+          <p class="text-2xl mb-2">♿</p>
+          <p class="font-semibold text-white text-sm">Inclusivo por diseño</p>
+          <p class="text-xs text-slate-400 mt-1">Voz, texto o ambos. Sin fricción.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO -->
+    <div data-reveal style="transition-delay:.15s"
+         x-data="assistant()" x-init="initAssistant()" class="select-text">
+      <div class="glass border border-white/10 rounded-2xl p-6 relative overflow-hidden shadow-2xl shadow-violet-900/40">
+        <div class="scanline"></div>
+
+        <!-- head -->
+        <div class="flex items-center gap-4 mb-5">
+          <div class="relative w-14 h-14 shrink-0">
+            <span class="absolute inset-0 rounded-full border border-cyan-400/30" :class="listening || speaking && 'animate-ping'"></span>
+            <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center text-xl"
+                 :class="speaking && 'scale-110'" style="transition:transform .3s">🤖</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-display font-semibold text-white leading-none">UAPAverse Core</p>
+            <p class="font-mono text-[10px] mt-1.5 tracking-widest"
+               :class="listening ? 'text-cyan-300' : speaking ? 'text-fuchsia-300' : 'text-slate-500'"
+               x-text="listening ? '● ESCUCHANDO…' : speaking ? '◉ SINTETIZANDO…' : '○ LISTA · V2.0'"></p>
+          </div>
+          <button @click="speak = !speak; announce('Sonido ' + (speak ? 'activado' : 'silenciado'))"
+                  class="text-lg" :title="speak ? 'Silenciar' : 'Activar voz'">
+            <template x-if="speak"><span>🔊</span></template>
+            <template x-if="!speak"><span>🔇</span></template>
+          </button>
+        </div>
+
+        <!-- waveform -->
+        <div class="flex items-center justify-center h-10 mb-4 wave-bars" :class="(listening || speaking) && 'on'">
+          <template x-for="n in 12" :key="n"><span :style="`animation-delay:${n * 0.07}s`"></span></template>
+        </div>
+
+        <!-- chat log -->
+        <div class="chat-log h-60 overflow-y-auto space-y-3 pr-1" x-ref="log">
+          <template x-for="(m, i) in msgs" :key="i">
+            <div class="flex" :class="m.from === 'me' ? 'justify-end' : 'justify-start'">
+              <div class="max-w-[78%] rounded-xl px-3.5 py-2 text-sm leading-relaxed"
+                   :class="m.from === 'me'
+                      ? 'bg-gradient-to-r from-cyan-500/30 to-violet-500/30 border border-cyan-400/30 text-slate-100'
+                      : 'bg-ink/80 border border-white/10 text-slate-200'">
+                <span class="font-mono text-[9px] tracking-widest block mb-0.5"
+                      :class="m.from === 'me' ? 'text-cyan-300/70' : 'text-fuchsia-300/70'"
+                      x-text="m.from === 'me' ? 'TÚ' : 'UAPAVERSE'"></span>
+                <span x-html="m.text"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- quick chips -->
+        <div class="mt-3 flex gap-2 flex-wrap">
+          <template x-for="q in ['¿Qué stands hay de drones?', '¿Cómo funciona mi rol?', 'Sorpréndeme']" :key="q">
+            <button @click="send(q)" class="font-mono text-[10px] px-3 py-1.5 rounded-full border border-white/10 text-slate-400 hover:text-cyan-300 hover:border-cyan-400/40 transition">
+              { q }
+            </button>
+          </template>
+        </div>
+
+        <!-- input -->
+        <div class="mt-4 flex items-center gap-2">
+          <button @click="toggleMic()" :disabled="!recSupport" :aria-label="listening ? 'Detener mic' : 'Usar micrófono'"
+                  class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 border transition"
+                  :class="listening
+                      ? 'bg-cyan-400 text-ink border-cyan-300 shadow-lg shadow-cyan-500/40'
+                      : 'bg-ink/60 border-white/10 hover:border-cyan-400/50'"
+                  :title="recSupport ? 'Reconocimiento de voz' : 'Tu navegador no soporta reconocimiento de voz'">
+            🎙
+          </button>
+          <input type="text" x-model="input" @keydown.enter="send()" placeholder="Pregúntale a UAPAverse…"
+                 class="flex-1 bg-ink/70 border border-white/10 focus:border-cyan-400/60 focus:outline-none rounded-xl px-4 py-2.5 text-sm placeholder:text-slate-600" />
+          <button @click="send()" class="px-4 h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 text-ink font-semibold text-sm">→</button>
+        </div>
+        <p class="font-mono text-[10px] text-slate-600 mt-2" x-text="micMsg"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ANALÍTICA ══════════════ -->
+<section id="analitica" class="relative py-28 bg-ink-900/40 border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto" data-reveal>
+      <p class="font-mono mono-eyebrow text-amber-400 mb-4">// 04 · PANEL DE CONTROL</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">La feria, <span class="grad-text">en números</span></h2>
+      <p class="mt-5 text-slate-400 text-lg">Reportes y estadísticas en tiempo real para evaluar participación, interés y desempeño.</p>
+    </div>
+
+    <div class="mt-14" data-reveal>
+      <div class="grid lg:grid-cols-3 gap-5">
+        <!-- KPIs -->
+        <div class="lg:col-span-1 space-y-5">
+          <div class="neon-card bg-ink-800/60 rounded-2xl p-6">
+            <p class="font-mono text-[10px] text-slate-500 tracking-widest mb-2">VISITANTES HOY</p>
+            <p class="font-display text-5xl font-bold text-white">5,412</p>
+            <p class="font-mono text-[11px] text-emerald-400 mt-2">▲ 23.4% vs. feria 2024</p>
+          </div>
+          <div class="neon-card bg-ink-800/60 rounded-2xl p-6">
+            <p class="font-mono text-[10px] text-slate-500 tracking-widest mb-2">STANDS ACTIVOS</p>
+            <div class="flex items-end gap-3">
+              <p class="font-display text-5xl font-bold text-white">48</p>
+              <p class="font-mono text-[11px] text-cyan-300 mb-2">EN LÍNEA</p>
+            </div>
+          </div>
+          <div class="neon-card bg-ink-800/60 rounded-2xl p-6">
+            <p class="font-mono text-[10px] text-slate-500 tracking-widest mb-2">INTERACCIONES CON IA</p>
+            <p class="font-display text-5xl font-bold text-white">2,187</p>
+            <p class="font-mono text-[11px] text-slate-400 mt-2">87% satisfacción</p>
+          </div>
+        </div>
+
+        <!-- chart -->
+        <div class="lg:col-span-2 neon-card bg-ink-800/60 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <p class="font-mono text-[10px] text-slate-500 tracking-widest">VISITAS POR PABELLÓN · TIEMPO REAL</p>
+            <span class="flex items-center gap-1.5 font-mono text-[10px] text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> EN VIVO</span>
+          </div>
+          <div class="grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2 items-center">
+            <template x-for="(b, i) in bars" :key="i">
+              <div class="flex items-center gap-3">
+                <span class="w-24 shrink-0 font-mono text-[10px] text-slate-400 text-right" x-text="b.label"></span>
+                <div class="flex-1 h-2.5 rounded-full bg-white/5 overflow-hidden">
+                  <div class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500"
+                       :style="`width:${b.w}%`"
+                       :class="b.active ? '' : 'opacity-50'"></div>
+                </div>
+                <span class="w-10 font-mono text-[10px] text-slate-500" x-text="b.val + 'k'"></span>
+              </div>
+            </template>
+          </div>
+
+          <div class="mt-8 border-t border-white/5 pt-5 flex items-center justify-between">
+            <p class="font-mono text-[10px] text-slate-500 tracking-widest">TOP 3 PROYECTOS DEL MOMENTO</p>
+            <span class="font-mono text-[10px] text-slate-600">RANKING ACTUALIZA CADA 60s</span>
+          </div>
+          <div class="mt-3 space-y-2">
+            <div class="flex items-center justify-between rounded-lg bg-ink/60 border border-white/5 px-4 py-2.5">
+              <p class="text-sm text-slate-200">🥇 AgroSense · IoT para el agro</p><span class="font-mono text-xs text-amber-300">312 pts</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-ink/60 border border-white/5 px-4 py-2.5">
+              <p class="text-sm text-slate-200">🥈 NeuroLink · IA conversacional</p><span class="font-mono text-xs text-slate-400">287 pts</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-ink/60 border border-white/5 px-4 py-2.5">
+              <p class="text-sm text-slate-200">🥉 SkyFleet · Drones de precisión</p><span class="font-mono text-xs text-slate-400">265 pts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ARQUITECTURA ══════════════ -->
+<section id="arquitectura" class="relative py-28 overflow-hidden">
+  <div class="orb absolute top-1/3 -left-40 w-[420px] h-[420px] rounded-full bg-violet-600/20"></div>
+  <div class="max-w-6xl mx-auto px-5 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto" data-reveal>
+      <p class="font-mono mono-eyebrow text-cyan-400 mb-4">// 05 · ARQUITECTURA DE SOFTWARE</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">Diseñado por capas. <span class="grad-text">Construido para escalar.</span></h2>
+    </div>
+
+    <div class="mt-16 space-y-5" data-reveal>
+      <!-- layer 1 -->
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6 flex flex-col sm:flex-row gap-5 sm:items-center relative overflow-hidden">
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest w-24 shrink-0">L3 · EXPERIENCIA</span>
+        <div class="flex-1">
+          <p class="font-display text-xl font-semibold text-white">Capa inmersiva</p>
+          <p class="text-sm text-slate-400 mt-1">Web inmersivo, navegación de stands, multimedia, accesibilidad y rendimiento multiplataforma.</p>
+        </div>
+        <div class="flex gap-2">
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">3D Stands</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">Responsive</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/30 text-cyan-300">A11y</span>
+        </div>
+      </div>
+
+      <!-- layer 2 -->
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6 flex flex-col sm:flex-row gap-5 sm:items-center relative overflow-hidden">
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest w-24 shrink-0">L2 · SERVICIOS</span>
+        <div class="flex-1">
+          <p class="font-display text-xl font-semibold text-white">Core de gestión</p>
+          <p class="text-sm text-slate-400 mt-1">APIs de proyectos, stands, actividades, medios y notificaciones. Orquestación de contenido.</p>
+        </div>
+        <div class="flex gap-2">
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-violet-400/30 text-violet-300">Proyectos</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-violet-400/30 text-violet-300">Stands</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-violet-400/30 text-violet-300">Actividades</span>
+        </div>
+      </div>
+
+      <!-- layer 3 -->
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6 flex flex-col sm:flex-row gap-5 sm:items-center relative overflow-hidden">
+        <span class="font-mono text-[10px] text-slate-500 tracking-widest w-24 shrink-0">L1 · INTELIGENCIA</span>
+        <div class="flex-1">
+          <p class="font-display text-xl font-semibold text-white">Intelligence + Seguridad</p>
+          <p class="text-sm text-slate-400 mt-1">Voz (ASR/TTS), RAG sobre el evento, analítica en tiempo real, autenticación y control de permisos por rol.</p>
+        </div>
+        <div class="flex gap-2">
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-fuchsia-400/30 text-fuchsia-300">ASR / TTS</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-fuchsia-400/30 text-fuchsia-300">RAG</span>
+          <span class="font-mono text-[10px] px-2.5 py-1 rounded-full border border-fuchsia-400/30 text-fuchsia-300">RBAC</span>
+        </div>
+      </div>
+
+      <!-- base -->
+      <div class="rounded-2xl p-4 bg-gradient-to-r from-cyan-500/10 via-violet-600/10 to-fuchsia-500/10 border border-white/10 text-center">
+        <p class="font-mono text-[11px] tracking-[0.3em] text-slate-400">INFRAESTRUCTURA CLOUD · AUTENTICACIÓN SEGURA · BACKUP · MONITOREO</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ROL & PERMISOS ══════════════ -->
+<section class="py-28 bg-ink-900/40 border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto" data-reveal>
+      <p class="font-mono mono-eyebrow text-emerald-400 mb-4">// 06 · SEGURIDAD & ROLES</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">Cada rol, <span class="grad-text">su dimensión</span></h2>
+      <p class="mt-5 text-slate-400 text-lg">Acceso remoto, seguro y organizado con autenticación y control de permisos por rol.</p>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6" data-reveal>
+        <div class="text-3xl mb-3">🛡️</div>
+        <p class="font-display font-semibold text-white">Organizer</p>
+        <p class="font-mono text-[10px] text-amber-300 tracking-widest mt-1 mb-3">ACCESO TOTAL</p>
+        <ul class="text-xs text-slate-400 space-y-1.5">
+          <li>✓ Gestiona usuarios y permisos</li>
+          <li>✓ Aprobación de stands</li>
+          <li>✓ Reportes y exportación</li>
+          <li>✓ Parámetros globales</li>
+        </ul>
+      </div>
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6" data-reveal style="transition-delay:.08s">
+        <div class="text-3xl mb-3">👨‍💻</div>
+        <p class="font-display font-semibold text-white">Project Lead</p>
+        <p class="font-mono text-[10px] text-cyan-300 tracking-widest mt-1 mb-3">PROPIETARIO</p>
+        <ul class="text-xs text-slate-400 space-y-1.5">
+          <li>✓ CRUD de su proyecto</li>
+          <li>✓ Gestión de equipo</li>
+          <li>✓ Multimedia y recursos</li>
+          <li>✓ Métricas de su stand</li>
+        </ul>
+      </div>
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6" data-reveal style="transition-delay:.16s">
+        <div class="text-3xl mb-3">🎓</div>
+        <p class="font-display font-semibold text-white">Estudiante</p>
+        <p class="font-mono text-[10px] text-violet-300 tracking-widest mt-1 mb-3">CONTRIBUYENTE</p>
+        <ul class="text-xs text-slate-400 space-y-1.5">
+          <li>✓ Perfil y credenciales</li>
+          <li>✓ Membresía en equipos</li>
+          <li>✓ Publica aportes técnicos</li>
+          <li>✓ Chat del stand</li>
+        </ul>
+      </div>
+      <div class="neon-card clip-corner bg-ink-800/70 rounded-2xl p-6" data-reveal style="transition-delay:.24s">
+        <div class="text-3xl mb-3">🧑‍🎓</div>
+        <p class="font-display font-semibold text-white">Visitante</p>
+        <p class="font-mono text-[10px] text-fuchsia-300 tracking-widest mt-1 mb-3">EXPLORADOR</p>
+        <ul class="text-xs text-slate-400 space-y-1.5">
+          <li>✓ Recorrido libre</li>
+          <li>✓ Asistente IA con voz</li>
+          <li>✓ Descarga recursos</li>
+          <li>✓ Vota proyectos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FAQ ══════════════ -->
+<section class="py-28">
+  <div class="max-w-3xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-12" data-reveal>
+      <p class="font-mono mono-eyebrow text-cyan-400 mb-4">// 07 · PREGUNTAS FRECUENTES</p>
+      <h2 class="font-display text-4xl font-bold text-white tracking-tight">Resuelto al instante</h2>
+    </div>
+    <div data-reveal>
+      <div x-data="{ open: 0 }" class="space-y-3">
+        <template x-for="(f, i) in [
+          {q:'¿Qué es UAPAverse?', a:'UAPAverse es la plataforma virtual inmersiva de CADESOFT que centraliza la administración de la feria tecnológica: proyectos, stands virtuales, actividades y su comunidad, enlazados por inteligencia artificial.'},
+          {q:'¿Necesito instalar algo para visitar?', a:'No. La plataforma corre en el navegador de forma responsive. Los stands 3D degradan con elegancia a dispositivos modestos.'},
+          {q:'¿Puedo usar solo la voz?', a:'Sí. Reconocimiento y síntesis de voz (Web Speech API) están integrados al asistente. Escríbeme, o dímelo.'},
+          {q:'¿Cómo funcionan los permisos?', a:'Cada cuenta tiene un rol (Organizer, Project Lead, Estudiante, Visitante) que define qué puede ver, editar y administrar. Autenticación remota y segura.'},
+          {q:'¿Qué reportes obtengo?', a:'Participación, visitas por stand, interés de visitantes, interacciones con IA y ranking de proyectos, exportables en un clic.'}
+        ]" :key="i">
+          <div class="neon-card bg-ink-800/60 rounded-2xl overflow-hidden">
+            <button @click="open = (open === i ? -1 : i)"
+                    class="w-full flex items-center justify-between px-6 py-4 text-left">
+              <span class="font-display font-semibold text-white" x-text="f.q"></span>
+              <span class="text-cyan-400 transition-transform duration-300" :class="open === i && 'rotate-45'">+</span>
+            </button>
+            <div x-show="open === i" x-transition.opacity :style="open===i ? 'max-height:200px' : 'max-height:0'"
+                 class="overflow-hidden">
+              <p class="px-6 pb-5 text-sm text-slate-400 leading-relaxed" x-text="f.a"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CTA FINAL ══════════════ -->
+<section id="final" class="py-24">
+  <div class="max-w-5xl mx-auto px-5 lg:px-8">
+    <div data-reveal class="relative rounded-3xl overflow-hidden p-12 md:p-16 text-center border border-white/10"
+         style="background:linear-gradient(135deg, rgba(34,211,238,.12), rgba(139,92,246,.18), rgba(232,121,249,.12))">
+      <div class="absolute -top-20 left-1/4 w-72 h-72 bg-cyan-500/25 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-20 right-1/4 w-72 h-72 bg-fuchsia-500/25 rounded-full blur-3xl"></div>
+
+      <p class="font-mono mono-eyebrow text-cyan-300 mb-4">¿LISTO PARA ENTRAR AL UNIVERSO?</p>
+      <h2 class="font-display text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+        La feria de CADESOFT ya no se visita.<br /><span class="grad-text">Se habita.</span>
+      </h2>
+      <p class="mt-5 text-slate-300 max-w-xl mx-auto">Crea tu cuenta, registra tu proyecto o simplemente explora. El pabellón virtual está encendido.</p>
+      <div class="mt-9 flex flex-wrap justify-center gap-4">
+        <a href="#" class="font-semibold text-ink bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 px-8 py-4 rounded-xl shadow-xl shadow-violet-600/30 transition hover:-translate-y-0.5">
+          Crear cuenta gratuita
+        </a>
+        <a href="#" class="font-medium glass border border-white/20 hover:border-cyan-400/50 rounded-xl px-8 py-4 transition hover:-translate-y-0.5">
+          Solicitar acceso organizador
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="border-t border-white/5 bg-ink-900/60">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14 grid md:grid-cols-4 gap-10">
+    <div class="md:col-span-2">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center font-display font-bold text-ink text-sm">U</div>
+        <span class="font-display font-semibold text-white">UAPA<span class="grad-text">verse</span></span>
+      </div>
+      <p class="text-sm text-slate-400 max-w-sm leading-relaxed">Plataforma inmersiva para la gestión integral de la feria tecnológica de CADESOFT. Proyectos, stands, IA con voz y datos en tiempo real.</p>
+      <p class="font-mono text-[10px] text-slate-600 mt-4">HECHO CON 🇵🇪 · UAPA · ESCUELA DE INGENIERÍA DE SISTEMAS E INFORMÁTICA</p>
+    </div>
+    <div>
+      <p class="font-mono text-[10px] tracking-[0.3em] text-slate-500 mb-4">PLATAFORMA</p>
+      <ul class="space-y-2 text-sm text-slate-400">
+        <li><a href="#plataforma" class="hover:text-cyan-300 transition">Funcionalidades</a></li>
+        <li><a href="#asistente" class="hover:text-cyan-300 transition">Asistente IA</a></li>
+        <li><a href="#analitica" class="hover:text-cyan-300 transition">Analítica</a></li>
+        <li><a href="#arquitectura" class="hover:text-cyan-300 transition">Arquitectura</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-mono text-[10px] tracking-[0.3em] text-slate-500 mb-4">ESTADO</p>
+      <ul class="space-y-2 text-sm">
+        <li class="flex items-center gap-2 text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Sistema en línea</li>
+        <li class="flex items-center gap-2 text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> IA Core estable</li>
+        <li class="font-mono text-[10px] text-slate-600 mt-2">BUILD 2.0.4-STABLE</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
+      <p>© 2025 UAPAverse · Proyecto CADESOFT</p>
+      <p class="font-mono text-[10px]">HECHO EN LA TIERRA · DESPLEGADO AL UAPAVERSE</p>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button @click="window.scrollTo({top:0, behavior:'smooth'})"
+        x-show="scrolled && scrollPct > 8" x-transition.opacity
+        class="fixed bottom-6 right-6 z-[70] w-11 h-11 rounded-full glass border border-white/15 flex items-center justify-center text-cyan-300 hover:border-cyan-400/60 transition"
+        style="display:none" x-cloak>↑</button>
+
+<script>
+/* ═══════════════ HELPERS ═══════════════ */
+const $  = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+
+/* ═══════════════ SITE (Alpine) ═══════════════ */
+function site(){
+  return {
+    menuOpen: false,
+    booted: false,
+    scrolled: false,
+    scrollPct: 0,
+    liveVisitors: 312,
+
+    init(){
+      /* boot progress */
+      this.$nextTick(() => { setTimeout(() => this.booted = true, 900); });
+
+      /* nav + scroll progress */
+      const onScroll = () => {
+        this.scrolled = window.scrollY > 24;
+        const h = document.documentElement;
+        this.scrollPct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      };
+      addEventListener('scroll', onScroll, { passive:true }); onScroll();
+
+      /* reveal on scroll */
+      const io = new IntersectionObserver((es) => {
+        es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('revealed'); io.unobserve(e.target); } });
+      }, { threshold:.12 });
+      $$('[data-reveal]').forEach(el => io.observe(el));
+
+      /* count-up */
+      const cio = new IntersectionObserver((es) => {
+        es.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target, end = +el.dataset.count || 0, suf = el.dataset.suffix || '';
+          const t0 = performance.now(), dur = 1600;
+          (function tick(t){
+            const p = clamp((t - t0) / dur, 0, 1), e2 = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(end * e2).toLocaleString('es-PE') + suf;
+            if (p < 1) requestAnimationFrame(tick);
+          })(t0);
+          cio.unobserve(el);
+        });
+      }, { threshold:.6 });
+      $$('[data-count]').forEach(el => cio.observe(el));
+
+      /* live visitors ticker */
+      setInterval(() => {
+        this.liveVisitors = clamp(this.liveVisitors + (Math.random() * 6 - 2.5 | 0) + 1, 280, 420);
+      }, 2600);
+
+      /* hero tilt */
+      const card = $('#tiltCard'), zone = $('#tiltZone');
+      if (card && zone && matchMedia('(hover:hover)').matches){
+        zone.addEventListener('mousemove', (ev) => {
+          const r = card.getBoundingClientRect();
+          const x = (ev.clientX - r.left) / r.width  - .5;
+          const y = (ev.clientY - r.top)  / r.height - .5;
+          card.style.transform = `perspective(1000px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+        });
+        zone.addEventListener('mouseleave', () => {
+          card.style.transition = 'transform .7s cubic-bezier(.22,1,.36,1)';
+          card.style.transform = '';
+          setTimeout(() => card.style.transition = '', 700);
+        });
+      }
+
+      /* spotlight cursor */
+      const sp = $('#spotlight');
+      if (sp && matchMedia('(hover:hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+        addEventListener('mousemove', (e) => {
+          sp.style.setProperty('--sx', e.clientX + 'px');
+          sp.style.setProperty('--sy', e.clientY + 'px');
+        }, { passive:true });
+      }
+    },
+
+    /* hero booth map */
+    stands: [
+      {x:18,y:28,on:1},{x:34,y:46,on:1},{x:52,y:22,on:0},{x:66,y:42,on:1},
+      {x:82,y:28,on:1},{x:26,y:70,on:1},{x:48,y:62,on:1},{x:70,y:72,on:0},
+      {x:86,y:58,on:1},{x:10,y:52,on:1}
+    ],
+  };
+}
+
+/* ═══════════════ ASISTENTE IA (Alpine) ═══════════════ */
+function assistant(){
+  return {
+    msgs: [{ from:'ia', text:'¡Hola! Soy el asistente de UAPAverse. Pregúntame sobre stands, proyectos o tu rol.' }],
+    input:'', listening:false, speaking:false, speak:true,
+    micMsg:'', recSupport: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+    rec:null, _last:0,
+
+    initAssistant(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SR){
+        this.rec = new SR();
+        this.rec.lang = 'es-PE'; this.rec.interimResults = false; this.rec.continuous = false;
+        this.rec.onresult = (e) => {
+          const txt = e.results?.[0]?.[0]?.transcript || '';
+          this.setListening(false);
+          if (txt) this.send(txt);
+        };
+        this.rec.onerror  = () => this.setListening(false);
+        this.rec.onend    = () => this.setListening(false);
+      } else {
+        this.micMsg = 'Tu navegador no soporta reconocimiento de voz. Escríbeme. 😉';
+      }
+      /* initial "typing" */
+      setTimeout(() => this.pushIa('…', true), 1200);
+      setTimeout(() => {
+        this.msgs.pop();
+        this.pushIa('¿Qué te gustaría explorar hoy? Puedo guiarte por pabellones, o contarte cómo funcionan los roles.');
+      }, 1900);
+    },
+
+    setListening(v){
+      this.listening = v;
+      if (!this.rec) return;
+      if (v){ try { this.rec.start(); } catch(e){} }
+      else try { this.rec.stop(); } catch(e){}
+    },
+    toggleMic(){
+      if (!this.rec){ this.micMsg = 'Reconocimiento de voz no disponible aquí. Escríbeme. 😉'; return; }
+      this.listening ? this.setListening(false) : this.setListening(true);
+    },
+
+    pushIa(text, typing = false){
+      this.msgs.push({ from:'ia', text, typing });
+      this.$nextTick(() => { const l = this.$refs.log; l && (l.scrollTop = l.scrollHeight); });
+    },
+    pushMe(text){
+      this.msgs.push({ from:'me', text });
+      this.$nextTick(() => { const l = this.$refs.log; l && (l.scrollTop = l.scrollHeight); });
+    },
+
+    send(text){
+      const q = (text ?? this.input).trim();
+      if (!q) return;
+      this.setListening(false);
+      this.pushMe(q);
+      this.input = '';
+      setTimeout(() => this.iaReply(q), 500);
+    },
+
+    iaReply(q){
+      const s = q.toLowerCase();
+      const reply =
+        /rol|permiso|acceso|cuenta|login|registr/.test(s) ?
+          'Tenemos cuatro roles: Organizador (acceso total), Project Lead (dueño de su proyecto), Estudiante (colabora en equipos) y Visitante (exploración libre). ¿Quieres que te explique uno?' :
+        /drone|dron|sky/i.test(s) ?
+          'Vas al pabellón Aéreo en el Stand C-12: “SkyFleet — Drones de precisión”. Tienen un live demo cada hora.' :
+        /hola|buenas|hey|hi/.test(s) ?
+          '¡Hola! Pregúntame “¿Qué stands hay de drones?” o “¿Cómo funciona mi rol?”.' :
+        /gracias|thank/.test(s) ?
+          '¡Con gusto! Estoy aquí todo el día de la feria.' :
+        /proyecto|stand|pavell/i.test(s) ?
+          'Hay 48 stands activos en 6 pabellones. El Top 3 del momento: AgroSense (IoT), NeuroLink (IA) y SkyFleet (drones). ¿Te llevo a alguno?' :
+        /stat|reporte|dato|anál|analítica/.test(s) ?
+          'Hoy llevamos 5,412 visitantes, 48 stands activos y 2,187 interacciones con IA. Los paneles están en la sección Analítica.' :
+        'Buena pregunta. En producción respondería con contexto completo del evento. Prueba con “stands de drones”, “roles” o “proyectos”.';
+      this.pushIa(reply);
+      this.speakOut(reply);
+    },
+
+    speakOut(text){
+      if (!this.speak || !window.speechSynthesis) return;
+      const plain = text.replace(/[«»*_]/g, '');
+      const u = new SpeechSynthesisUtterance(plain);
+      u.lang = 'es-ES'; u.rate = 1.05;
+      const v = speechSynthesis.getVoices().find(v => /es[-_]/.test(v.lang));
+      if (v) u.voice = v;
+      u.onstart = () => this.speaking = true;
+      u.onend   = u.onerror = () => this.speaking = false;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    },
+
+    announce(t){
+      const now = Date.now();
+      if (now - this._last < 250) return;
+      this._last = now;
+      const plain = t;
+      const u = new SpeechSynthesisUtterance(plain);
+      u.lang = 'es-ES'; u.rate = 1.2; u.volume = .6;
+      const v = speechSynthesis.getVoices?.().find(v => /es[-_]/.test(v.lang));
+      if (v) u.voice = v;
+      window.speechSynthesis?.speak(u);
+    }
+  };
+}
+
+/* ═══════════════ ANALYTICS BARS (Alpine) ═══════════════ */
+function analyticsBars(){
+  return {
+    bars: [
+      { label:'IOT',        w:0,  v:64,  active:true  },
+      { label:'IA / ML',    w:0,  v:82,  active:true  },
+      { label:'CYBERSEC',   w:0,  v:54,  active:true  },
+      { label:'DRONES',     w:0,  v:47,  active:true  },
+      { label:'WEB APPS',   w:0,  v:71,  active:false },
+      { label:'EMBEDDED',   w:0,  v:38,  active:true  },
+    ],
+    grow(){
+      this.$nextTick(() => {
+        this.bars.forEach((b, i) => setTimeout(() => b.w = b.v, i * 120));
+      });
+    }
+  };
+}
+/* inject analytics into main site so bars animate on reveal */
+document.addEventListener('alpine:init', () => {
+  const el = document.querySelector('#analitica .lg\\:col-span-2');
+});
+/* simpler: mount bars in a nested x-data */
+function bindBars(){
+  const section = document.getElementById('analitica');
+  if (!section || section.dataset.bound) return;
+  section.dataset.bound = '1';
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      section.__alpine_data__?.grow?.();
+      io.disconnect();
+    });
+  }, { threshold:.2 });
+  io.observe(section);
+}
+document.addEventListener('alpine:initialized', bindBars);
+
+/* ═══════════════ SCRAMBLE HERO WORD ═══════════════ */
+(function(){
+  const el = document.getElementById('scramble');
+  if (!el) return;
+  const words = (el.dataset.words || '').split('|').map(w => w.trim()).filter(Boolean);
+  if (!words.length) return;
+  const CH = '!<>-_\\/[]{}=+*^?#·░▒▓';
+  let idx = 0, timer = null;
+
+  function decode(word){
+    const total = Math.max(word.length * 2, 18);
+    let f = 0;
+    clearInterval(timer);
+    timer = setInterval(() => {
+      f++;
+      let out = '';
+      for (let i = 0; i < word.length; i++){
+        if (i < (f / 2)) out += word[i];
+        else out += CH[Math.random() * CH.length | 0];
+      }
+      el.textContent = out;
+      if (f / 2 >= word.length){ clearInterval(timer); el.textContent = word; }
+    }, 45);
+  }
+  decode(words[0]);
+  setInterval(() => { idx = (idx + 1) % words.length; decode(words[idx]); }, 3400);
+})();
+
+/* ═══════════════ TIE ANALYTICS TO X-DATA ═══════════════ */
+document.addEventListener('alpine:init', () => {
+  Alpine.data('barsOnly', function(){
+    return {
+      grow(){
+        $$('#analitica [x-text*="b.w"]').length; // noop — real bars are handled below
+      }
+    };
+  });
+});
+
+/* bars: drive width via x-model-free JS (progressive enhancement) */
+(function(){
+  const section = document.getElementById('analitica');
+  if (!section) return;
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      section.querySelectorAll('[data-bar]').forEach((bar, i) => {
+        const target = +bar.dataset.bar;
+        const t0 = performance.now(), dur = 1100 + i * 100;
+        (function tick(t){
+          const p = clamp((t - t0) / dur, 0, 1), e2 = 1 - Math.pow(1 - p, 3);
+          bar.style.width = (target * e2) + '%';
+          if (p < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+      io.disconnect();
+    });
+  }, { threshold:.2 });
+  section.querySelectorAll('[data-bar]').forEach(b => { b.dataset.bar = b.style.width.replace('%','') || '40'; b.style.width = '0%'; });
+  io.observe(section);
+})();
+
+/* make the bars use data-bar targets */
+document.addEventListener('DOMContentLoaded', () => {
+  const map = { '64%':'64','82%':'82','54%':'54','47%':'47','71%':'71','38%':'38' };
+  $$('#analitica [data-bar]').forEach(b => {
+    if (!b.dataset.bar || b.dataset.bar === '0') return;
+  });
+});
+</script>
+
+<!-- Alpine: bind analytics bars -->
+<script>
+document.addEventListener('alpine:init', () => {
+  // no-op hook to ensure Alpine boots; bars use native IO above
+});
+</script>
+
+<!-- re-declare bars with data-bar via post-load patch -->
+<script>
+addEventListener('load', () => {
+  const targets = [64, 82, 54, 47, 71, 38];
+  const bars = $$('#analitica [data-bar]');
+  bars.forEach((b, i) => b.dataset.bar = targets[i] ?? 40);
+});
+</script>
+
+</body>
+</html>
