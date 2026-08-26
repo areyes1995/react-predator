@@ -8,7 +8,7 @@ Frontend de la aplicación **Modu** construido con **React**, **TypeScript**, **
 
 ---
 
-## 📦 Stack tecnológico
+## Stack tecnológico
 
 - **Node.js 22** + **TypeScript**
 - **React 19** + **React Router**
@@ -18,7 +18,7 @@ Frontend de la aplicación **Modu** construido con **React**, **TypeScript**, **
 
 ---
 
-## 🧱 Módulos incluidos
+## Módulos incluidos
 
 | Módulo | Descripción |
 |--------|-------------|
@@ -31,7 +31,7 @@ Frontend de la aplicación **Modu** construido con **React**, **TypeScript**, **
 
 ---
 
-## 🚀 Inicio rápido
+## Inicio rápido
 
 ```bash
 # 1. Instalar dependencias
@@ -48,7 +48,7 @@ La aplicación estará en: **http://localhost:5173**
 
 ---
 
-## 📄 Variables de entorno (.env)
+## Variables de entorno (.env)
 
 ```
 VITE_API_URL=http://localhost:3000/api/v1
@@ -60,7 +60,7 @@ VITE_AUTH_METHOD=ldap
 
 ---
 
-## 🛠 Scripts disponibles
+## Scripts disponibles
 
 ```bash
 pnpm dev        # Desarrollo con hot reload
@@ -70,7 +70,7 @@ pnpm preview    # Preview del build
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 .
