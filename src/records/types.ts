@@ -23,6 +23,7 @@ export interface RecordViewOption {
   slug: string
   description: string
   kind: RecordViewKind
+  permission?: string
 }
 
 /** A single column definition of a module's grid. */

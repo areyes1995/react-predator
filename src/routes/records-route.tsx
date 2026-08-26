@@ -68,8 +68,6 @@ export function RecordsRoute() {
     return <Navigate to={`/app/records/${visibleModules[0].slug}/summary`} replace />
   }
 
-  const targetView = targetModule?.viewOptions.find(v => v.slug === viewSlug)
-
   if (targetModule && !segments[3]) {
     return <Navigate to={`/app/records/${targetModule.slug}/summary`} replace />
   }

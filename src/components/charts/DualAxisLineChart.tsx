@@ -14,7 +14,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  type TooltipProps,
 } from 'recharts'
 
 export interface ChartDataPoint {
@@ -55,7 +54,10 @@ export default function DualAxisLineChart({
     return data.map((row) => {
       const entry: Record<string, number | string> = { month: row.month }
       series.forEach((s) => {
-        entry[s.key] = row[s.key as keyof ChartDataPoint]
+        const val = row[s.key as keyof ChartDataPoint]
+        if (val !== undefined) {
+          entry[s.key] = val
+        }
       })
       return entry
     })
@@ -84,28 +86,32 @@ export default function DualAxisLineChart({
   }, [data, series])
 
   const renderTooltip = (
-    v: TooltipProps<number, string>,
+    props: unknown,
     defaultColor: string,
   ) => {
-    const [payload] = v.payload || []
-    if (!payload) return null
-    const { label, key, data: row } = payload as unknown as Record<string, unknown> & { data: ChartDataPoint }
-    const d = row as ChartDataPoint
-    if (!label || !d) return null
+    const typedProps = props as { payload?: unknown[]; label?: string }
+    const payloadArr = (typedProps?.payload as unknown[]) || []
+    const [firstPayload] = payloadArr
+    if (!firstPayload || !typedProps?.label) return null
 
-    const items = (v.payload as unknown[]).map((p) => {
-      const s = series.find((ser) => ser.key === p.dataKey)
-      const val = (d as Record<string, unknown>)[p.dataKey as keyof ChartDataPoint] as number
+    const label = typedProps.label as string
+    const row = (firstPayload as { data?: ChartDataPoint })?.data as ChartDataPoint | undefined
+    if (!label || !row) return null
+
+    const items = payloadArr.map((p) => {
+      const typedP = p as { dataKey?: string; type?: string }
+      const s = series.find((ser) => ser.key === typedP.dataKey)
+      const val = (row as unknown as Record<string, unknown>)[typedP.dataKey as keyof ChartDataPoint] as number
       const formatted = formatValue
-        ? formatValue(String(p.dataKey), val)
+        ? formatValue(String(typedP.dataKey), val)
         : s?.yAxis === 'right'
           ? `${Math.round(val * 100)}%`
           : val.toLocaleString()
       return {
-        type: p.type as string,
-        dataKey: String(p.dataKey),
+        type: typedP.type as string,
+        dataKey: String(typedP.dataKey),
         color: s?.strokeColor || defaultColor,
-        label: s?.name || String(p.dataKey),
+        label: s?.name || String(typedP.dataKey),
         value: formatted,
         strokeWidth: s?.strokeWidth || 2,
         strokeDasharray: s?.strokeDasharray,
@@ -142,7 +148,7 @@ export default function DualAxisLineChart({
       )}
 
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData} margin={{ top: 10, right: 60, left: 0, bottom: 0 }} animationDuration={300}>
+        <LineChart data={chartData} margin={{ top: 10, right: 60, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
           <XAxis
@@ -175,8 +181,8 @@ export default function DualAxisLineChart({
           />
 
           <Tooltip
-            content={({ props, ...rest }) =>
-              renderTooltip(rest as TooltipProps<number, string>, 'var(--text-muted)')
+            content={({ payload, ...rest }: any) =>
+              renderTooltip({ payload, label: rest?.label }, 'var(--text-muted)')
             }
             wrapperStyle={{ fontSize: '12px' }}
           />
@@ -197,10 +203,7 @@ export default function DualAxisLineChart({
               strokeWidth={s.strokeWidth || 2}
               strokeDasharray={s.strokeDasharray}
               dot={s.dot ?? true}
-              dotSize={4}
               activeDot={{ r: 6, strokeWidth: 2 }}
-              isAnimationActive={true}
-              animationDuration={300}
             />
           ))}
         </LineChart>

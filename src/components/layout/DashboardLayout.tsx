@@ -5,7 +5,7 @@
 // ──────────────────────────────────────────────
 
 import { useState, type ReactNode } from 'react'
-import { LayoutGrid, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useAppTranslation } from '../../i18n/useAppTranslation'
 
 export interface DashboardLayoutProps {

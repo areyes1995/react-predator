@@ -38,7 +38,7 @@ const DB_USERS: Array<{ email: string; password: string; user: MockUser }> = [
     user: {
       id: 'u-001',
       email: `admin@test.com`,
-      name: `Admin ${import.meta.env.VITE_APP_NAME.charAt(0).toUpperCase() + import.meta.env.VITE_APP_NAME.slice(1)}`,
+      name: `Admin ${((import.meta.env.VITE_APP_NAME || 'App').charAt(0).toUpperCase() + (import.meta.env.VITE_APP_NAME || 'App').slice(1))}`,
       role: 'ADMIN',
       permissions: ROLE_PERMISSIONS.ADMIN,
       isActive: true,
@@ -218,7 +218,7 @@ export function mockLdapLogin(credentials: {
         // Simular atributos LDAP adicionales
         ldapAttributes: {
           dn: `cn=${found.user.name.split(' ')[0]},ou=usuarios,${import.meta.env.VITE_LDAP_BASE_DN || `dc=test,dc=edu`}`,
-          memberOf: [`CN=Docentes,OU=Grupos,DC=${import.meta.env.VITE_APP_NAME.toUpperCase()},DC=edu`],
+          memberOf: [`CN=Docentes,OU=Grupos,DC=${(import.meta.env.VITE_APP_NAME || 'App').toUpperCase()},DC=edu`],
         },
       })
     }, 800) // LDAP suele ser un poco más lento

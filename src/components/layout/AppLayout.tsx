@@ -23,11 +23,7 @@ export default function AppLayout() {
 
   const {
     activeItemLabel,
-    menuCollapsed,
-    setMenuCollapsed,
     sidebarSections,
-    menuTitle,
-    menuItems,
     viewOptions,
     activeView,
     handleSelectCard,

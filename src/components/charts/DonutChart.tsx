@@ -20,14 +20,16 @@ export interface DonutChartProps {
 export default function DonutChart({ title, total, items, icon, className }: { title: string; total: number; items: DonutDataPoint[]; icon?: React.ReactNode; className?: string }) {
   const totalValue = items.reduce((sum, item) => sum + item.value, 0)
 
-  const renderTooltip = ({ payload, label }: { payload?: Array<{ name: string; value: number; percent?: number }>; label: string }) => {
-    if (!payload || !label) return null
-    const data = items.find(i => i.name === label)
+  const renderTooltip = (props: unknown) => {
+    const p = (props as any)?.payload as Array<{ name: string; value: number; percent?: number }> | undefined
+    const l = (props as any)?.label as string
+    if (!p || !l) return null
+    const data = items.find(i => i.name === l)
     if (!data) return null
     const percentage = totalValue > 0 ? ((data.value / totalValue) * 100).toFixed(1) : '0'
     return (
       <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-lg px-3 py-2 shadow-sm">
-        <p className="text-xs font-medium text-[var(--text-primary)] mb-1">{label}</p>
+        <p className="text-xs font-medium text-[var(--text-primary)] mb-1">{l}</p>
         <div className="flex items-center gap-2 text-xs">
           <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: data.color }} />
           <span className="text-[var(--text-secondary)]">{data.name}</span>
