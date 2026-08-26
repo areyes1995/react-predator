@@ -35,7 +35,9 @@ export default function Login() {
       <div className="login-center">
         <div className="login-card">
           <div className="login-form-header">
-            <img src="/logo.png" alt={`${appName} Logo`} className="login-form-logo" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />
+            <div className="login-form-logo">
+              <span className="login-form-logo-text">V</span>
+            </div>
           </div>
 
           <div className="login-form-body">
@@ -150,6 +152,18 @@ export default function Login() {
         .login-form-logo {
           width: 2.5rem;
           height: 2.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #f2a93b, #f5b961);
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 12px rgba(242, 169, 59, 0.25);
+        }
+        .login-form-logo-text {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: #fff;
+          line-height: 1;
         }
 
         .login-form-body {
