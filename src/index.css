@@ -72,7 +72,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #07080c;
+  background-color: var(--bg-app);
   color: var(--text-secondary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -112,10 +112,6 @@ body {
   background: var(--scrollbar-track);
 }
 
-/* ── Scroll-triggered animations ── */
-[data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
-[data-reveal].revealed { opacity: 1; transform: translateY(0) !important; }
-
 /* ── Smooth scrolling containers ── */
 .overflow-auto,
 .overflow-y-auto,
@@ -123,17 +119,6 @@ body {
   scroll-behavior: smooth;
   overscroll-behavior: contain;
 }
-
-/* ── Landing-specific keyframes ── */
-@keyframes gradShift{ to{background-position:100% 0} }
-@keyframes floatY{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
-@keyframes blink{ 50%{opacity:0} }
-@keyframes marquee{ to{transform:translateX(-50%)} }
-@keyframes wave{ 0%,100%{transform:scaleY(.25)} 50%{transform:scaleY(1)} }
-@keyframes pulseDot{ 0%{box-shadow:0 0 0 0 rgba(34,211,238,.5)} 100%{box-shadow:0 0 0 12px rgba(34,211,238,0)} }
-@keyframes dashDraw{ to{stroke-dashoffset:0} }
-@keyframes scan{ 0%{top:-20%} 100%{top:110%} }
-@keyframes spinSlow{ to{transform:rotate(360deg)} }
 
 /* ── Hide scrollbar (used in small overflow rows) ── */
 .scrollbar-none {
@@ -217,148 +202,4 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 6px;
-}
-
-/* ── UAPAverse Design Tokens ── */
-.ink-950  { background-color: #07080C; }
-.ink-900  { background-color: rgba(7,8,12,0.6); }
-.ink-800  { background-color: #0D0F14; }
-.ink-800\/60 { background-color: rgba(13,15,20,0.6); }
-.ink-800\/70 { background-color: rgba(13,15,20,0.7); }
-.ink-700\/60 { background-color: rgba(18,19,28,0.6); }
-
-.text-ink { color: #07080C; }
-
-.grad-text {
-  background: linear-gradient(135deg, #22D3EE, #8B5CF6, #E879F9);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-}
-
-.glass {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.neon-card {
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 30px rgba(34,211,238,0.06), 0 0 60px rgba(139,92,246,0.04);
-}
-
-.clip-corner {
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-  -webkit-clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-}
-
-.mono-eyebrow {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-}
-
-.font-display {
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-}
-
-.revealed {
-  opacity: 1;
-  transform: translateY(0) !important;
-}
-
-/* ── Scrollbar for chat logs ── */
-.scroll-smooth {
-  scroll-behavior: smooth;
-}
-
-/* ── Landing page custom components ── */
-.grad-text {
-  background: linear-gradient(92deg, #67e8f9 0%, #a78bfa 45%, #f0abfc 90%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  background-size: 200% auto; animation: gradShift 7s ease-in-out infinite alternate;
-}
-
-.mono-eyebrow { letter-spacing: .28em; font-size: 11px }
-
-.anim-float { animation: floatY 6s ease-in-out infinite }
-
-.cursor-blink { animation: blink 1s step-end infinite }
-
-.marquee-track { animation: marquee 28s linear infinite; will-change: transform }
-.marquee:hover .marquee-track { animation-play-state: paused }
-
-.wave-bars span {
-  width: 4px; border-radius: 99px; height: 34px; transform: scaleY(.22);
-  background: linear-gradient(180deg, #22d3ee, #8b5cf6); opacity: .35; transition: opacity .3s;
-}
-.wave-bars.on span { opacity: 1; animation: wave 1s ease-in-out infinite }
-.wave-bars.on span:nth-child(1){animation-delay:0s}    .wave-bars.on span:nth-child(2){animation-delay:.12s}
-.wave-bars.on span:nth-child(3){animation-delay:.24s}  .wave-bars.on span:nth-child(4){animation-delay:.06s}
-.wave-bars.on span:nth-child(5){animation-delay:.3s}   .wave-bars.on span:nth-child(6){animation-delay:.15s}
-.wave-bars.on span:nth-child(7){animation-delay:.02s}  .wave-bars.on span:nth-child(8){animation-delay:.22s}
-.wave-bars.on span:nth-child(9){animation-delay:.36s}  .wave-bars.on span:nth-child(10){animation-delay:.1s}
-.wave-bars.on span:nth-child(11){animation-delay:.28s} .wave-bars.on span:nth-child(12){animation-delay:.18s}
-
-.orb { filter: blur(90px); opacity: .5; pointer-events: none }
-
-.glass { background: rgba(13,18,38,.62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px) }
-
-.neon-card {
-  position: relative; border: 1px solid rgba(148,163,184,.14); transition: border-color .4s, box-shadow .4s, transform .4s;
-}
-.neon-card:hover {
-  border-color: rgba(139,92,246,.55); box-shadow: 0 0 0 1px rgba(139,92,246,.2), 0 20px 60px -20px rgba(139,92,246,.35);
-}
-
-.clip-corner { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%) }
-
-.draw-line { stroke-dasharray: 600; stroke-dashoffset: 600 }
-.draw-line.animate { animation: dashDraw 2.2s ease forwards }
-
-.scanline {
-  position: absolute; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(56,189,248,.55), transparent);
-  animation: scan 5s linear infinite;
-}
-
-.hero-floor { position: absolute; left: -10%; right: -10%; bottom: -4%; height: 42%; width: 120%; z-index: 0 }
-
-.bg-grid-floor {
-  background-image: linear-gradient(rgba(56,189,248,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,.18) 1px, transparent 1px);
-  background-size: 44px 44px;
-  transform: perspective(600px) rotateX(62deg);
-  -webkit-mask-image: linear-gradient(to top, black 20%, transparent 95%);
-  mask-image: linear-gradient(to top, black 20%, transparent 95%);
-}
-
-.bg-grid {
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(rgba(148,163,184,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.07) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
-}
-
-.tilt { transform-style: preserve-3d; will-change: transform }
-
-.nav-link { position: relative }
-.nav-link::after {
-  content: ''; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0;
-  background: linear-gradient(90deg, #22d3ee, #8b5cf6); transition: width .3s;
-}
-.nav-link:hover::after { width: 100% }
-
-@media(prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition-duration: .01ms !important }
-  [data-reveal] { opacity: 1 !important; transform: none !important }
-}
-
-/* ── Spotlight cursor effect ── */
-#spotlight {
-  background: radial-gradient(560px circle at var(--sx, 50%) var(--sy, 40%), rgba(120,120,255,.10), transparent 60%);
-  transition: opacity .4s;
 }
