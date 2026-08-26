@@ -164,7 +164,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       }))
 
     const recordsItems = visibleModules
-      .filter(m => m.slug === 'records' || m.slug === 'sales')
+      .filter(m => m.slug === 'sales')
       .map(m => ({
         icon: m.icon,
         label: m.label,
