@@ -14,7 +14,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-const THEME_KEY = 'modu_theme'
+const THEME_KEY = `${import.meta.env.VITE_APP_NAMESPACE}_theme`
 
 function getInitialTheme(): Theme {
   const saved = localStorage.getItem(THEME_KEY) as Theme | null

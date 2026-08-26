@@ -68,7 +68,7 @@ interface UseRecordsDashboardResult {
 function readMenuCollapsed(): boolean {
   const current = localStorage.getItem(STORAGE_KEYS.menuCollapsed)
   if (current !== null) return current === 'true'
-  return localStorage.getItem('modu_notes_collapsed') === 'true'
+  return localStorage.getItem(`${import.meta.env.VITE_APP_NAMESPACE}_notes_collapsed`) === 'true'
 }
 
 export function useRecordsDashboard(): UseRecordsDashboardResult {

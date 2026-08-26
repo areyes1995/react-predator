@@ -86,8 +86,8 @@ export const AUTH_METHOD: AuthMethod =
 export const LDAP_CONFIG = {
   host: import.meta.env.VITE_LDAP_HOST || 'ldap.example.com',
   port: Number(import.meta.env.VITE_LDAP_PORT) || 389,
-  baseDn: import.meta.env.VITE_LDAP_BASE_DN || 'dc=modu,dc=edu',
-  domain: import.meta.env.VITE_LDAP_DOMAIN || 'modu.edu',
+  baseDn: import.meta.env.VITE_LDAP_BASE_DN || `dc=${import.meta.env.VITE_APP_NAMESPACE},dc=edu`,
+  domain: import.meta.env.VITE_LDAP_DOMAIN || `${import.meta.env.VITE_APP_NAMESPACE}.edu`,
   bindDn: import.meta.env.VITE_LDAP_BIND_DN || '',
   bindPassword: import.meta.env.VITE_LDAP_BIND_PASSWORD || '',
 }

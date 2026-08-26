@@ -11,6 +11,7 @@ import { FormField, FormInput, FormButton, TextCarousel } from '../components/ui
 export default function Login() {
   const { login, isAuthenticated, isSubmitting, error, clearError } = useAuth()
   const navigate = useNavigate()
+  const appName = import.meta.env.VITE_APP_NAME || import.meta.env.VITE_APP_NAMESPACE || 'Modu'
 
   // ─── Redirigir si ya está autenticado ────────
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function Login() {
         <div className="login-brand-glow" />
         <div className="login-brand-content">
           <div className="login-logo-box">
-            <img src="/logo.png" alt="Modu Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src="/logo.png" alt={`${appName} Logo`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 className="login-brand-title">
             The platform for <span className="login-brand-accent">transforming</span> your work
@@ -75,14 +76,14 @@ export default function Login() {
         <div className="login-form-container">
           {/* Header */}
           <div className="login-form-header">
-            <img src="/logo.png" alt="Modu Logo" className="login-form-logo" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />
+            <img src="/logo.png" alt={`${appName} Logo`} className="login-form-logo" style={{ width: '2.5rem', height: '2.5rem', objectFit: 'contain' }} />
             {/* <p className="login-signup-text">
               Don't have an account? <a href="#">Sign up</a>
             </p> */}
           </div>
 
           <div className="login-form-body">
-            <h2 className="login-form-title">Welcome to Modu</h2>
+            <h2 className="login-form-title">Welcome to {appName}</h2>
             <p className="login-form-subtitle">
               Enter your credentials to access your account.
             </p>
@@ -166,7 +167,7 @@ export default function Login() {
 
           {/* Footer */}
           <footer className="login-footer">
-            <p>&copy; {new Date().getFullYear()} Modu. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {appName}. All rights reserved.</p>
             <div>
               <a href="#">Privacy Policy</a>
               <a href="#">Support</a>

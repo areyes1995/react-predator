@@ -19,6 +19,7 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const { t } = useAppTranslation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const appName = import.meta.env.VITE_APP_NAME || import.meta.env.VITE_APP_NAMESPACE || 'Modu'
 
   const closeSidebar = () => {
     setSidebarOpen(false)
@@ -53,7 +54,7 @@ export default function DashboardLayout({
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="text-sm font-semibold text-[var(--text-primary)] truncate">{t('Modu')}</span>
+          <span className="text-sm font-semibold text-[var(--text-primary)] truncate">{appName}</span>
         </div>
 
         {/* ─── Backdrop para drawer en móvil ─── */}

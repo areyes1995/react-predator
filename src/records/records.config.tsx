@@ -96,7 +96,7 @@ export const GENERAL_MENU: RecordViewOption[] = [
 
 /** localStorage keys used by the dashboard. */
 export const STORAGE_KEYS = {
-  activeView: 'modu_active_view',
-  selectedCard: 'modu_selected_card',
-  menuCollapsed: 'modu_menu_collapsed',
+  activeView: `${import.meta.env.VITE_APP_NAMESPACE}_active_view`,
+  selectedCard: `${import.meta.env.VITE_APP_NAMESPACE}_selected_card`,
+  menuCollapsed: `${import.meta.env.VITE_APP_NAMESPACE}_menu_collapsed`,
 } as const
