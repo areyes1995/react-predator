@@ -18,8 +18,8 @@ export interface MockUser {
 // ─── Permisos por rol (espejo de roles.constants.ts) ───
 
 const ROLE_PERMISSIONS: Record<string, string[]> = {
-  ADMIN: ['module:records', 'module:coaching', 'module:vacations', 'module:sales', 'module:licenses', 'module:permissions', 'rag:upload-view', 'rag:upload'],
-  BASIC: ['module:records', 'rag:read', 'rag:search'],
+  ADMIN: ['module:coaching', 'module:vacations', 'module:sales', 'module:licenses', 'module:permissions'],
+  BASIC: [],
 }
 
 interface MockSession {

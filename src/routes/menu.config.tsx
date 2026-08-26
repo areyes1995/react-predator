@@ -9,8 +9,8 @@
 //   - `permission` ausente → se omite la validación
 //     y el item siempre se muestra.
 //
-// Sigue el mismo patrón que `RecordViewOption.permission`
-// de records.config (ej. `rag:upload-view`).
+// Sigue el mismo patrón que `RecordViewOption`
+// de records.config para permisos de vistas.
 // ──────────────────────────────────────────────
 
 import { Home, Cable, Settings, KeyRound, ShieldCheck, ScrollText, FileText } from 'lucide-react'

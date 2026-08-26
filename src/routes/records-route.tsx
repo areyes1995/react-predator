@@ -6,8 +6,6 @@
 //   1. El módulo base (`:base`) debe estar autorizado
 //      con el permiso `module:<slug>`.
 //   2. La vista (`:view`) puede exigir un permiso extra
-//      declarado en `RecordViewOption.permission`
-//      (ej. `rag:upload-view` para la subida de RAG).
 //
 // Sin módulos visibles se cae a /app/reports.
 // ──────────────────────────────────────────────
@@ -31,7 +29,7 @@ export function RecordsRoute() {
   }
 
   const segments = location.pathname.split('/').filter(Boolean)
-  const baseSlug = segments[2] ?? 'records'
+  const baseSlug = segments[2] ?? 'coaching'
   const viewSlug = segments[3] ?? 'summary'
 
   const rbacBases: Record<string, { slug: string; options: { slug: string }[] }> = {
@@ -71,9 +69,6 @@ export function RecordsRoute() {
   }
 
   const targetView = targetModule?.viewOptions.find(v => v.slug === viewSlug)
-  if (targetModule && targetView?.permission && !hasPermission(user, targetView.permission)) {
-    return <Navigate to={`/app/records/${targetModule.slug}/summary`} replace />
-  }
 
   if (targetModule && !segments[3]) {
     return <Navigate to={`/app/records/${targetModule.slug}/summary`} replace />

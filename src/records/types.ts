@@ -15,7 +15,7 @@ export interface RecordData extends Record<string, string | number | string[]> {
 }
 
 /** Kind of view a module can render in the main area. */
-export type RecordViewKind = 'summary' | 'table' | 'archived' | 'upload'
+export type RecordViewKind = 'summary' | 'table' | 'archived'
 
 /** A selectable option in the notes panel for a record module. */
 export interface RecordViewOption {
@@ -23,8 +23,6 @@ export interface RecordViewOption {
   slug: string
   description: string
   kind: RecordViewKind
-  /** Permiso RBAC requerido para ver esta opción (ej. `rag:upload-view`). */
-  permission?: string
 }
 
 /** A single column definition of a module's grid. */

@@ -6,8 +6,6 @@ import { getRecordsForModule } from '../../records'
 import type { RecordModule, RecordViewOption } from '../../records'
 import RecordsSummary from './RecordsSummary'
 import RecordsTable from './RecordsTable'
-import RagSearchView from './RagSearchView'
-import UploadDocumentView from './UploadDocumentView'
 
 export interface RecordsViewProps {
   module: RecordModule
@@ -15,10 +13,6 @@ export interface RecordsViewProps {
 }
 
 export default function RecordsView({ module, view }: RecordsViewProps) {
-  if (module.slug === 'records') {
-    return view.kind === 'upload' ? <UploadDocumentView /> : <RagSearchView />
-  }
-
   const data = getRecordsForModule(module.label)
 
   switch (view.kind) {
