@@ -2,9 +2,9 @@
   <img src="https://www.svgrepo.com/download/416805/react.svg" width="120" alt="React Logo" />
 </p>
 
-# Modu Frontend
+# General Frontend
 
-Frontend de la aplicación **Modu** construido con **React**, **TypeScript**, **Vite** y **Tailwind CSS**.
+Frontend de la aplicación **General** construido con **React**, **TypeScript**, **Vite** y **Tailwind CSS**.
 
 ---
 
