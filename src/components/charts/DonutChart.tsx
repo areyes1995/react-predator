@@ -46,7 +46,7 @@ export default function DonutChart({ title, total, items, icon, className }: { t
         <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>
       </div>
 
-      <div className="flex justify-between gap-4 text-left">
+      <div className="">
         <div className="flex-1">
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
