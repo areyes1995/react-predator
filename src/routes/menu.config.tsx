@@ -29,9 +29,6 @@ import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
 /** Quick links at the top of the sidebar — top-level product pages. */
 export const QUICK_LINKS: StaticSidebarItem[] = [
   { icon: <Home className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Home Page', slug: 'home', path: '/app/home' },
-  { icon: <Cable className="w-4 h-4" strokeWidth={1.5} />, label: 'Connections', slug: 'connections', path: '/app/connections' },
-  { icon: <Settings className="w-4 h-4" strokeWidth={1.5} />, label: 'Administration', slug: 'admin', path: '/app/admin' },
-  { icon: <Settings className="w-4 h-4" strokeWidth={1.5} />, label: 'Settings', slug: 'settings', path: '/app/settings' },
 ]
 
 /** Static sidebar sections — product areas grouping navigable links. */
