@@ -109,6 +109,7 @@ export const RECORD_MODULES: RecordModule[] = [
   // { label: 'Sales', slug: 'sales', color: 'amber', icon: <TrendingUp className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: salesColumns },
   // { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
   // { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
+  // { label: 'Projects', slug: 'projects', color: 'blue', icon: <FolderOpen className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: recordsViewColumns },
 ]
 
 /** Generic menu used for the Home overview (single view). */

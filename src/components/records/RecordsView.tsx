@@ -4,9 +4,11 @@
 
 import { LayoutGrid, CheckCircle2, Clock, Archive, FolderOpen, TrendingUp } from 'lucide-react'
 import { getRecordsForModule, sampleData, RECORD_STATUSES, STATUS_META, MODULE_BAR_COLORS } from '../../records'
+import { useAuth } from '../../context/AuthContext'
 import type { RecordModule, RecordViewOption, RecordColumn, RecordData } from '../../records'
 import RagSearchView from './RagSearchView'
 import UploadDocumentView from './UploadDocumentView'
+import { ProjectsView } from '../../modules/projects/components'
 import { DynamicComponentRenderer } from '../charts'
 import type { DynamicBlock } from '../charts'
 
@@ -347,8 +349,15 @@ function summaryChartToDynamicBlocks(
 }
 
 export default function RecordsView({ module, view }: RecordsViewProps) {
+  const { user } = useAuth()
+
   if (module.slug === 'records') {
     return view.kind === 'upload' ? <UploadDocumentView /> : <RagSearchView />
+  }
+
+  if (module.slug === 'projects') {
+    const role = user?.role === 'admin' ? 'admin' : user?.role === 'expositor' ? 'expositor' : 'visitor'
+    return <ProjectsView role={role} />
   }
 
   const data = getRecordsForModule(module.label)

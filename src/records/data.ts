@@ -68,6 +68,15 @@ export const permissionsData: RecordData[] = [
   { id: 'PE-007', title: 'Audit Trail Viewer', scope: 'Audit', status: 'Active', lastUpdated: '11/03/2024', role: 'Viewer', owner: 'Jorge Pérez' },
 ]
 
+export const PROJECTS_DATA: RecordData[] = [
+  { id: 'PRJ-001', title: 'AI-Powered Analytics', category: 'AI', status: 'Active', lastUpdated: '12/03/2025', owner: 'Dra. María González' },
+  { id: 'PRJ-002', title: 'Blockchain Tracker', category: 'Blockchain', status: 'Pending', lastUpdated: '10/03/2025', owner: 'Ing. Carlos Ramírez' },
+  { id: 'PRJ-003', title: 'Collab Platform', category: 'Cloud', status: 'Active', lastUpdated: '14/03/2025', owner: 'Lic. Ana Martínez' },
+  { id: 'PRJ-004', title: 'IoT Suite', category: 'IoT', status: 'Active', lastUpdated: '28/02/2025', owner: 'Ing. Pedro Sánchez' },
+  { id: 'PRJ-005', title: 'AR Campus', category: 'AR', status: 'Active', lastUpdated: '13/03/2025', owner: 'Dra. Laura Fernández' },
+  { id: 'PRJ-006', title: 'Threat Intel', category: 'Security', status: 'Pending', lastUpdated: '11/03/2025', owner: 'Ing. Jorge Herrera' },
+]
+
 /** Lookup of module label → its own dataset. */
 export const RECORDS_BY_MODULE: Record<string, RecordData[]> = {
   'Records View': sampleData,
@@ -76,6 +85,7 @@ export const RECORDS_BY_MODULE: Record<string, RecordData[]> = {
   Sales: salesData,
   Licenses: licensesData,
   Permissions: permissionsData,
+  Projects: PROJECTS_DATA,
 }
 
 /** Returns the dataset for a module label (falls back to `sampleData`). */
@@ -98,6 +108,7 @@ export const ALL_MODULE_DATA: ModuleDataEntry[] = [
   { label: 'Sales', color: 'amber', data: salesData },
   { label: 'Licenses', color: 'blue', data: licensesData },
   { label: 'Permissions', color: 'pink', data: permissionsData },
+  { label: 'Projects', color: 'blue', data: PROJECTS_DATA },
 ]
 
 /** Flattened rows across all modules. */
