@@ -4,6 +4,7 @@
 
 import SidebarSection, { type SidebarSectionProps } from './SidebarSection'
 import UserProfile, { type UserProfileProps } from './UserProfile'
+import MetaverseButton from './MetaverseButton'
 
 export interface SidebarProps {
   sections: SidebarSectionProps[]
@@ -16,6 +17,7 @@ export default function Sidebar({ sections, user, onLogout, onSettings }: Sideba
   return (
     <aside className="w-60 h-full bg-[var(--bg-main)] border-r border-[var(--border)] flex flex-col justify-between p-4 shrink-0 select-none">
       <div className="space-y-6 overflow-y-auto pr-1">
+        <MetaverseButton />
         {sections.map((section, idx) => (
           <SidebarSection key={idx} title={section.title} items={section.items} dropdown={section.dropdown} />
         ))}

@@ -260,5 +260,6 @@
   "createModule.saveModule": "Guardar módulo",
   "createModule.saving": "Guardando…",
   "createModule.errors.nameRequired": "El nombre del módulo es obligatorio",
-  "createModule.errors.slugRequired": "El slug URL es obligatorio"
+  "createModule.errors.slugRequired": "El slug URL es obligatorio",
+  "metaverse.go": "Ir al Metaverso"
 }
