@@ -15,7 +15,7 @@ export interface RecordData extends Record<string, string | number | string[]> {
 }
 
 /** Kind of view a module can render in the main area. */
-export type RecordViewKind = 'summary' | 'table' | 'archived'
+export type RecordViewKind = 'summary' | 'table' | 'archived' | 'upload'
 
 /** A selectable option in the notes panel for a record module. */
 export interface RecordViewOption {
@@ -23,6 +23,7 @@ export interface RecordViewOption {
   slug: string
   description: string
   kind: RecordViewKind
+  /** Permiso RBAC requerido para ver esta opción (ej. `rag:upload-view`). */
   permission?: string
 }
 
@@ -46,6 +47,7 @@ export interface RecordModule {
   icon: ReactNode
   viewOptions: RecordViewOption[]
   columns: RecordColumn[]
+  summaryChart?: Record<string, any>
 }
 
 /** Static entry in a sidebar section (folders, tags, trash, …). */

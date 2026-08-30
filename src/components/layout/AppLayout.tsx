@@ -5,43 +5,53 @@
 // Breadcrumbs are derived from the current URL.
 // ──────────────────────────────────────────────
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { ReloadNotificationProvider } from '../../context/ReloadNotificationContext'
 import DashboardLayout from './DashboardLayout'
 import { Sidebar } from '../sidebar'
+import { MenuPanel } from '../menu'
 import SettingsView from '../settings/SettingsView'
-import { Breadcrumbs, ViewTabs, type BreadcrumbItem } from '../ui'
-import { useRecordsDashboard, RECORD_MODULES } from '../../records'
+import CreateModuleView from '../settings/CreateModuleView'
+import { Breadcrumbs, type BreadcrumbItem } from '../ui'
+import ReloadNotificationBanner from '../ui/ReloadNotificationBanner'
+import { useRecordsDashboard } from '../../records'
 import { QUICK_LINKS, STATIC_SECTIONS } from '../../routes/menu.config'
 
 export default function AppLayout() {
   const { user: authUser, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [showSettings, setShowSettings] = useState(false)
+
+  const isCreateModuleRoute = location.pathname === '/app/settings/create-module'
+  const isSettingsRoute = !isCreateModuleRoute && location.pathname.startsWith('/app/settings')
 
   const {
-    activeItemLabel,
+    menuCollapsed,
+    setMenuCollapsed,
     sidebarSections,
-    viewOptions,
-    activeView,
-    handleSelectCard,
+    menuTitle,
+    menuItems,
+    activeModule,
   } = useRecordsDashboard()
-
-  useEffect(() => {
-    setShowSettings(false)
-  }, [activeItemLabel])
 
   const crumbs = useMemo<BreadcrumbItem[]>(() => {
     const segments = location.pathname.split('/').filter(Boolean)
     const items: BreadcrumbItem[] = [{ label: 'Home', to: '/app/home' }]
-    if (showSettings) {
-      items.push({ label: 'settings.title' })
+    if (isCreateModuleRoute) {
+      items.push({ label: 'settings.title', to: '/app/settings' })
+      items.push({ label: 'settings.preferences.createModule' })
+    } else if (isSettingsRoute) {
+      items.push({ label: 'settings.title', to: '/app/settings' })
     } else if (segments[1] === 'records') {
-      const module = RECORD_MODULES.find(m => m.slug === segments[2])
+      const module = activeModule
       if (module) {
         items.push({ label: module.label, to: `/app/records/${module.slug}/summary` })
+        const view = module.viewOptions.find(v => v.slug === segments[3])
+        if (view && view.slug !== module.viewOptions[0]?.slug) {
+          items.push({ label: view.label })
+        }
       } else {
         const securityItem = STATIC_SECTIONS.flatMap(s => s.items).find(i => i.slug === segments[2])
         if (securityItem) {
@@ -53,7 +63,7 @@ export default function AppLayout() {
       items.push({ label: page?.label ?? segments[1] })
     }
     return items
-  }, [location.pathname, showSettings])
+  }, [location.pathname, activeModule, isCreateModuleRoute, isSettingsRoute])
 
   const handleLogout = async () => {
     await logout()
@@ -68,30 +78,40 @@ export default function AppLayout() {
   }
 
   return (
-    <DashboardLayout
-      sidebar={
-        <Sidebar
-          sections={sidebarSections}
-          user={displayUser}
-          onLogout={handleLogout}
-          onSettings={() => setShowSettings(true)}
-        />
-      }
-      mainContent={
-        <>
-          <ViewTabs
-            items={viewOptions}
-            activeSlug={activeView?.slug || 'summary'}
-            onSelect={handleSelectCard}
+    <ReloadNotificationProvider>
+      <DashboardLayout
+        sidebar={
+          <Sidebar
+            sections={sidebarSections}
+            user={displayUser}
+            onLogout={handleLogout}
+            onSettings={() => { setMenuCollapsed(true); navigate('/app/settings') }}
           />
-          <Breadcrumbs items={crumbs} onNavigate={() => setShowSettings(false)} />
-          {showSettings ? (
-            <SettingsView />
-          ) : (
-            <Outlet />
-          )}
-        </>
-      }
-    />
+        }
+        menuPanel={
+          <MenuPanel
+            title={menuTitle ?? 'Orchestrator'}
+            items={menuItems ?? []}
+            search={{}}
+            autoHideSeconds={3}
+            collapsed={menuCollapsed}
+            onCollapsedChange={setMenuCollapsed}
+          />
+        }
+        mainContent={
+          <>
+            <ReloadNotificationBanner />
+            <Breadcrumbs items={crumbs} />
+            {isCreateModuleRoute ? (
+              <CreateModuleView />
+            ) : isSettingsRoute ? (
+              <SettingsView />
+            ) : (
+              <Outlet />
+            )}
+          </>
+        }
+      />
+    </ReloadNotificationProvider>
   )
 }

@@ -9,11 +9,21 @@
 //   - `permission` ausente → se omite la validación
 //     y el item siempre se muestra.
 //
-// Sigue el mismo patrón que `RecordViewOption`
-// de records.config para permisos de vistas.
+// Sigue el mismo patrón que `RecordViewOption.permission`
+// de records.config (ej. `rag:upload-view`).
 // ──────────────────────────────────────────────
 
-import { Home, Cable, Settings, KeyRound, ShieldCheck, ScrollText, FileText } from 'lucide-react'
+import {
+  Home,
+  Cable,
+  Settings,
+  CalendarClock,
+  Users,
+  KeyRound,
+  ShieldCheck,
+  ScrollText,
+  FileText,
+} from 'lucide-react'
 import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
 
 /** Quick links at the top of the sidebar — top-level product pages. */
@@ -21,10 +31,18 @@ export const QUICK_LINKS: StaticSidebarItem[] = [
   { icon: <Home className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Home Page', slug: 'home', path: '/app/home' },
   { icon: <Cable className="w-4 h-4" strokeWidth={1.5} />, label: 'Connections', slug: 'connections', path: '/app/connections' },
   { icon: <Settings className="w-4 h-4" strokeWidth={1.5} />, label: 'Administration', slug: 'admin', path: '/app/admin' },
+  { icon: <Settings className="w-4 h-4" strokeWidth={1.5} />, label: 'Settings', slug: 'settings', path: '/app/settings' },
 ]
 
 /** Static sidebar sections — product areas grouping navigable links. */
 export const STATIC_SECTIONS: StaticSidebarSection[] = [
+  {
+    title: 'Management',
+    items: [
+      { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/records/schedules' },
+      { icon: <Users className="w-4 h-4" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/records/users' },
+    ],
+  },
   {
     title: 'Security',
     items: [
@@ -36,7 +54,7 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
   {
     title: 'Reports',
     items: [
-      { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Reports', slug: 'reports', path: '/app/reports' },
+      { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Attrition Report', slug: 'attrition-report', path: '/app/reports/attrition' },
     ],
   },
 ]

@@ -10,10 +10,14 @@ import Login from '../pages/Login'
 import NotFound from '../pages/NotFound'
 import { AppLayout } from '../components/layout'
 import HomePage from '../pages/home/HomePage'
+import ReportsPage from '../pages/reports/ReportsPage'
+import AttritionReport from '../pages/reports/AttritionReport'
 import ConnectionsPage from '../pages/integrations/ConnectionsPage'
 import AdminPage from '../pages/admin/AdminPage'
 import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
+import CreateModuleView from '../components/settings/CreateModuleView'
+import SettingsView from '../components/settings/SettingsView'
 
 export const router = createBrowserRouter([
   {
@@ -39,8 +43,13 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/app/home" replace /> },
       { path: 'home', element: <HomePage /> },
       { path: 'records/:base?/:view?', element: <RecordsRoute /> },
+      { path: 'reports', element: <ReportsPage /> },
+      { path: 'reports/attrition', element: <AttritionReport /> },
       { path: 'connections', element: <ConnectionsPage /> },
       { path: 'admin', element: <AdminPage /> },
+      { path: 'records/create', element: <CreateModuleView /> },
+      { path: 'settings', element: <SettingsView /> },
+      { path: 'settings/create-module', element: <CreateModuleView /> },
       { path: '*', element: <NotFound /> },
     ],
   },

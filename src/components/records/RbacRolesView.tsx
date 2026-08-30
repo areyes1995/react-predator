@@ -8,13 +8,13 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, Loader2, AlertCircle, KeyRound } from 'lucide-react'
-import RecordsTable from './RecordsTable'
 import ViewHeader from '../ui/ViewHeader'
 import Expandable from '../ui/Expandable'
 import { buildDynamicTable } from '../../records/dynamicColumns'
 import { getRoles } from '../../services/rbac'
 import type { PermissionDto, RoleDto } from '../../services/rbac'
 import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { DynamicComponentRenderer } from '../charts'
 
 /** Badge de permisos anidados con Expandable (count + lista). */
 function RolePermissionsCell({ permissions }: { permissions: PermissionDto[] }) {
@@ -139,7 +139,14 @@ export default function RbacRolesView({ view }: { view?: string }) {
             {error}
           </div>
         ) : (
-          <RecordsTable data={data} columns={columns} />
+          <DynamicComponentRenderer
+            items={[
+              {
+                type: 'RecordsTable',
+                props: { data, columns },
+              },
+            ]}
+          />
         )}
       </div>
     </div>

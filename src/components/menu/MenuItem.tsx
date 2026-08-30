@@ -64,10 +64,12 @@ export default function MenuItem({
   onClick,
   onDelete,
 }: MenuItemProps) {
-  const dotClass = color ? dotColors[color] ?? '' : ''
+  const isHex = typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color)
+  const dotClass = isHex ? '' : (color ? dotColors[color] ?? '' : '')
   const vClasses = variantClasses[variant] ?? variantClasses.default
   const titleClass = titleColors[variant] ?? titleColors.default
   const hasDot = !!color
+  const dotStyle = isHex ? { backgroundColor: color } : undefined
 
   return (
     <div
@@ -78,7 +80,7 @@ export default function MenuItem({
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2 min-w-0">
           {hasDot && (
-            <span className={`w-2.5 h-2.5 rounded-full ${dotClass} shrink-0 ring-2 ring-[var(--border)]`} />
+            <span className={`w-2.5 h-2.5 rounded-full ${dotClass} shrink-0 ring-2 ring-[var(--border)]`} style={dotStyle} />
           )}
           <h4 className={`text-sm font-semibold ${titleClass} truncate`}>
             {title}

@@ -13,7 +13,7 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'es', labelKey: 'settings.language.spanish' },
 ] as const
 
-const LANGUAGE_KEY = `${import.meta.env.VITE_APP_NAMESPACE}_language`
+const LANGUAGE_KEY = 'modu_language'
 
 const savedLanguage = localStorage.getItem(LANGUAGE_KEY)
 

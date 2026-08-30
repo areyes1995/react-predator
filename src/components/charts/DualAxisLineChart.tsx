@@ -20,7 +20,7 @@ export interface ChartDataPoint {
   month: string
   left1: number
   left2: number
-  right?: number
+  right: number
 }
 
 export interface ChartSeries {
@@ -54,10 +54,7 @@ export default function DualAxisLineChart({
     return data.map((row) => {
       const entry: Record<string, number | string> = { month: row.month }
       series.forEach((s) => {
-        const val = row[s.key as keyof ChartDataPoint]
-        if (val !== undefined) {
-          entry[s.key] = val
-        }
+        entry[s.key] = row[s.key as keyof ChartDataPoint] ?? 0
       })
       return entry
     })
@@ -85,36 +82,26 @@ export default function DualAxisLineChart({
     return Array.from({ length: 6 }, (_, i) => Math.round(min + step * i))
   }, [data, series])
 
-  const renderTooltip = (
-    props: unknown,
-    defaultColor: string,
-  ) => {
-    const typedProps = props as { payload?: unknown[]; label?: string }
-    const payloadArr = (typedProps?.payload as unknown[]) || []
-    const [firstPayload] = payloadArr
-    if (!firstPayload || !typedProps?.label) return null
+  const MyTooltip = ({ payload, label }: { payload?: Array<{ dataKey: string; value: number; type: string; color: string }>; label?: string }) => {
+    if (!payload || !payload.length || !label) return null
+    const d = data.find((row) => row.month === label)
 
-    const label = typedProps.label as string
-    const row = (firstPayload as { data?: ChartDataPoint })?.data as ChartDataPoint | undefined
-    if (!label || !row) return null
-
-    const items = payloadArr.map((p) => {
-      const typedP = p as { dataKey?: string; type?: string }
-      const s = series.find((ser) => ser.key === typedP.dataKey)
-      const val = (row as unknown as Record<string, unknown>)[typedP.dataKey as keyof ChartDataPoint] as number
+    const items = payload.map((p) => {
+      const ser = series.find((s) => s.key === p.dataKey)
+      const val = Number((d as unknown as Record<string, unknown>)[p.dataKey] ?? 0)
       const formatted = formatValue
-        ? formatValue(String(typedP.dataKey), val)
-        : s?.yAxis === 'right'
+        ? formatValue(p.dataKey, val)
+        : ser?.yAxis === 'right'
           ? `${Math.round(val * 100)}%`
           : val.toLocaleString()
       return {
-        type: typedP.type as string,
-        dataKey: String(typedP.dataKey),
-        color: s?.strokeColor || defaultColor,
-        label: s?.name || String(typedP.dataKey),
+        type: p.type,
+        dataKey: p.dataKey,
+        color: ser?.strokeColor || 'var(--text-muted)',
+        label: ser?.name || p.dataKey,
         value: formatted,
-        strokeWidth: s?.strokeWidth || 2,
-        strokeDasharray: s?.strokeDasharray,
+        strokeWidth: ser?.strokeWidth || 2,
+        strokeDasharray: ser?.strokeDasharray,
       }
     })
 
@@ -139,7 +126,7 @@ export default function DualAxisLineChart({
   }
 
   return (
-    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)]">
+    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] flex flex-col" style={{ height: `${height}px` }}>
       {title && (
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-4 h-4 text-[var(--text-muted)]" />
@@ -147,7 +134,8 @@ export default function DualAxisLineChart({
         </div>
       )}
 
-      <ResponsiveContainer width="100%" height={height}>
+      <div className="flex-1 min-h-0">
+        <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 10, right: 60, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
@@ -181,9 +169,7 @@ export default function DualAxisLineChart({
           />
 
           <Tooltip
-            content={({ payload, ...rest }: any) =>
-              renderTooltip({ payload, label: rest?.label }, 'var(--text-muted)')
-            }
+            content={<MyTooltip />}
             wrapperStyle={{ fontSize: '12px' }}
           />
 
@@ -202,12 +188,13 @@ export default function DualAxisLineChart({
               stroke={s.strokeColor || '#6b7280'}
               strokeWidth={s.strokeWidth || 2}
               strokeDasharray={s.strokeDasharray}
-              dot={s.dot ?? true}
+              dot={s.dot !== false ? { r: 4 } : false}
               activeDot={{ r: 6, strokeWidth: 2 }}
             />
           ))}
         </LineChart>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }

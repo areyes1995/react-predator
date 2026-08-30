@@ -31,7 +31,7 @@ export interface StatusOverviewProps {
 export default function StatusOverview({ title, segments, total, recent, icon }: StatusOverviewProps) {
   const { t } = useAppTranslation()
   return (
-    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)]">
+    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] h-full">
       <div className="flex items-center gap-2 mb-4">
         {icon}
         <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>

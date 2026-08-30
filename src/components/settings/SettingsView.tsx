@@ -13,12 +13,28 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Check,
+  Plus,
+  Code,
 } from 'lucide-react'
+import { Toggle } from '../ui'
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Expandable, SectionTitle } from '../ui'
 import { useTheme, type Theme } from '../../context/ThemeContext'
 import { useAppTranslation, type AppTFunction } from '../../i18n/useAppTranslation'
 import { changeLanguage, SUPPORTED_LANGUAGES } from '../../i18n'
+
+const DEV_MODE_KEY = 'modu_dev_mode'
+
+function getDevMode(): boolean {
+  const stored = localStorage.getItem(DEV_MODE_KEY)
+  if (stored === null) return false
+  return stored === 'true'
+}
+
+function setDevMode(val: boolean): void {
+  localStorage.setItem(DEV_MODE_KEY, String(val))
+}
 
 export interface SettingsOption {
   icon: ReactNode
@@ -104,6 +120,7 @@ const sections: SettingsSection[] = [
         subOptions: [
           { label: 'settings.preferences.defaultView' },
           { label: 'settings.preferences.defaultModule' },
+          { label: 'settings.preferences.createModule' },
         ],
       },
       {
@@ -116,12 +133,23 @@ const sections: SettingsSection[] = [
       },
     ],
   },
+  {
+    title: 'settings.section.developer',
+    options: [
+      {
+        icon: <Code className="w-4 h-4" />,
+        label: 'settings.developerMode',
+      },
+    ],
+  },
 ]
 
 export default function SettingsView() {
   const [openKey, setOpenKey] = useState<string | null>(null)
   const { theme, setTheme } = useTheme()
   const { t, i18n } = useAppTranslation()
+  const navigate = useNavigate()
+  const [devMode, setDevModeState] = useState(getDevMode)
 
   return (
     <div className="flex flex-col h-full">
@@ -137,7 +165,13 @@ export default function SettingsView() {
               onThemeChange={setTheme}
               language={i18n.language}
               onLanguageChange={changeLanguage}
+              devMode={devMode}
+              onDevModeToggle={val => {
+                setDevModeState(val)
+                setDevMode(val)
+              }}
               t={t}
+              navigate={navigate}
             />
           ))}
         </div>
@@ -154,7 +188,10 @@ function SettingsSectionView({
   onThemeChange,
   language,
   onLanguageChange,
+  devMode,
+  onDevModeToggle,
   t,
+  navigate,
 }: {
   section: SettingsSection
   openKey: string | null
@@ -163,7 +200,10 @@ function SettingsSectionView({
   onThemeChange: (theme: Theme) => void
   language: string
   onLanguageChange: (lang: string) => void
+  devMode: boolean
+  onDevModeToggle: (val: boolean) => void
   t: AppTFunction
+  navigate: (path: string) => void
 }) {
   const themeLabel = t(`settings.theme.${theme}`)
   return (
@@ -173,14 +213,17 @@ function SettingsSectionView({
         {section.options.map(opt => {
           const key = `${section.title}.${opt.label}`
           const isOpen = openKey === key
+          const isDevMode = opt.label === 'settings.developerMode'
           const displayValue =
-            opt.label === 'settings.theme'
-              ? themeLabel
-              : opt.label === 'settings.language'
-                ? (SUPPORTED_LANGUAGES.find(l => l.code === language)?.labelKey ?? language)
-                : opt.value
-                  ? t(opt.value)
-                  : ''
+            isDevMode
+              ? (devMode ? t('settings.developerMode.on') : t('settings.developerMode.off'))
+              : opt.label === 'settings.theme'
+                ? themeLabel
+                : opt.label === 'settings.language'
+                  ? (SUPPORTED_LANGUAGES.find(l => l.code === language)?.labelKey ?? language)
+                  : opt.value
+                    ? t(opt.value)
+                    : ''
           const isSelected = (sub: { label: string; value?: string }) =>
             opt.label === 'settings.theme'
               ? sub.label === `settings.theme.${theme}`
@@ -205,37 +248,48 @@ function SettingsSectionView({
                 </div>
               </button>
 
-              <Expandable open={isOpen}>
-                <ul className="pl-8 pr-2 space-y-0.5 pt-1 pb-3">
-                  {opt.subOptions?.map(sub => {
-                    const selected = isSelected(sub)
-                    return (
-                      <li
-                        key={sub.value ?? sub.label}
-                        onClick={() => {
-                          if (opt.label === 'settings.theme') onThemeChange(sub.label.replace('settings.theme.', '') as Theme)
-                          if (opt.label === 'settings.language') onLanguageChange(sub.value!)
-                          onToggle(key)
-                        }}
-                        className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-[var(--bg-surface-hover)] cursor-pointer transition"
-                      >
-                        <div className="min-w-0">
-                          <span className="text-sm text-[var(--text-secondary)]">{t(sub.label)}</span>
-                          {sub.description && (
-                            <p className="text-xs text-[var(--text-muted)] truncate">{t(sub.description)}</p>
+              {isDevMode && (
+                <div className="pl-8 pr-2 py-2">
+                  <Toggle checked={devMode} onChange={onDevModeToggle} />
+                </div>
+              )}
+              {!isDevMode && (
+                <Expandable open={isOpen}>
+                  <ul className="pl-8 pr-2 space-y-0.5 pt-1 pb-3">
+                    {opt.subOptions?.map(sub => {
+                      const selected = isSelected(sub)
+                      return (
+                        <li
+                          key={sub.value ?? sub.label}
+                          onClick={() => {
+                            if (opt.label === 'settings.theme') onThemeChange(sub.label.replace('settings.theme.', '') as Theme)
+                            if (opt.label === 'settings.language') onLanguageChange(sub.value!)
+                            if (opt.label === 'settings.preferences' && sub.label === 'settings.preferences.createModule') {
+                              navigate('/app/settings/create-module')
+                            } else {
+                              onToggle(key)
+                            }
+                          }}
+                          className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-[var(--bg-surface-hover)] cursor-pointer transition"
+                        >
+                          <div className="min-w-0">
+                            <span className="text-sm text-[var(--text-secondary)]">{t(sub.label)}</span>
+                            {sub.description && (
+                              <p className="text-xs text-[var(--text-muted)] truncate">{t(sub.description)}</p>
+                            )}
+                          </div>
+                          {selected && (
+                            <Check className="w-3.5 h-3.5 text-[#f2a93b] shrink-0" />
                           )}
-                        </div>
-                        {selected && (
-                          <Check className="w-3.5 h-3.5 text-[#f2a93b] shrink-0" />
-                        )}
-                      </li>
-                    )
-                  })}
-                  {(!opt.subOptions || opt.subOptions.length === 0) && (
-                    <li className="py-2 px-2 text-xs text-[var(--text-muted)]">{t('settings.noOptions')}</li>
-                  )}
-                </ul>
-              </Expandable>
+                        </li>
+                      )
+                    })}
+                    {(!opt.subOptions || opt.subOptions.length === 0) && (
+                      <li className="py-2 px-2 text-xs text-[var(--text-muted)]">{t('settings.noOptions')}</li>
+                    )}
+                  </ul>
+                </Expandable>
+              )}
             </li>
           )
         })}

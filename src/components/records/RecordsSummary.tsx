@@ -51,7 +51,9 @@ export default function RecordsSummary({ data, columns = [], moduleColor }: Reco
     return { total: rows.length, byStatus, groups }
   }, [rows, groupColumn])
 
-  const barClass = moduleColor ? (MODULE_BAR_COLORS[moduleColor] ?? 'bg-blue-500') : 'bg-blue-500'
+  const isHex = typeof moduleColor === 'string' && /^#[0-9A-Fa-f]{6}$/.test(moduleColor)
+  const barClass = moduleColor && !isHex ? (MODULE_BAR_COLORS[moduleColor] ?? 'bg-blue-500') : 'bg-blue-500'
+  const barStyle = isHex ? { backgroundColor: moduleColor } : undefined
   const segments = RECORD_STATUSES.map(status => ({
     label: STATUS_META[status].label,
     count: stats.byStatus[status],
@@ -94,6 +96,7 @@ export default function RecordsSummary({ data, columns = [], moduleColor }: Reco
           items={stats.groups}
           icon={<FolderOpen className="w-4 h-4 text-[var(--text-muted)]" />}
           barClass={barClass}
+          barStyle={barStyle}
         />
         <StatusOverview
           title={t('Status overview')}

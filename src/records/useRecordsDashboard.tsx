@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import type { MenuItemProps, MenuBadge } from '../components/menu/MenuItem'
 import type { SidebarSectionProps } from '../components/sidebar/SidebarSection'
 import { BarChart3, LayoutGrid } from 'lucide-react'
+import * as LucideIcons from 'lucide-react'
 import {
   RECORD_MODULES,
   GENERAL_MENU,
@@ -21,10 +22,12 @@ import {
 } from './records.config'
 import { QUICK_LINKS, STATIC_SECTIONS } from '../routes/menu.config'
 import { getRecordsForModule } from './data'
-import type { RecordModule, RecordViewOption, StaticSidebarItem } from './types'
+import type { RecordModule, RecordViewOption, RecordColumn, StaticSidebarItem } from './types'
 import { useAppTranslation } from '../i18n/useAppTranslation'
 import { useAuth } from '../context/AuthContext'
 import { hasPermission } from '../services/auth'
+import { jsonConfig, type BaseModule, type ColumnType, type ViewOption } from '../services/json-config'
+
 
 /** Slugs de módulos visibles según permisos RBAC (`module:<slug>`). */
 export function getVisibleRecordModules(
@@ -49,6 +52,53 @@ const RBAC_BASES: Record<string, { title: string; options: RecordViewOption[] }>
   permissions: { title: 'Permissions', options: PERMISSIONS_VIEW_OPTIONS },
 }
 
+/** Convert a JSON config column to a frontend RecordColumn. */
+function jsonColumnToRecordColumn(col: ColumnType): RecordColumn {
+  const base: RecordColumn = {
+    key: col.key,
+    header: col.header,
+    type: col.type.toLowerCase() as RecordColumn['type'],
+    chartGroup: col.chartGroup,
+  }
+  if (col.options && Array.isArray(col.options)) {
+    base.options = col.options as string[]
+  }
+  return base
+}
+
+/** Convert a JSON config view option to a frontend RecordViewOption. */
+function jsonViewToRecordView(vo: ViewOption): RecordViewOption {
+  const kind = (vo.kind ?? '').toLowerCase()
+  return {
+    label: vo.label,
+    slug: vo.slug,
+    description: vo.description ?? '',
+    kind: kind === 'summary' ? 'summary' : kind === 'table' ? 'table' : kind === 'archived' ? 'archived' : 'upload',
+  }
+}
+
+function resolveIconComponent(iconName: string): ReactNode {
+  const pascal = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+  const Icon = (LucideIcons as Record<string, any>)[pascal]
+  const IconComponent = Icon || LayoutGrid
+  return <IconComponent className="w-4 h-4" strokeWidth={1.5} />
+}
+
+/** Convert a JSON config module to a frontend RecordModule. */
+export function dbModuleToRecordModule(baseMod: BaseModule): RecordModule {
+  const icon: RecordModule['icon'] = resolveIconComponent(baseMod.icon || 'LayoutGrid')
+  return {
+    label: baseMod.label,
+    slug: baseMod.slug,
+    color: baseMod.color,
+    icon,
+    viewOptions: (baseMod.viewOptions ?? []).map(jsonViewToRecordView),
+    columns: (baseMod.columns ?? []).map(jsonColumnToRecordColumn),
+    summaryChart: (baseMod as any).summaryChart,
+  }
+}
+
+
 interface UseRecordsDashboardResult {
   activeItemLabel: string
   activeModule: RecordModule | undefined
@@ -68,7 +118,7 @@ interface UseRecordsDashboardResult {
 function readMenuCollapsed(): boolean {
   const current = localStorage.getItem(STORAGE_KEYS.menuCollapsed)
   if (current !== null) return current === 'true'
-  return localStorage.getItem(`${import.meta.env.VITE_APP_NAMESPACE}_notes_collapsed`) === 'true'
+  return localStorage.getItem('modu_notes_collapsed') === 'true'
 }
 
 export function useRecordsDashboard(): UseRecordsDashboardResult {
@@ -79,10 +129,49 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     readMenuCollapsed(),
   )
 
-  /* ── Parse URL: /app/records/:base?/:view? or /app/:page ── */
+  const [systemModules, setSystemModules] = useState<BaseModule[]>([])
+  const [customModules, setCustomModules] = useState<BaseModule[]>([])
+  const [systemModulesLoaded, setSystemModulesLoaded] = useState(false)
+  const [customModulesLoaded, setCustomModulesLoaded] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    jsonConfig.getSystemModules()
+      .then(mods => {
+        if (!cancelled) {
+          setSystemModules(mods)
+          setSystemModulesLoaded(true)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setSystemModulesLoaded(true)
+      })
+    jsonConfig.getCustomModules()
+      .then(mods => {
+        if (!cancelled) {
+          setCustomModules(mods)
+          setCustomModulesLoaded(true)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCustomModulesLoaded(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const allModules = useMemo<RecordModule[]>(() => {
+    if (!systemModulesLoaded || !customModulesLoaded) {
+      return RECORD_MODULES
+    }
+    const combined = [...(systemModules ?? []), ...(customModules ?? [])]
+    return combined.map(dbModuleToRecordModule)
+  }, [systemModules, customModules, systemModulesLoaded, customModulesLoaded])
+
   const segments = location.pathname.split('/').filter(Boolean)
   const baseSlug = segments[1] === 'records' ? (segments[2] ?? 'records') : (segments[1] ?? 'records')
-  const viewSlug = segments[3] ?? 'summary'
+  const viewSlug = segments[3] ?? 'overview'
 
   const visibleModules = useMemo<RecordModule[]>(
     () => getVisibleRecordModules(user?.permissions),
@@ -90,17 +179,15 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const activeModule = useMemo(() => {
-    const fromUrl = RECORD_MODULES.find(m => m.slug === baseSlug)
+    const fromUrl = allModules.find(m => m.slug === baseSlug)
     if (!fromUrl) return undefined
-    if (hasPermission(user, `module:${fromUrl.slug}`)) return fromUrl
-    return visibleModules[0]
-  }, [baseSlug, user, visibleModules])
+    return fromUrl
+  }, [baseSlug, allModules])
 
   const rbacBase = RBAC_BASES[baseSlug]
   const generalView = GENERAL_MENU.find(v => v.slug === baseSlug)
   const viewOptions = useMemo<RecordViewOption[]>(() => {
     if (rbacBase) {
-      // Filter RBAC view options by user permission (module:permissions)
       return rbacBase.options.filter(opt => !opt.permission || hasPermission(user, opt.permission))
     }
     const base = activeModule ? activeModule.viewOptions : GENERAL_MENU
@@ -120,7 +207,6 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   const selectedCard = activeView.label
   const menuTitle = rbacBase ? rbacBase.title : activeModule?.label ?? activeView.label
 
-  /* ── Navigate & keep menu panel collapsed while browsing ── */
   const goTo = useCallback((path: string) => {
     setMenuCollapsed(false)
     navigate(path, { replace: location.pathname === path })
@@ -134,23 +220,21 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       goTo(item.path)
       return
     }
-    const isModule = RECORD_MODULES.some(m => m.slug === slug)
-    goTo(isModule ? `/app/records/${slug}/summary` : `/app/records/${slug}`)
-  }, [goTo])
+    const isStaticModule = RECORD_MODULES.some(m => m.slug === slug)
+    const isCustomModule = (customModulesLoaded || systemModulesLoaded) && allModules.some(m => m.slug === slug)
+    const isModule = isStaticModule || isCustomModule
+    goTo(isModule ? `/app/records/${slug}/overview` : `/app/records/${slug}`)
+  }, [goTo, customModulesLoaded, systemModulesLoaded, allModules])
 
   const handleSelectCard = useCallback((slug: string) => {
-    // Módulo activo → su slug; items independientes (roles, permissions…)
-    // → conservan el slug actual de la URL como base.
     const base = activeModule?.slug ?? baseSlug
     goTo(`/app/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
-  /* ── Persist collapsed state only ── */
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.menuCollapsed, String(menuCollapsed))
   }, [menuCollapsed])
 
-  /* ── Build sidebar sections ── */
   const sidebarSections = useMemo<SidebarSectionProps[]>(() => {
     const userPermissions = user?.permissions
 
@@ -163,14 +247,12 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
         onClick: () => handleSidebarClick(item.slug ?? item.label),
       }))
 
-    const recordsItems = visibleModules
-      .filter(m => m.slug === 'sales')
-      .map(m => ({
-        icon: m.icon,
-        label: m.label,
-        active: activeModule?.slug === m.slug,
-        onClick: () => handleSidebarClick(m.slug),
-      }))
+    const recordsItems = allModules.map(m => ({
+      icon: m.icon,
+      label: m.label,
+      active: activeModule?.slug === m.slug,
+      onClick: () => handleSidebarClick(m.slug),
+    }))
 
     const staticSections = STATIC_SECTIONS
       .map(section => ({
@@ -198,9 +280,8 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       },
       ...staticSections,
     ]
-  }, [baseSlug, activeModule, visibleModules, user, handleSidebarClick])
+  }, [baseSlug, activeModule, allModules, user, handleSidebarClick])
 
-  /* ── Build menu items (view options as MenuItems) ── */
   const { t } = useAppTranslation()
   const menuItems = useMemo<MenuItemProps[]>(() => {
     const summaryBadge = buildSummaryBadge(activeModule)

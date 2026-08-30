@@ -18,8 +18,8 @@ export interface MockUser {
 // ─── Permisos por rol (espejo de roles.constants.ts) ───
 
 const ROLE_PERMISSIONS: Record<string, string[]> = {
-  ADMIN: [`module:coaching`, `module:vacations`, `module:sales`, `module:licenses`, `module:permissions`],
-  BASIC: [],
+  ADMIN: ['module:records', 'module:coaching', 'module:vacations', 'module:sales', 'module:licenses', 'module:permissions', 'rag:upload-view', 'rag:upload'],
+  BASIC: ['module:records', 'rag:read', 'rag:search'],
 }
 
 interface MockSession {
@@ -33,23 +33,23 @@ interface MockSession {
 
 const DB_USERS: Array<{ email: string; password: string; user: MockUser }> = [
   {
-    email: `admin@test.com`,
+    email: 'admin@modu.com',
     password: 'admin123',
     user: {
       id: 'u-001',
-      email: `admin@test.com`,
-      name: `Admin ${((import.meta.env.VITE_APP_NAME || 'App').charAt(0).toUpperCase() + (import.meta.env.VITE_APP_NAME || 'App').slice(1))}`,
+      email: 'admin@modu.com',
+      name: 'Admin Modu',
       role: 'ADMIN',
       permissions: ROLE_PERMISSIONS.ADMIN,
       isActive: true,
     },
   },
   {
-    email: `docente@test.com`,
+    email: 'docente@modu.com',
     password: 'docente123',
     user: {
       id: 'u-002',
-      email: `docente@test.com`,
+      email: 'docente@modu.com',
       name: 'María García',
       role: 'BASIC',
       permissions: ROLE_PERMISSIONS.BASIC,
@@ -57,11 +57,11 @@ const DB_USERS: Array<{ email: string; password: string; user: MockUser }> = [
     },
   },
   {
-    email: `director@test.com`,
+    email: 'director@modu.com',
     password: 'director123',
     user: {
       id: 'u-003',
-      email: `director@test.com`,
+      email: 'director@modu.com',
       name: 'Carlos López',
       role: 'ADMIN',
       permissions: ROLE_PERMISSIONS.ADMIN,
@@ -74,11 +74,11 @@ const DB_USERS: Array<{ email: string; password: string; user: MockUser }> = [
 
 const LDAP_USERS: Array<{ email: string; password: string; user: MockUser }> = [
   {
-    email: import.meta.env.VITE_LDAP_MOCK_USER1 || `admin@test.edu`,
+    email: import.meta.env.VITE_LDAP_MOCK_USER1 || 'admin@modu.edu',
     password: import.meta.env.VITE_LDAP_MOCK_PASS1 || 'Admin123!',
     user: {
       id: 'ldap-u-001',
-      email: import.meta.env.VITE_LDAP_MOCK_USER1 || `admin@test.edu`,
+      email: import.meta.env.VITE_LDAP_MOCK_USER1 || 'admin@modu.edu',
       name: 'Admin LDAP',
       role: 'ADMIN',
       permissions: ROLE_PERMISSIONS.ADMIN,
@@ -86,11 +86,11 @@ const LDAP_USERS: Array<{ email: string; password: string; user: MockUser }> = [
     },
   },
   {
-    email: import.meta.env.VITE_LDAP_MOCK_USER2 || `maria.garcia@test.edu`,
+    email: import.meta.env.VITE_LDAP_MOCK_USER2 || 'maria.garcia@modu.edu',
     password: import.meta.env.VITE_LDAP_MOCK_PASS2 || 'Maria2025!',
     user: {
       id: 'ldap-u-002',
-      email: import.meta.env.VITE_LDAP_MOCK_USER2 || `maria.garcia@test.edu`,
+      email: import.meta.env.VITE_LDAP_MOCK_USER2 || 'maria.garcia@modu.edu',
       name: 'María García LDAP',
       role: 'BASIC',
       permissions: ROLE_PERMISSIONS.BASIC,
@@ -98,11 +98,11 @@ const LDAP_USERS: Array<{ email: string; password: string; user: MockUser }> = [
     },
   },
   {
-    email: import.meta.env.VITE_LDAP_MOCK_USER3 || `carlos.lopez@test.edu`,
+    email: import.meta.env.VITE_LDAP_MOCK_USER3 || 'carlos.lopez@modu.edu',
     password: import.meta.env.VITE_LDAP_MOCK_PASS3 || 'Carlos2025!',
     user: {
       id: 'ldap-u-003',
-      email: import.meta.env.VITE_LDAP_MOCK_USER3 || `carlos.lopez@test.edu`,
+      email: import.meta.env.VITE_LDAP_MOCK_USER3 || 'carlos.lopez@modu.edu',
       name: 'Carlos López LDAP',
       role: 'ADMIN',
       permissions: ROLE_PERMISSIONS.ADMIN,
@@ -119,13 +119,13 @@ function generateToken(user: MockUser): string {
     email: user.email,
     name: user.name,
     role: user.role,
-    source: user.email.includes(`@test.edu`) ? 'ldap' : 'db',
+    source: user.email.includes('@modu.edu') ? 'ldap' : 'db',
     iat: Math.floor(Date.now() / 1000),
     exp:
       Math.floor(Date.now() / 1000) +
       60 * Number(import.meta.env.VITE_TOKEN_EXPIRY_MINUTES || 60),
   }
-  const secret = import.meta.env.VITE_MOCK_SECRET || `test-dev-secret-2025`
+  const secret = import.meta.env.VITE_MOCK_SECRET || 'modu-dev-secret-2025'
   return `mock.${btoa(JSON.stringify(payload))}.${btoa(secret)}`
 }
 
@@ -183,11 +183,14 @@ export function mockLdapLogin(credentials: {
       // Extraer dominio del email para validación
       const domain = credentials.email.split('@')[1]?.toLowerCase()
       const expectedDomain = (
-        import.meta.env.VITE_LDAP_DOMAIN || `test.edu`
+        import.meta.env.VITE_LDAP_DOMAIN || 'modu.edu'
+      ).toLowerCase()
+      const allowAnyDomain = (
+        import.meta.env.VITE_LDAP_ALLOW_ANY_DOMAIN || 'false'
       ).toLowerCase()
 
       // Validar que el dominio coincida con el LDAP configurado
-      if (domain !== expectedDomain) {
+      if (allowAnyDomain !== 'true' && domain !== expectedDomain) {
         reject(
           new Error(
             `Dominio no autorizado. Use su cuenta @${expectedDomain}`,
@@ -217,8 +220,8 @@ export function mockLdapLogin(credentials: {
         expiresAt,
         // Simular atributos LDAP adicionales
         ldapAttributes: {
-          dn: `cn=${found.user.name.split(' ')[0]},ou=usuarios,${import.meta.env.VITE_LDAP_BASE_DN || `dc=test,dc=edu`}`,
-          memberOf: [`CN=Docentes,OU=Grupos,DC=${(import.meta.env.VITE_APP_NAME || 'App').toUpperCase()},DC=edu`],
+          dn: `cn=${found.user.name.split(' ')[0]},ou=usuarios,${import.meta.env.VITE_LDAP_BASE_DN || 'dc=modu,dc=edu'}`,
+          memberOf: ['CN=Docentes,OU=Grupos,DC=modu,DC=edu'],
         },
       })
     }, 800) // LDAP suele ser un poco más lento

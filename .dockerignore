@@ -3,3 +3,5 @@ dist
 .git
 .gitignore
 .env
+docker-compose.dev.yml
+docker-compose.prod.yml

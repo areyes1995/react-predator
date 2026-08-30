@@ -30,8 +30,8 @@ export interface MenuPanelProps {
   onCollapsedChange?: (collapsed: boolean) => void
 }
 
-const MENU_COLLAPSED_KEY = `${import.meta.env.VITE_APP_NAMESPACE}_menu_collapsed`
-const LEGACY_NOTES_COLLAPSED_KEY = `${import.meta.env.VITE_APP_NAMESPACE}_notes_collapsed`
+const MENU_COLLAPSED_KEY = 'modu_menu_collapsed'
+const LEGACY_NOTES_COLLAPSED_KEY = 'modu_notes_collapsed'
 
 /** Lee el estado colapsado migrando la key legacy de "notas". */
 function readCollapsedKey(): boolean {

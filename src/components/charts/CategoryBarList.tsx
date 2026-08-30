@@ -17,14 +17,15 @@ export interface CategoryBarListProps {
   items: CategoryBarItem[]
   icon?: ReactNode
   barClass?: string
+  barStyle?: React.CSSProperties
 }
 
-export default function CategoryBarList({ title, subtitle, items, icon, barClass = 'bg-blue-500' }: CategoryBarListProps) {
+export default function CategoryBarList({ title, subtitle, items, icon, barClass = 'bg-blue-500', barStyle }: CategoryBarListProps) {
   const { t } = useAppTranslation()
   const max = Math.max(1, ...items.map(i => i.count))
 
   return (
-    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)]">
+    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] h-full">
       <div className="flex items-center gap-2 mb-4">
         {icon}
         <div>
@@ -42,7 +43,7 @@ export default function CategoryBarList({ title, subtitle, items, icon, barClass
             <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${barClass}`}
-                style={{ width: `${(item.count / max) * 100}%` }}
+                style={{ ...barStyle, width: `${(item.count / max) * 100}%` }}
               />
             </div>
             {item.subtitle && <p className="text-[10px] text-[var(--text-muted)] mt-1">{item.subtitle}</p>}

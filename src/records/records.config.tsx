@@ -8,6 +8,7 @@ import {
   TrendingUp,
   BadgeCheck,
   ShieldCheck,
+  LayoutGrid,
 } from 'lucide-react'
 import type { RecordColumn, RecordModule, RecordViewOption } from './types'
 
@@ -28,6 +29,26 @@ export const ROLES_VIEW_OPTIONS: RecordViewOption[] = [
 export const PERMISSIONS_VIEW_OPTIONS: RecordViewOption[] = [
   { label: 'Summary', slug: 'summary', description: 'All permissions grid', kind: 'summary' },
   { label: 'Archived', slug: 'archived', description: 'Archived permissions', kind: 'archived' },
+]
+
+/**
+ * Records View: el módulo `records` renderiza el contenido RAG.
+ * - Summary → búsqueda sobre la base vectorial (RagSearchView).
+ * - Upload Document → sube un documento al índice.
+ */
+export const RAG_VIEW_OPTIONS: RecordViewOption[] = [
+  { label: 'Overview', slug: 'overview', description: 'RAG search over the vector store', kind: 'summary' },
+  { label: 'Upload Document', slug: 'upload', description: 'Add a document to the index', kind: 'upload', permission: 'rag:upload-view' },
+]
+
+/** Columns for the generic Records View. */
+const recordsViewColumns: RecordColumn[] = [
+  { key: 'id', header: 'ID', type: 'text' },
+  { key: 'title', header: 'Title', type: 'text' },
+  { key: 'category', header: 'Category', type: 'text', chartGroup: true },
+  { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
+  { key: 'lastUpdated', header: 'Last Updated', type: 'date' },
+  { key: 'owner', header: 'Owner', type: 'text' },
 ]
 
 /** Columns for Coaching Forms. */
@@ -82,11 +103,12 @@ const permissionsColumns: RecordColumn[] = [
 
 /** The record modules rendered in the sidebar dropdown + notes panel. */
 export const RECORD_MODULES: RecordModule[] = [
-  { label: 'Coaching Forms', slug: 'coaching', color: 'purple', icon: <ClipboardList className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: coachingColumns },
-  { label: 'Vacations', slug: 'vacations', color: 'green', icon: <Plane className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: vacationsColumns },
-  { label: 'Sales', slug: 'sales', color: 'amber', icon: <TrendingUp className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: salesColumns },
-  { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
-  { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
+  // { label: 'Records View', slug: 'records', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: RAG_VIEW_OPTIONS, columns: recordsViewColumns },
+  // { label: 'Coaching Forms', slug: 'coaching', color: 'purple', icon: <ClipboardList className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: coachingColumns },
+  // { label: 'Vacations', slug: 'vacations', color: 'green', icon: <Plane className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: vacationsColumns },
+  // { label: 'Sales', slug: 'sales', color: 'amber', icon: <TrendingUp className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: salesColumns },
+  // { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
+  // { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
 ]
 
 /** Generic menu used for the Home overview (single view). */
@@ -96,7 +118,7 @@ export const GENERAL_MENU: RecordViewOption[] = [
 
 /** localStorage keys used by the dashboard. */
 export const STORAGE_KEYS = {
-  activeView: `${import.meta.env.VITE_APP_NAMESPACE}_active_view`,
-  selectedCard: `${import.meta.env.VITE_APP_NAMESPACE}_selected_card`,
-  menuCollapsed: `${import.meta.env.VITE_APP_NAMESPACE}_menu_collapsed`,
+  activeView: 'modu_active_view',
+  selectedCard: 'modu_selected_card',
+  menuCollapsed: 'modu_menu_collapsed',
 } as const

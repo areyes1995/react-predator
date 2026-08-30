@@ -6,25 +6,14 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        ink: {
-          DEFAULT: '#05070f',
-          950: '#07080c',
-          900: '#080c1a',
-          800: '#0b1022',
-          700: '#101733',
-          600: '#181A22',
-        },
-        neon: {
-          cyan: '#22d3ee',
-          violet: '#8b5cf6',
-          pink: '#e879f9',
-          amber: '#fbbf24',
-        },
+      animation: {
+        'fade-in': 'fade-in 0.3s ease-out',
       },
-      fontFamily: {
-        display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(-8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
     },
   },

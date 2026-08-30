@@ -1,0 +1,434 @@
+[
+  {
+    "id": "mod_records",
+    "source": "base",
+    "label": "Records View",
+    "slug": "records",
+    "color": "blue",
+    "icon": "FileSquare",
+    "viewOptions": [
+      {
+        "label": "Overview",
+        "slug": "overview",
+        "description": "RAG search and document upload",
+        "kind": "summary"
+      },
+      {
+        "label": "Upload",
+        "slug": "upload",
+        "description": "Add documents to the index",
+        "kind": "upload"
+      }
+    ],
+    "columns": [
+      {
+        "key": "id",
+        "header": "ID",
+        "type": "text"
+      },
+      {
+        "key": "title",
+        "header": "Title",
+        "type": "text"
+      },
+      {
+        "key": "category",
+        "header": "Category",
+        "type": "text",
+        "chartGroup": true
+      },
+      {
+        "key": "status",
+        "header": "Status",
+        "type": "select",
+        "options": [
+          "Active",
+          "Pending",
+          "Archived"
+        ]
+      },
+      {
+        "key": "lastUpdated",
+        "header": "Last Updated",
+        "type": "date"
+      },
+      {
+        "key": "owner",
+        "header": "Owner",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "id": "mod_coaching",
+    "source": "base",
+    "label": "Coaching Forms",
+    "slug": "coaching",
+    "color": "#3ef4f1",
+    "icon": "BookOpen",
+    "viewOptions": [
+      {
+        "label": "Summary",
+        "slug": "summary",
+        "description": "Charts and KPIs overview",
+        "kind": "summary"
+      },
+      {
+        "label": "Table Grid",
+        "slug": "table",
+        "description": "Records as a table grid",
+        "kind": "table"
+      },
+      {
+        "label": "Archived",
+        "slug": "archived",
+        "description": "Archived records",
+        "kind": "archived"
+      }
+    ],
+    "columns": [
+      {
+        "key": "id",
+        "header": "ID",
+        "type": "text"
+      },
+      {
+        "key": "title",
+        "header": "Form",
+        "type": "text"
+      },
+      {
+        "key": "category",
+        "header": "Category",
+        "type": "text",
+        "chartGroup": true
+      },
+      {
+        "key": "status",
+        "header": "Status",
+        "type": "select",
+        "options": [
+          "Active",
+          "Pending",
+          "Archived"
+        ]
+      },
+      {
+        "key": "coach",
+        "header": "Coach",
+        "type": "text"
+      },
+      {
+        "key": "sessions",
+        "header": "Sessions",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "id": "mod_vacations",
+    "source": "base",
+    "label": "Vacationsss",
+    "slug": "vacations",
+    "color": "#d92665",
+    "icon": "Sunset",
+    "viewOptions": [
+      {
+        "label": "Summary",
+        "slug": "summary",
+        "description": "Charts and KPIs overview",
+        "kind": "summary"
+      },
+      {
+        "label": "Table Grid",
+        "slug": "table",
+        "description": "Records as a table grid",
+        "kind": "table"
+      },
+      {
+        "label": "Archived",
+        "slug": "archived",
+        "description": "Archived records",
+        "kind": "archived"
+      }
+    ],
+    "columns": [
+      {
+        "key": "id",
+        "header": "ID",
+        "type": "text"
+      },
+      {
+        "key": "title",
+        "header": "Request",
+        "type": "text"
+      },
+      {
+        "key": "leaveType",
+        "header": "Leave Type",
+        "type": "select",
+        "options": [
+          "Summer",
+          "Short Leave",
+          "Medical",
+          "Holiday"
+        ],
+        "chartGroup": true
+      },
+      {
+        "key": "status",
+        "header": "Status",
+        "type": "select",
+        "options": [
+          "Active",
+          "Pending",
+          "Archived"
+        ]
+      },
+      {
+        "key": "days",
+        "header": "Days",
+        "type": "number"
+      },
+      {
+        "key": "employee",
+        "header": "Employee",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "id": "mod_sales",
+    "source": "base",
+    "label": "Sales",
+    "slug": "sales",
+    "color": "amber",
+    "icon": "DollarSign",
+    "viewOptions": [
+      {
+        "label": "Summary",
+        "slug": "summary",
+        "description": "Charts and KPIs overview",
+        "kind": "summary"
+      },
+      {
+        "label": "Table Grid",
+        "slug": "table",
+        "description": "Records as a table grid",
+        "kind": "table"
+      },
+      {
+        "label": "Archived",
+        "slug": "archived",
+        "description": "Archived records",
+        "kind": "archived"
+      }
+    ],
+    "columns": [
+      {
+        "key": "id",
+        "header": "ID",
+        "type": "text"
+      },
+      {
+        "key": "title",
+        "header": "Deal",
+        "type": "text"
+      },
+      {
+        "key": "stage",
+        "header": "Stage",
+        "type": "select",
+        "options": [
+          "Pipeline",
+          "Deals",
+          "Renewals",
+          "Campaigns",
+          "Referrals"
+        ],
+        "chartGroup": true
+      },
+      {
+        "key": "status",
+        "header": "Status",
+        "type": "select",
+        "options": [
+          "Active",
+          "Pending",
+          "Archived"
+        ]
+      },
+      {
+        "key": "amount",
+        "header": "Amount",
+        "type": "number"
+      },
+      {
+        "key": "owner",
+        "header": "Owner",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "id": "mod_licenses",
+    "source": "base",
+    "label": "Licenses",
+    "slug": "licenses",
+    "color": "blue",
+    "icon": "Key",
+    "viewOptions": [
+      {
+        "label": "Summary",
+        "slug": "summary",
+        "description": "License distribution and key metrics",
+        "kind": "summary"
+      },
+      {
+        "label": "Table Grid",
+        "slug": "table",
+        "description": "All licenses in table format",
+        "kind": "table"
+      },
+      {
+        "label": "Archived",
+        "slug": "archived",
+        "description": "Inactive or expired licenses",
+        "kind": "archived"
+      }
+    ],
+    "columns": [
+      {
+        "key": "id",
+        "header": "ID",
+        "type": "text"
+      },
+      {
+        "key": "title",
+        "header": "License",
+        "type": "text"
+      },
+      {
+        "key": "category",
+        "header": "Category",
+        "type": "select",
+        "options": [
+          "Operating System",
+          "Development",
+          "Design",
+          "Security",
+          "Productivity",
+          "Cloud Services"
+        ],
+        "chartGroup": true
+      },
+      {
+        "key": "vendor",
+        "header": "Vendor",
+        "type": "select",
+        "options": [
+          "Microsoft",
+          "Adobe",
+          "JetBrains",
+          "Sentinel",
+          "Norton",
+          "Google"
+        ]
+      },
+      {
+        "key": "seats",
+        "header": "Seats",
+        "type": "number",
+        "chartGroup": true
+      },
+      {
+        "key": "costPerSeat",
+        "header": "Cost/Seat",
+        "type": "number"
+      },
+      {
+        "key": "status",
+        "header": "Status",
+        "type": "select",
+        "options": [
+          "Active",
+          "Pending",
+          "Archived"
+        ]
+      },
+      {
+        "key": "owner",
+        "header": "Owner",
+        "type": "text"
+      },
+      {
+        "key": "renewalDate",
+        "header": "Next Renewal",
+        "type": "date"
+      }
+    ],
+    "summaryChart": {
+      "kpiRow": [
+        {
+          "label": "Total Licenses",
+          "targetKey": "id",
+          "icon": "BadgeCheck"
+        },
+        {
+          "label": "Active",
+          "targetKey": "status",
+          "filter": "Active",
+          "icon": "CheckCircle2"
+        },
+        {
+          "label": "Pending",
+          "targetKey": "status",
+          "filter": "Pending",
+          "icon": "Clock"
+        },
+        {
+          "label": "Seats",
+          "targetKey": "seats",
+          "icon": "Users"
+        }
+      ],
+      "charts": [
+        {
+          "type": "bar",
+          "title": "License Categories",
+          "description": "Breakdown by software category",
+          "groupKey": "category",
+          "valueKey": "seats",
+          "color": "bg-purple-500"
+        },
+        {
+          "type": "donut",
+          "title": "License Status Distribution",
+          "description": "Active, pending and inactive licenses",
+          "items": [
+            {
+              "name": "Active",
+              "value": 50,
+              "color": "#10b981"
+            },
+            {
+              "name": "Pending",
+              "value": 2,
+              "color": "#f59e0b"
+            },
+            {
+              "name": "Archived",
+              "value": 1,
+              "color": "#94a3b8"
+            }
+          ]
+        }
+      ],
+      "overview": {
+        "title": "License Overview",
+        "recentKey": "id",
+        "groupBy": "status"
+      }
+    }
+  }
+]

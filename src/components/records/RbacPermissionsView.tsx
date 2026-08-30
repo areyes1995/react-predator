@@ -7,12 +7,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Loader2, AlertCircle } from 'lucide-react'
-import RecordsTable from './RecordsTable'
 import ViewHeader from '../ui/ViewHeader'
 import { buildDynamicTable } from '../../records/dynamicColumns'
 import { getPermissions } from '../../services/rbac'
 import type { PermissionDto } from '../../services/rbac'
 import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { DynamicComponentRenderer } from '../charts'
 
 export default function RbacPermissionsView({ view }: { view?: string }) {
   const { t } = useAppTranslation()
@@ -73,7 +73,14 @@ export default function RbacPermissionsView({ view }: { view?: string }) {
             {error}
           </div>
         ) : (
-          <RecordsTable data={filteredData} columns={columns} />
+          <DynamicComponentRenderer
+            items={[
+              {
+                type: 'RecordsTable',
+                props: { data: filteredData, columns },
+              },
+            ]}
+          />
         )}
       </div>
     </div>

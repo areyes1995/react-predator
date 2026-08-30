@@ -15,7 +15,7 @@ export interface KpiCardProps {
 
 export default function KpiCard({ label, value, hint, suffix, icon, accentClass = 'text-[var(--text-muted)]' }: KpiCardProps) {
   return (
-    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-4 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] cursor-default">
+    <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-4 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] cursor-default h-full">
       <div className={`flex items-center gap-2 mb-3 ${accentClass}`}>
         {icon}
         <span className="text-xs font-medium uppercase tracking-wide">{label}</span>
