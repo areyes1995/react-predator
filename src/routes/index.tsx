@@ -18,6 +18,7 @@ import StandsPage from '../pages/dashboard/stands/StandsPage'
 import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
 import SettingsView from '../components/settings/SettingsView'
+import KnowledgeBasePage from '../pages/dashboard/knowledge-base/KnowledgeBasePage'
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
         { path: 'connections', element: <ConnectionsPage /> },
         { path: 'admin', element: <AdminPage /> },
         { path: 'settings', element: <SettingsView /> },
+        { path: 'knowledge-base', element: <KnowledgeBasePage /> },
         { path: '*', element: <NotFound /> },
       ]},
       { path: 'records/:base?/:view?', element: <RecordsRoute /> },
@@ -64,6 +66,7 @@ export const router = createBrowserRouter([
       { path: 'connections', element: <ConnectionsPage /> },
       { path: 'admin', element: <AdminPage /> },
       { path: 'settings', element: <SettingsView /> },
+      { path: 'knowledge-base', element: <KnowledgeBasePage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

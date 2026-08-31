@@ -26,6 +26,7 @@ export default function AppLayout() {
 
   const isSettingsRoute = location.pathname.startsWith('/app/settings')
   const isProjectsRoute = segments[1] === 'dashboard' && (segments[2] === 'projects' || segments[2] === 'stands')
+  const isKnowledgeBaseRoute = segments[1] === 'dashboard' && segments[2] === 'knowledge-base'
 
   const {
     menuCollapsed,
@@ -88,7 +89,7 @@ export default function AppLayout() {
     />
   )
 
-  const menuPanel = isSettingsRoute || isProjectsRoute ? null : (
+  const menuPanel = isSettingsRoute || isProjectsRoute || isKnowledgeBaseRoute ? null : (
     <MenuPanel
       title={menuTitle ?? 'Orchestrator'}
       items={menuItems ?? []}

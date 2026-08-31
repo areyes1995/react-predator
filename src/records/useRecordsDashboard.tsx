@@ -168,12 +168,22 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
     const isStands = activeModule?.slug === 'stands' || baseSlug === 'stands'
     const base = activeModule?.slug ?? baseSlug
-    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : isModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : activeModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.menuCollapsed, String(menuCollapsed))
   }, [menuCollapsed])
+
+  /** Slugs that map to standalone pages (not records modules). */
+  const PAGE_SLUGS = ['knowledge-base']
+
+  /** Whether the current URL matches a page slug. */
+  const activePageSlug = useMemo(() => {
+    if (segments[1] === 'dashboard' && PAGE_SLUGS.includes(segments[2])) return segments[2]
+    if (segments[1] !== 'records') return PAGE_SLUGS.find(s => s === segments[1]) ?? null
+    return null
+  }, [segments])
 
   const sidebarSections = useMemo<SidebarSectionProps[]>(() => {
     const userPermissions = user?.permissions
@@ -183,7 +193,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       .map(item => ({
         icon: item.icon,
         label: item.label,
-        active: item.slug === baseSlug,
+        active: item.slug === baseSlug || item.slug === activePageSlug,
         onClick: () => handleSidebarClick(item.slug ?? item.label),
       }))
 
@@ -202,7 +212,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
           .map(item => ({
             icon: item.icon,
             label: item.label,
-            active: item.slug === baseSlug,
+            active: item.slug === baseSlug || item.slug === activePageSlug,
             onClick: () => handleSidebarClick(item.slug ?? item.label),
           })),
       }))
