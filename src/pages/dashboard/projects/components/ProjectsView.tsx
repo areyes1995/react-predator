@@ -7,6 +7,7 @@ import EntityCardSkeleton from '../../../../components/ui/cards/EntityCardSkelet
 import CardError from '../../../../components/ui/cards/CardError'
 import CardEmpty from '../../../../components/ui/cards/CardEmpty'
 import ProjectDetailModal from './ProjectDetailModal'
+import { LayoutGrid, List } from 'lucide-react'
 
 export default function ProjectsView({ role }: { role: ProjectRole }) {
   const [projects, setProjects] = useState<ProjectData[]>([])
@@ -14,6 +15,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
   const [error, setError] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null)
   const [selectedTab, setSelectedTab] = useState<ProjectTab>('all')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [filters, setFilters] = useState<ProjectSearchFilters>({
     search: '',
     category: 'Todas',
@@ -86,6 +88,24 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
     console.log('Edit project')
   }, [])
 
+  const handleViewToggle = useCallback(() => {
+    setViewMode(prev => (prev === 'grid' ? 'list' : 'grid'))
+  }, [])
+
+  const statusLabels: Record<string, string> = {
+    active: 'Activo',
+    pending: 'Pendiente',
+    completed: 'Completado',
+    archived: 'Archivado'
+  }
+
+  const statusColors: Record<string, string> = {
+    active: 'text-emerald-400',
+    pending: 'text-amber-400',
+    completed: 'text-blue-400',
+    archived: 'text-gray-400'
+  }
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -154,59 +174,153 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-6 px-4 lg:px-6 border-b border-[var(--border)]">
-        {([
-          { tab: 'all' as ProjectTab, label: 'All Projects', count: stats.total },
-          { tab: 'my' as ProjectTab, label: 'My Projects', count: stats.total },
-          { tab: 'pending' as ProjectTab, label: 'Pending Approval', count: stats.pending }
-        ]).map(tab => (
+      {/* Tabs + View Toggle */}
+      <div className="flex items-center justify-between px-4 lg:px-6 border-b border-[var(--border)]">
+        <div className="flex gap-6">
+          {([
+            { tab: 'all' as ProjectTab, label: 'All Projects', count: stats.total },
+            { tab: 'my' as ProjectTab, label: 'My Projects', count: stats.total },
+            { tab: 'pending' as ProjectTab, label: 'Pending Approval', count: stats.pending }
+          ]).map(tab => (
+            <button
+              key={tab.tab}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                selectedTab === tab.tab
+                  ? 'border-blue-400 text-blue-400'
+                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              }`}
+              onClick={() => setSelectedTab(tab.tab)}
+            >
+              {tab.label}
+              <span className="ml-2 text-[10px] opacity-60">{tab.count}</span>
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 bg-[var(--bg-surface-soft)] rounded-lg p-1">
           <button
-            key={tab.tab}
-            className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-              selectedTab === tab.tab
-                ? 'border-blue-400 text-blue-400'
-                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+              viewMode === 'grid'
+                ? 'bg-blue-500/20 text-blue-400 shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
             }`}
-            onClick={() => setSelectedTab(tab.tab)}
+            onClick={handleViewToggle}
+            aria-label="Vista cuadrícula"
+            title="Vista cuadrícula"
           >
-            {tab.label}
-            <span className="ml-2 text-[10px] opacity-60">{tab.count}</span>
+            <LayoutGrid className="w-4 h-4" />
+            <span className="text-xs hidden sm:inline">Grid</span>
           </button>
-        ))}
+          <button
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+              viewMode === 'list'
+                ? 'bg-blue-500/20 text-blue-400 shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
+            }`}
+            onClick={handleViewToggle}
+            aria-label="Vista lista"
+            title="Vista lista"
+          >
+            <List className="w-4 h-4" />
+            <span className="text-xs hidden sm:inline">List</span>
+          </button>
+        </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <EntityCardSkeleton key={i} count={1} />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="p-4 lg:p-6">
-            <CardError />
-          </div>
-        ) : projects.length === 0 ? (
-          <div className="p-4 lg:p-6">
-            <CardEmpty
-              icon={FolderOpen}
-              message={role === 'admin' ? 'No hay proyectos registrados. Haz clic en "+ New Project" para crear uno.' : role === 'expositor' ? 'Aún no tienes proyectos. ¡Comienza creando tu primer proyecto!' : 'No hay proyectos disponibles en este momento. Vuelve pronto.'}
-              role={role}
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
-            {projects.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
+        {viewMode === 'grid' ? (
+          loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <EntityCardSkeleton key={i} count={1} />
+              ))}
+            </div>
+          ) : error ? (
+            <div className="p-4 lg:p-6">
+              <CardError />
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="p-4 lg:p-6">
+              <CardEmpty
+                icon={FolderOpen}
+                message={role === 'admin' ? 'No hay proyectos registrados. Haz clic en "+ New Project" para crear uno.' : role === 'expositor' ? 'A&#233;un no tienes proyectos. &#191;Comienza creando tu primer proyecto!' : 'No hay proyectos disponibles en este momento. Vuelve pronto.'}
                 role={role}
-                onClick={handleCardClick}
               />
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
+              {projects.map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  role={role}
+                  onClick={handleCardClick}
+                />
+              ))}
+            </div>
+          )
+        ) : (
+          loading ? (
+            <div className="flex items-center justify-center py-12 text-[var(--text-muted)]">
+              <EntityCardSkeleton count={1} />
+            </div>
+          ) : error ? (
+            <div className="p-4 lg:p-6">
+              <CardError />
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="p-4 lg:p-6">
+              <CardEmpty
+                icon={FolderOpen}
+                message={role === 'admin' ? 'No hay proyectos registrados. Haz clic en "+ New Project" para crear uno.' : role === 'expositor' ? 'A&#233;un no tienes proyectos. &#191;Comienza creando tu primer proyecto!' : 'No hay proyectos disponibles en este momento. Vuelve pronto.'}
+                role={role}
+              />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap">
+                      Nombre
+                    </th>
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap hidden sm:table-cell">
+                      Estado
+                    </th>
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap hidden md:table-cell">
+                      Autor
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projects.map(project => (
+                    <tr
+                      key={project.id}
+                      className="border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-surface-soft)] cursor-pointer"
+                      onClick={() => handleCardClick(project)}
+                    >
+                      <td className="py-3 px-3 text-[var(--text-secondary)]">
+                        <span className="font-medium">{project.title}</span>
+                      </td>
+                      <td className="py-3 px-3 hidden sm:table-cell">
+                        <span className={`text-xs ${statusColors[project.status]}`}>
+                          {statusLabels[project.status]}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 hidden md:table-cell">
+                        <span className="text-xs text-[var(--text-muted)]">{project.author}</span>
+                      </td>
+                    </tr>
+                  ))}
+                  {projects.length === 0 && (
+                    <tr>
+                      <td className="text-center py-12 text-[var(--text-muted)]">No hay proyectos</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )
         )}
       </div>
 

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tent, Plus, Eye, Edit, Trash2, Search } from 'lucide-react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
+import { Tent, Plus, Search } from 'lucide-react'
 import type { StandRole, StandSearchFilters, StandData, StandStatus } from '../types'
 import { STANDS_DATA, STAND_SALAS, STAND_PROYECTOS } from '../data'
 import StandsCard from './StandsCard'
@@ -8,6 +8,7 @@ import CardError from '../../../../components/ui/cards/CardError'
 import CardEmpty from '../../../../components/ui/cards/CardEmpty'
 import StandsDetailModal from './StandsDetailModal'
 import StandsFormModal from './StandsFormModal'
+import { LayoutGrid, List } from 'lucide-react'
 
 export default function StandsView({ role }: { role: StandRole }) {
   const [stands, setStands] = useState<StandData[]>([])
@@ -16,6 +17,7 @@ export default function StandsView({ role }: { role: StandRole }) {
   const [selectedStand, setSelectedStand] = useState<StandData | null>(null)
   const [showFormModal, setShowFormModal] = useState(false)
   const [editingStand, setEditingStand] = useState<StandData | null>(null)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [filters, setFilters] = useState<StandSearchFilters>({
     search: '',
     status: 'all',
@@ -95,6 +97,10 @@ export default function StandsView({ role }: { role: StandRole }) {
   const handleStatusChange = useCallback((_stand: StandData, _status: StandStatus) => {
   }, [])
 
+  const handleViewToggle = useCallback(() => {
+    setViewMode(prev => (prev === 'grid' ? 'list' : 'grid'))
+  }, [])
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -102,7 +108,7 @@ export default function StandsView({ role }: { role: StandRole }) {
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">Gestión de Stands</h1>
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">Gesti&#243;n de Stands</h1>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Administra los stands que forman parte de la experiencia virtual.</p>
             </div>
             {role === 'admin' || role === 'presentador' ? (
@@ -111,7 +117,6 @@ export default function StandsView({ role }: { role: StandRole }) {
                 className="flex items-center gap-2 px-4 py-2 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors whitespace-nowrap"
                 aria-label="Crear nuevo stand"
               >
-                <Plus className="w-4 h-4" />
                 Crear stand
               </button>
             ) : null}
@@ -189,50 +194,170 @@ export default function StandsView({ role }: { role: StandRole }) {
         </div>
       </div>
 
+      {/* View Toggle */}
+      <div className="flex items-center justify-end px-4 lg:px-6 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center gap-2 bg-[var(--bg-surface-soft)] rounded-lg p-1">
+          <button
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+              viewMode === 'grid'
+                ? 'bg-blue-500/20 text-blue-400 shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
+            }`}
+            onClick={handleViewToggle}
+            aria-label="Vista cuadrícula"
+            title="Vista cuadrícula"
+          >
+            <LayoutGrid className="w-4 h-4" />
+            <span className="text-xs hidden sm:inline">Grid</span>
+          </button>
+          <button
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+              viewMode === 'list'
+                ? 'bg-blue-500/20 text-blue-400 shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
+            }`}
+            onClick={handleViewToggle}
+            aria-label="Vista lista"
+            title="Vista lista"
+          >
+            <List className="w-4 h-4" />
+            <span className="text-xs hidden sm:inline">List</span>
+          </button>
+        </div>
+      </div>
+
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <EntityCardSkeleton key={i} count={1} />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="p-4 lg:p-6">
-            <CardError />
-          </div>
-        ) : stands.length === 0 && filters.search ? (
-          <div className="p-4 lg:p-6">
-            <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-12 flex flex-col items-center justify-center gap-4 text-center">
-              <Search className="w-8 h-8 text-[var(--text-muted)]" strokeWidth={1.5} />
-              <p className="text-sm text-[var(--text-muted)] max-w-sm">
-                No encontramos stands. Prueba con otro término o modifica los filtros.
-              </p>
+        {viewMode === 'grid' ? (
+          loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <EntityCardSkeleton key={i} count={1} />
+              ))}
             </div>
-          </div>
-        ) : stands.length === 0 ? (
-          <div className="p-4 lg:p-6">
-            <CardEmpty
-              icon={Tent}
-              message="No hay stands todavía. Crea el primer stand para comenzar a configurar la feria."
-              role={role}
-              rolesWithAction={['admin', 'presentador']}
-              actionLabel="Crear stand"
-              onAction={handleCreate}
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
-            {stands.map(stand => (
-              <StandsCard
-                key={stand.id}
-                stand={stand}
+          ) : error ? (
+            <div className="p-4 lg:p-6">
+              <CardError />
+            </div>
+          ) : stands.length === 0 && filters.search ? (
+            <div className="p-4 lg:p-6">
+              <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+                <Search className="w-8 h-8 text-[var(--text-muted)]" strokeWidth={1.5} />
+                <p className="text-sm text-[var(--text-muted)] max-w-sm">
+                  No encontramos stands. Prueba con otro t&#233;rmino o modifica los filtros.
+                </p>
+              </div>
+            </div>
+          ) : stands.length === 0 ? (
+            <div className="p-4 lg:p-6">
+              <CardEmpty
+                icon={Tent}
+                message="No hay stands todav&#237;a. Crea el primer stand para comenzar a configurar la feria."
                 role={role}
-                onClick={handleCardClick}
-                onEdit={handleEdit}
+                rolesWithAction={['admin', 'presentador']}
+                actionLabel="Crear stand"
+                onAction={handleCreate}
               />
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
+              {stands.map(stand => (
+                <StandsCard
+                  key={stand.id}
+                  stand={stand}
+                  role={role}
+                  onClick={handleCardClick}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </div>
+          )
+        ) : (
+          loading ? (
+            <div className="flex items-center justify-center py-12 text-[var(--text-muted)]">
+              <EntityCardSkeleton count={1} />
+            </div>
+          ) : error ? (
+            <div className="p-4 lg:p-6">
+              <CardError />
+            </div>
+          ) : stands.length === 0 && filters.search ? (
+            <div className="p-4 lg:p-6">
+              <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+                <Search className="w-8 h-8 text-[var(--text-muted)]" strokeWidth={1.5} />
+                <p className="text-sm text-[var(--text-muted)] max-w-sm">
+                  No encontramos stands. Prueba con otro t&#233;rmino o modifica los filtros.
+                </p>
+              </div>
+            </div>
+          ) : stands.length === 0 ? (
+            <div className="p-4 lg:p-6">
+              <CardEmpty
+                icon={Tent}
+                message="No hay stands todav&#237;a. Crea el primer stand para comenzar a configurar la feria."
+                role={role}
+                rolesWithAction={['admin', 'presentador']}
+                actionLabel="Crear stand"
+                onAction={handleCreate}
+              />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap">
+                      Nombre
+                    </th>
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap hidden sm:table-cell">
+                      Estado
+                    </th>
+                    <th className="text-left text-[var(--text-muted)] font-medium py-3 px-3 text-xs whitespace-nowrap hidden md:table-cell">
+                      Proyecto
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stands.map(stand => {
+                    const statusLabels: Record<string, string> = {
+                      published: 'Publicado',
+                      pending: 'Pendiente',
+                      draft: 'Borrador',
+                    }
+                    const statusColors: Record<string, string> = {
+                      published: 'text-emerald-400',
+                      pending: 'text-amber-400',
+                      draft: 'text-gray-400',
+                    }
+                    return (
+                      <tr
+                        key={stand.id}
+                        className="border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-surface-soft)] cursor-pointer"
+                        onClick={() => handleCardClick(stand)}
+                      >
+                        <td className="py-3 px-3 text-[var(--text-secondary)]">
+                          <span className="font-medium">{stand.title}</span>
+                        </td>
+                        <td className="py-3 px-3 hidden sm:table-cell">
+                          <span className={`text-xs ${statusColors[stand.status]}`}>
+                            {statusLabels[stand.status]}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 hidden md:table-cell">
+                          <span className="text-xs text-[var(--text-muted)]">{stand.proyecto}</span>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                  {stands.length === 0 && (
+                    <tr>
+                      <td className="text-center py-12 text-[var(--text-muted)]">No hay stands</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )
         )}
       </div>
 
