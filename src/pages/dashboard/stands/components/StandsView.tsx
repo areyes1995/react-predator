@@ -103,6 +103,7 @@ export default function StandsView({ role }: { role: StandRole }) {
 
   return (
     <div className="flex flex-col h-full">
+      <div className="max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="px-4 lg:px-6 py-4 border-b border-[var(--border)]">
         <div className="flex flex-col gap-3">
@@ -382,6 +383,7 @@ export default function StandsView({ role }: { role: StandRole }) {
         stand={editingStand}
         role={role}
       />
+      </div>
     </div>
   )
 }

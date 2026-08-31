@@ -108,6 +108,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
 
   return (
     <div className="flex flex-col h-full">
+      <div className="max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="px-4 lg:px-6 py-4 border-b border-[var(--border)] pb-4">
         <div className="flex flex-col gap-3">
@@ -232,7 +233,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
       <div className="flex-1 overflow-y-auto pt-4">
         {viewMode === 'grid' ? (
           loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <EntityCardSkeleton key={i} count={1} />
               ))}
@@ -338,6 +339,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
         onReject={handleReject}
         onEdit={handleEdit}
       />
+      </div>
     </div>
   )
 }
