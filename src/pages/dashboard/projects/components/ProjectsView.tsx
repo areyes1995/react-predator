@@ -109,7 +109,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 lg:px-6 py-4 border-b border-[var(--border)]">
+      <div className="px-4 lg:px-6 py-4 border-b border-[var(--border)] pb-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -174,28 +174,30 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
         </div>
       </div>
 
-      {/* Tabs + View Toggle */}
-      <div className="flex items-center justify-between px-4 lg:px-6 border-b border-[var(--border)]">
-        <div className="flex gap-6">
-          {([
-            { tab: 'all' as ProjectTab, label: 'All Projects', count: stats.total },
-            { tab: 'my' as ProjectTab, label: 'My Projects', count: stats.total },
-            { tab: 'pending' as ProjectTab, label: 'Pending Approval', count: stats.pending }
-          ]).map(tab => (
-            <button
-              key={tab.tab}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                selectedTab === tab.tab
-                  ? 'border-blue-400 text-blue-400'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-              onClick={() => setSelectedTab(tab.tab)}
-            >
-              {tab.label}
-              <span className="ml-2 text-[10px] opacity-60">{tab.count}</span>
-            </button>
-          ))}
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-6 px-4 lg:px-6 border-b border-[var(--border)]">
+        {([
+          { tab: 'all' as ProjectTab, label: 'All Projects', count: stats.total },
+          { tab: 'my' as ProjectTab, label: 'My Projects', count: stats.total },
+          { tab: 'pending' as ProjectTab, label: 'Pending Approval', count: stats.pending }
+        ]).map(tab => (
+          <button
+            key={tab.tab}
+            className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              selectedTab === tab.tab
+                ? 'border-blue-400 text-blue-400'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+            }`}
+            onClick={() => setSelectedTab(tab.tab)}
+          >
+            {tab.label}
+            <span className="ml-2 text-[10px] opacity-60">{tab.count}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* View Toggle */}
+      <div className="flex items-center justify-end px-4 lg:px-6 py-2 border-b border-[var(--border)]">
         <div className="flex items-center gap-2 bg-[var(--bg-surface-soft)] rounded-lg p-1">
           <button
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
@@ -227,7 +229,7 @@ export default function ProjectsView({ role }: { role: ProjectRole }) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pt-4">
         {viewMode === 'grid' ? (
           loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
