@@ -1,25 +1,26 @@
 // ──────────────────────────────────────────────
-// TrafficFlowChart — Gráfico de área para mostrar
-// el flujo de visitantes a lo largo del tiempo
+// AreaChartCard — Reusable area chart card
 // ──────────────────────────────────────────────
 
 import { useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
-export interface TrafficDataPoint {
+export interface AreaDataPoint {
   time: string
   unique: number
   total: number
 }
 
-export interface TrafficFlowChartProps {
-  data: TrafficDataPoint[]
+export interface AreaChartCardProps {
+  data: AreaDataPoint[]
   title?: string
   height?: number
+  uniqueKey?: string
+  totalKey?: string
 }
 
-export default function TrafficFlowChart({ data, title, height = 350 }: TrafficFlowChartProps) {
+export default function AreaChartCard({ data, title, height = 350, uniqueKey = 'unique', totalKey = 'total' }: AreaChartCardProps) {
   const chartData = useMemo(() => data, [data])
 
   return (
@@ -69,21 +70,21 @@ export default function TrafficFlowChart({ data, title, height = 350 }: TrafficF
             <Area
               yAxisId="left"
               type="monotone"
-              dataKey="unique"
+              dataKey={uniqueKey}
               stroke="var(--text-muted)"
               strokeWidth={2}
               fill="var(--text-muted)"
               fillOpacity={0.1}
-              name="Visitas únicas"
+              name="Unique"
             />
             <Area
               type="monotone"
-              dataKey="total"
+              dataKey={totalKey}
               stroke="#10b981"
               strokeWidth={2}
               fill="#10b981"
               fillOpacity={0.1}
-              name="Total visitas"
+              name="Total"
             />
           </AreaChart>
         </ResponsiveContainer>

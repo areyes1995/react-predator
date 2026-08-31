@@ -1,23 +1,34 @@
 // ──────────────────────────────────────────────
-// StandsVisitChart — Gráfico de barras comparativo
-// de tráfico entre stands/pabellones
+// BarChartCard — Reusable bar chart card
 // ──────────────────────────────────────────────
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
-export interface StandDataPoint {
+export interface BarDataPoint {
   name: string
   visitors: number
   avgStay: number
 }
 
-export interface StandsVisitChartProps {
-  data: StandDataPoint[]
+export interface BarChartCardProps {
+  data: BarDataPoint[]
   title?: string
   height?: number
+  primaryKey?: string
+  secondaryKey?: string
+  primaryName?: string
+  secondaryName?: string
 }
 
-export default function StandsVisitChart({ data, title, height = 350 }: StandsVisitChartProps) {
+export default function BarChartCard({
+  data,
+  title,
+  height = 350,
+  primaryKey = 'visitors',
+  secondaryKey = 'avgStay',
+  primaryName = 'Primary',
+  secondaryName = 'Secondary',
+}: BarChartCardProps) {
   return (
     <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] flex flex-col" style={{ height: `${height}px` }}>
       {title && (
@@ -49,27 +60,27 @@ export default function StandsVisitChart({ data, title, height = 350 }: StandsVi
             <Tooltip
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null
-                const d = payload[0]?.payload as StandDataPoint
+                const d = payload[0]?.payload as BarDataPoint
                 return (
                   <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-lg px-3 py-2 shadow-sm">
                     <p className="text-xs font-medium text-[var(--text-primary)] mb-1">{d.name}</p>
                     <div className="flex items-center gap-2 text-xs">
                       <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                      <span className="text-[var(--text-secondary)]">Visitantes</span>
-                      <span className="text-[var(--text-primary)] font-medium ml-auto">{d.visitors}</span>
+                      <span className="text-[var(--text-secondary)]">{primaryName}</span>
+                      <span className="text-[var(--text-primary)] font-medium ml-auto">{d[primaryKey]}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                      <span className="text-[var(--text-secondary)]">Tiempo prom.</span>
-                      <span className="text-[var(--text-primary)] font-medium ml-auto">{d.avgStay} min</span>
+                      <span className="text-[var(--text-secondary)]">{secondaryName}</span>
+                      <span className="text-[var(--text-primary)] font-medium ml-auto">{d[secondaryKey]}</span>
                     </div>
                   </div>
                 )
               }}
             />
             <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-            <Bar dataKey="visitors" fill="#3b82f6" name="Visitantes" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="avgStay" fill="#10b981" name="Tiempo (min)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey={primaryKey} fill="#3b82f6" name={primaryName} radius={[4, 4, 0, 0]} />
+            <Bar dataKey={secondaryKey} fill="#10b981" name={secondaryName} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
