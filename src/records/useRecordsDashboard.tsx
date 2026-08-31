@@ -68,7 +68,7 @@ export function dbModuleToRecordModule(mod: RecordModule): RecordModule {
   }
 }
 
-interface UseRecordsDashboardResult {
+export interface UseRecordsDashboardResult {
   activeItemLabel: string
   activeModule: RecordModule | undefined
   activeView: RecordViewOption
@@ -76,18 +76,21 @@ interface UseRecordsDashboardResult {
   menuCollapsed: boolean
   setMenuCollapsed: (collapsed: boolean) => void
   sidebarSections: SidebarSectionProps[]
-  menuTitle: string
-  menuItems: MenuItemProps[]
+  menuTitle: string | undefined
+  menuItems: MenuItemProps[] | undefined
   viewOptions: RecordViewOption[]
   handleSidebarClick: (slug: string) => void
   handleSelectCard: (slug: string) => void
+  isRecordsRoute: boolean
 }
 
 /** Read the collapsed state, migrating legacy key. */
 function readMenuCollapsed(): boolean {
   const current = localStorage.getItem(STORAGE_KEYS.menuCollapsed)
   if (current !== null) return current === 'true'
-  return localStorage.getItem('modu_notes_collapsed') === 'true'
+  const legacy = localStorage.getItem('modu_notes_collapsed')
+  if (legacy !== null) return legacy === 'true'
+  return true
 }
 
 export function useRecordsDashboard(): UseRecordsDashboardResult {
@@ -99,12 +102,13 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const allModules = useMemo<RecordModule[]>(() => {
-    return RECORD_MODULES
+    return RECORD_MODULES.filter(m => m.slug === 'records' || m.slug === 'projects')
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
   const baseSlug = segments[1] === 'records' ? (segments[2] ?? 'records') : (segments[1] ?? 'records')
   const viewSlug = segments[3] ?? 'overview'
+  const isRecordsRoute = segments[1] === 'dashboard' && segments[2] === 'records'
 
   const visibleModules = useMemo<RecordModule[]>(
     () => getVisibleRecordModules(user?.permissions),
@@ -136,9 +140,9 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     : activeModule
     ? (viewOptions.find(v => v.slug === viewSlug) ?? viewOptions[0] ?? fallbackView)
     : (generalView ?? viewOptions.find(v => v.slug === viewSlug) ?? viewOptions[0] ?? fallbackView)
-  const activeItemLabel = rbacBase ? rbacBase.title : activeModule?.label ?? activeView.label
-  const selectedCard = activeView.label
-  const menuTitle = rbacBase ? rbacBase.title : activeModule?.label ?? activeView.label
+  const activeItemLabel = isRecordsRoute ? (rbacBase ? rbacBase.title : activeModule?.label ?? activeView.label) : ''
+  const selectedCard = isRecordsRoute ? activeView.label : ''
+  const menuTitle = isRecordsRoute ? (rbacBase ? rbacBase.title : activeModule?.label ?? activeView.label) : undefined
 
   const goTo = useCallback((path: string) => {
     setMenuCollapsed(false)
@@ -155,12 +159,14 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     }
     const isStaticModule = RECORD_MODULES.some(m => m.slug === slug)
     const isModule = isStaticModule
-    goTo(isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
+    const isProjects = slug === 'projects'
+    goTo(isProjects ? '/app/dashboard/projects' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
   }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
+    const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
     const base = activeModule?.slug ?? baseSlug
-    goTo(`/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/projects/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {
@@ -216,6 +222,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
 
   const { t } = useAppTranslation()
   const menuItems = useMemo<MenuItemProps[]>(() => {
+    if (!isRecordsRoute) return []
     const summaryBadge = buildSummaryBadge(activeModule)
     const lastArchived = buildArchivedLabel(activeModule)
 
@@ -227,7 +234,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       badge: opt.kind === 'summary' ? summaryBadge : undefined,
       onClick: () => handleSelectCard(opt.slug),
     }))
-  }, [viewOptions, activeModule, activeView, handleSelectCard, t])
+  }, [viewOptions, activeModule, activeView, handleSelectCard, t, isRecordsRoute])
 
   return {
     activeItemLabel,
@@ -242,6 +249,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     viewOptions,
     handleSidebarClick,
     handleSelectCard,
+    isRecordsRoute,
   }
 }
 

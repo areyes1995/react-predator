@@ -24,6 +24,8 @@ export default function AppLayout() {
   const location = useLocation()
 
   const isSettingsRoute = location.pathname.startsWith('/app/settings')
+  const segments = location.pathname.split('/').filter(Boolean)
+  const isProjectsRoute = segments[1] === 'dashboard' && segments[2] === 'projects'
 
   const {
     menuCollapsed,
@@ -32,13 +34,15 @@ export default function AppLayout() {
     menuTitle,
     menuItems,
     activeModule,
+    isRecordsRoute,
   } = useRecordsDashboard()
 
   const crumbs = useMemo<BreadcrumbItem[]>(() => {
-    const segments = location.pathname.split('/').filter(Boolean)
     const items: BreadcrumbItem[] = [{ label: 'Home', to: '/app/home' }]
     if (isSettingsRoute) {
       items.push({ label: 'settings.title', to: '/app/settings' })
+    } else if (isProjectsRoute) {
+      items.push({ label: 'Projects' })
     } else if (segments[1] === 'dashboard' && segments[2] === 'records') {
       const module = activeModule
       if (module) {
@@ -61,7 +65,7 @@ export default function AppLayout() {
       items.push({ label: page?.label ?? segments[1] })
     }
     return items
-  }, [location.pathname, activeModule, isSettingsRoute])
+  }, [location.pathname, activeModule, isSettingsRoute, isProjectsRoute])
 
   const handleLogout = async () => {
     await logout()
@@ -75,27 +79,31 @@ export default function AppLayout() {
     status: 'online' as const,
   }
 
+  const sidebar = isSettingsRoute ? null : (
+    <Sidebar
+      sections={sidebarSections}
+      user={displayUser}
+      onLogout={handleLogout}
+      onSettings={() => { setMenuCollapsed(true); navigate('/app/settings') }}
+    />
+  )
+
+  const menuPanel = isSettingsRoute || isProjectsRoute ? null : (
+    <MenuPanel
+      title={menuTitle ?? 'Orchestrator'}
+      items={menuItems ?? []}
+      search={{}}
+      autoHideSeconds={3}
+      collapsed={menuCollapsed}
+      onCollapsedChange={setMenuCollapsed}
+    />
+  )
+
   return (
     <ReloadNotificationProvider>
       <DashboardLayout
-        sidebar={
-          <Sidebar
-            sections={sidebarSections}
-            user={displayUser}
-            onLogout={handleLogout}
-            onSettings={() => { setMenuCollapsed(true); navigate('/app/settings') }}
-          />
-        }
-        menuPanel={
-          <MenuPanel
-            title={menuTitle ?? 'Orchestrator'}
-            items={menuItems ?? []}
-            search={{}}
-            autoHideSeconds={3}
-            collapsed={menuCollapsed}
-            onCollapsedChange={setMenuCollapsed}
-          />
-        }
+        sidebar={sidebar}
+        menuPanel={menuPanel}
         mainContent={
           <>
             <ReloadNotificationBanner />
