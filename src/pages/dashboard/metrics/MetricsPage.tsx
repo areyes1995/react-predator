@@ -4,18 +4,14 @@
 // ──────────────────────────────────────────────
 
 import { useEffect, useState, useCallback } from 'react'
-import { Users, Clock, MessageSquare, CheckCircle2, UserCheck, RefreshCw } from 'lucide-react'
-import { ViewHeader } from '../../../components/ui'
+import { Users, Clock, MessageSquare, CheckCircle2, UserCheck, Activity } from 'lucide-react'
+import { KpiCard, MetricGrid, ChartRow, DonutChart, ProgressCard, type KpiCardProps, type ProgressItem, type DonutDataPoint } from '../../../components/charts'
+import { EmptyState, PageLayout, SkeletonGrid, SkeletonChartCard, ExpandableTable, type ExpandableTableProps } from '../../../components/ui'
 import { useAppTranslation } from '../../../i18n/useAppTranslation'
 import TimeRangeFilter, { type TimeRange } from './TimeRangeFilter'
 import ExportDropdown from './ExportDropdown'
-import MetricCard from './MetricCard'
 import TrafficFlowChart from './TrafficFlowChart'
 import StandsVisitChart from './StandsVisitChart'
-import InteractionTypeChart from './InteractionTypeChart'
-import FrequentQuestions from './FrequentQuestions'
-import RagLatency from './RagLatency'
-import AuditLog, { type AuditEntry } from './AuditLog'
 
 // ──────────────────────────────────────────────
 // Mock data types
@@ -125,75 +121,17 @@ const MOCK_AUDIT_ENTRIES: AuditEntry[] = [
 ]
 
 // ──────────────────────────────────────────────
-// Skeleton loader
-// ──────────────────────────────────────────────
-
-function MetricsSkeleton() {
-  return (
-    <div className="space-y-6 animate-pulse">
-      {/* KPI cards skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-32">
-            <div className="h-3 bg-[var(--bg-surface-hover)] rounded w-2/3 mb-3" />
-            <div className="h-6 bg-[var(--bg-surface-hover)] rounded w-1/2" />
-          </div>
-        ))}
-      </div>
-      {/* Charts skeleton */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
-          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
-          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ──────────────────────────────────────────────
-// Empty state
+// Empty state — use shared EmptyState component
 // ──────────────────────────────────────────────
 
 function MetricsEmpty({ onRefresh }: { onRefresh: () => void }) {
   const { t } = useAppTranslation()
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-full bg-[var(--bg-surface-hover)] flex items-center justify-center mb-4">
-        <RefreshCw className="w-8 h-8 text-[var(--text-muted)]" />
-      </div>
-      <p className="text-[var(--text-muted)] mb-4">{t('metrics.empty')}</p>
-      <button
-        onClick={onRefresh}
-        className="px-4 py-2 rounded-lg bg-[var(--bg-surface-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--border-active)] transition-colors"
-      >
-        {t('metrics.refresh')}
-      </button>
-    </div>
+    <EmptyState
+      message={t('metrics.empty')}
+      actionLabel={t('metrics.refresh')}
+      onAction={onRefresh}
+    />
   )
 }
 
@@ -211,15 +149,11 @@ export default function MetricsPage() {
   const loadMetrics = useCallback(() => {
     setLoading(true)
     // TODO: Reemplazar con llamada al endpoint backend /api/v1/analytics?range={timeRange}
-    // fetch(`/api/v1/analytics?range=${timeRange}`)
-    //   .then(res => res.json())
-    //   .then(data => { setData(data); setLoading(false) })
-    //   .catch(() => { setLoading(false); setDataLoaded(true) })
     setTimeout(() => {
       setDataLoaded(true)
       setLoading(false)
     }, 1200)
-  }, [timeRange])
+  }, [])
 
   useEffect(() => {
     loadMetrics()
@@ -227,141 +161,130 @@ export default function MetricsPage() {
 
   const handleExport = (format: 'pdf' | 'csv' | 'excel') => {
     // TODO: Implementar exportación real
-    // window.open(`/api/v1/analytics/export?format=${format}`, '_blank')
     console.log(`Exporting metrics as ${format}`)
   }
 
   // KPI data (mock)
-  const kpis = [
-    {
-      label: 'metrics.uniqueVisitors',
-      value: '2,450',
-      trend: 12,
-      icon: <Users className="w-5 h-5" />,
-      accentClass: 'text-blue-400',
-    },
-    {
-      label: 'metrics.avgStayTime',
-      value: '14 min 30s',
-      trend: 5,
-      icon: <Clock className="w-5 h-5" />,
-      accentClass: 'text-emerald-400',
-    },
-    {
-      label: 'metrics.aiInteractions',
-      value: '5,820',
-      trend: 18,
-      icon: <MessageSquare className="w-5 h-5" />,
-      accentClass: 'text-purple-400',
-    },
-    {
-      label: 'metrics.ragSuccessRate',
-      value: '96.4%',
-      trend: 2.1,
-      icon: <CheckCircle2 className="w-5 h-5" />,
-      accentClass: 'text-emerald-500',
-    },
-    {
-      label: 'metrics.leadsCaptured',
-      value: '340',
-      trend: -3,
-      icon: <UserCheck className="w-5 h-5" />,
-      accentClass: 'text-amber-400',
-    },
+  const kpiMetrics: KpiCardProps[] = [
+    { label: 'metrics.uniqueVisitors', value: '2,450', trend: 12, icon: <Users className="w-5 h-5" />, accentClass: 'text-blue-400' },
+    { label: 'metrics.avgStayTime', value: '14 min 30s', trend: 5, icon: <Clock className="w-5 h-5" />, accentClass: 'text-emerald-400' },
+    { label: 'metrics.aiInteractions', value: '5,820', trend: 18, icon: <MessageSquare className="w-5 h-5" />, accentClass: 'text-purple-400' },
+    { label: 'metrics.ragSuccessRate', value: '96.4%', trend: 2.1, icon: <CheckCircle2 className="w-5 h-5" />, accentClass: 'text-emerald-500' },
+    { label: 'metrics.leadsCaptured', value: '340', trend: -3, icon: <UserCheck className="w-5 h-5" />, accentClass: 'text-amber-400' },
   ]
 
+  // Convert mock data to DonutChart format
+  const donutData: DonutDataPoint[] = MOCK_INTERACTION_DATA.map((item) => ({
+    name: item.name,
+    value: item.value,
+    color: item.color,
+  }))
+
+  // Convert mock data to ProgressCard format
+  const progressData: ProgressItem[] = MOCK_LATENCY_DATA.map((item) => ({
+    label: item.label,
+    value: item.value,
+    max: item.max,
+    status: item.status,
+  }))
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
-        <div className="border-b border-[var(--border)]">
-          <ViewHeader title={t('metrics.title')} subtitle={t('metrics.subtitle')} />
-
-          {/* Controls bar */}
-          <div className="px-4 lg:px-6 py-3">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <TimeRangeFilter
-                value={timeRange}
-                onChange={(val) => {
-                  setTimeRange(val)
-                  setLoading(true)
-                  setTimeout(() => {
-                    setDataLoaded(true)
-                    setLoading(false)
-                  }, 800)
-                }}
-              />
-              <ExportDropdown onExport={handleExport} />
-            </div>
-          </div>
+    <PageLayout
+      title={t('metrics.title')}
+      subtitle={t('metrics.subtitle')}
+      controls={
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <TimeRangeFilter
+            value={timeRange}
+            onChange={(val) => {
+              setTimeRange(val)
+              setLoading(true)
+              setTimeout(() => {
+                setDataLoaded(true)
+                setLoading(false)
+              }, 800)
+            }}
+          />
+          <ExportDropdown onExport={handleExport} />
         </div>
+      }
+    >
+      {loading ? (
+        <>
+          <SkeletonGrid count={5} cardHeight="h-32" />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <SkeletonChartCard height={320} />
+            <SkeletonChartCard height={320} />
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <SkeletonChartCard height={320} />
+            <SkeletonChartCard height={320} />
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <SkeletonChartCard height={320} />
+            <SkeletonChartCard height={320} />
+          </div>
+        </>
+      ) : dataLoaded ? (
+        <div className="space-y-6">
+          <MetricGrid metrics={kpiMetrics} />
 
-        {/* Main content */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {loading ? (
-            <MetricsSkeleton />
-          ) : dataLoaded ? (
-            <div className="space-y-6">
-              {/* KPI Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-                {kpis.map((kpi, i) => (
-                  <MetricCard
-                    key={i}
-                    label={kpi.label}
-                    value={kpi.value}
-                    trend={kpi.trend}
-                    icon={kpi.icon}
-                    accentClass={kpi.accentClass}
-                  />
-                ))}
-              </div>
+          <ChartRow
+            left={<TrafficFlowChart data={MOCK_TRAFFIC_DATA} title="metrics.trafficFlow" height={350} />}
+            right={<StandsVisitChart data={MOCK_STANDS_DATA} title="metrics.popularStands" height={350} />}
+          />
 
-              {/* Charts row 1: Traffic + Stands */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <TrafficFlowChart
-                  data={MOCK_TRAFFIC_DATA}
-                  title="metrics.trafficFlow"
-                  height={350}
-                />
-                <StandsVisitChart
-                  data={MOCK_STANDS_DATA}
-                  title="metrics.popularStands"
-                  height={350}
-                />
-              </div>
-
-              {/* Charts row 2: Interaction types + FAQ */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <InteractionTypeChart
-                  data={MOCK_INTERACTION_DATA}
-                  title="metrics.interactionTypes"
-                  className=""
-                />
-                <FrequentQuestions
-                  data={MOCK_FAQ_DATA}
-                  title="metrics.frequentQuestions"
+          <ChartRow
+            left={<DonutChart title="metrics.interactionTypes" items={donutData} />}
+            right={
+              <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] h-full">
+                <div className="flex items-center gap-2 mb-4">
+                  <MessageSquare className="w-4 h-4 text-[var(--text-muted)]" />
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t('metrics.frequentQuestions')}</h3>
+                </div>
+                <ExpandableTable
+                  items={MOCK_FAQ_DATA.map((faq) => (
+                    <tr key={faq.question} className="border-b border-[var(--border)] last:border-none hover:bg-[var(--bg-surface-hover)] transition-colors">
+                      <td className="py-2 px-1 text-[var(--text-muted)] font-mono text-xs">#</td>
+                      <td className="py-2 px-1 text-[var(--text-primary)]">{faq.question}</td>
+                      <td className="py-2 px-1 text-center text-[var(--text-primary)] font-medium">{faq.count.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  total={MOCK_FAQ_DATA.length}
                   maxItems={8}
                 />
               </div>
+            }
+          />
 
-              {/* AI Intelligence row: Latency */}
-              <RagLatency
-                avgResponseTime={460}
-                breakdown={MOCK_LATENCY_DATA}
-                title="metrics.ragLatency"
-              />
+          <ProgressCard
+            avgValue={460}
+            avgSuffix="ms"
+            items={progressData}
+            title="metrics.ragLatency"
+          />
 
-              {/* Audit Log */}
-              <AuditLog
-                entries={MOCK_AUDIT_ENTRIES}
-                title="metrics.auditLog"
-                maxEntries={10}
-              />
+          <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 transition-all duration-300 hover:scale-[1.02] hover:bg-[var(--bg-surface-hover)] hover:border-[var(--border-active)] h-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-4 h-4 text-[var(--text-muted)]" />
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t('metrics.auditLog')}</h3>
             </div>
-          ) : (
-            <MetricsEmpty onRefresh={loadMetrics} />
-          )}
+            <ExpandableTable
+              items={MOCK_AUDIT_ENTRIES.map((entry) => (
+                <tr key={entry.event} className="border-b border-[var(--border)] last:border-none hover:bg-[var(--bg-surface-hover)] transition-colors">
+                  <td className="py-2 px-1 text-[var(--text-primary)]">{entry.event}</td>
+                  <td className="py-2 px-1 text-[var(--text-secondary)]">{entry.user}</td>
+                  <td className="py-2 px-1 text-[var(--text-muted)]">{entry.timestamp}</td>
+                </tr>
+              ))}
+              total={MOCK_AUDIT_ENTRIES.length}
+              maxItems={10}
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <MetricsEmpty onRefresh={loadMetrics} />
+      )}
+    </PageLayout>
   )
 }
