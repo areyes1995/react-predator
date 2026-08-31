@@ -14,7 +14,6 @@ import ReportsPage from '../pages/dashboard/reports/ReportsPage'
 import AttritionReport from '../pages/dashboard/reports/AttritionReport'
 import AdminPage from '../pages/dashboard/AdminPage'
 import ConnectionsPage from '../pages/dashboard/integrations/ConnectionsPage'
-import StandsPage from '../pages/dashboard/stands/StandsPage'
 import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
 import SettingsView from '../components/settings/SettingsView'
@@ -52,7 +51,6 @@ export const router = createBrowserRouter([
         { path: 'reports/attrition', element: <AttritionReport /> },
         { path: 'connections', element: <ConnectionsPage /> },
         { path: 'admin', element: <AdminPage /> },
-        { path: 'stands', element: <StandsPage /> },
         { path: 'settings', element: <SettingsView /> },
         { path: '*', element: <NotFound /> },
       ]},
@@ -63,7 +61,6 @@ export const router = createBrowserRouter([
       { path: 'reports/attrition', element: <AttritionReport /> },
       { path: 'connections', element: <ConnectionsPage /> },
       { path: 'admin', element: <AdminPage /> },
-      { path: 'stands', element: <StandsPage /> },
       { path: 'settings', element: <SettingsView /> },
       { path: '*', element: <NotFound /> },
     ],

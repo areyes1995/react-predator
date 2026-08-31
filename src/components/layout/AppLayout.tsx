@@ -25,8 +25,7 @@ export default function AppLayout() {
   const segments = location.pathname.split('/').filter(Boolean)
 
   const isSettingsRoute = location.pathname.startsWith('/app/settings')
-  const isProjectsRoute = segments[1] === 'dashboard' && segments[2] === 'projects'
-  const isStandsRoute = segments[1] === 'dashboard' && segments[2] === 'stands'
+  const isProjectsRoute = segments[1] === 'dashboard' && (segments[2] === 'projects' || segments[2] === 'stands')
 
   const {
     menuCollapsed,
@@ -43,7 +42,7 @@ export default function AppLayout() {
     if (isSettingsRoute) {
       items.push({ label: 'settings.title', to: '/app/settings' })
     } else if (isProjectsRoute) {
-      items.push({ label: 'Projects' })
+      items.push({ label: segments[2] === 'stands' ? 'Stands' : 'Projects' })
     } else if (segments[1] === 'dashboard' && segments[2] === 'records') {
       const module = activeModule
       if (module) {
@@ -66,7 +65,7 @@ export default function AppLayout() {
       items.push({ label: page?.label ?? segments[1] })
     }
     return items
-  }, [location.pathname, activeModule, isSettingsRoute, isProjectsRoute, isStandsRoute])
+  }, [location.pathname, activeModule, isSettingsRoute, isProjectsRoute])
 
   const handleLogout = async () => {
     await logout()
@@ -89,7 +88,7 @@ export default function AppLayout() {
     />
   )
 
-  const menuPanel = isSettingsRoute || isProjectsRoute || isStandsRoute ? null : (
+  const menuPanel = isSettingsRoute || isProjectsRoute ? null : (
     <MenuPanel
       title={menuTitle ?? 'Orchestrator'}
       items={menuItems ?? []}

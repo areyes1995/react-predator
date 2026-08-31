@@ -355,7 +355,7 @@ export default function RecordsView({ module, view }: RecordsViewProps) {
     return view.kind === 'upload' ? <UploadDocumentView /> : <RagSearchView />
   }
 
-  if (module.slug === 'projects') {
+  if (module.slug === 'projects' || module.slug === 'stands') {
     const role = user?.role === 'admin' ? 'admin' : user?.role === 'expositor' ? 'expositor' : 'visitor'
     return <ProjectsView role={role} />
   }

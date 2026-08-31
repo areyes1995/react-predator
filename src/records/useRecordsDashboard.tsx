@@ -102,7 +102,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const allModules = useMemo<RecordModule[]>(() => {
-    return RECORD_MODULES.filter(m => m.slug === 'projects')
+    return RECORD_MODULES.filter(m => m.slug === 'projects' || m.slug === 'stands')
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
@@ -159,14 +159,14 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     }
     const isStaticModule = RECORD_MODULES.some(m => m.slug === slug)
     const isModule = isStaticModule
-    const isProjects = slug === 'projects'
+    const isProjects = slug === 'projects' || slug === 'stands'
     goTo(isProjects ? '/app/dashboard/projects' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
   }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
-    const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
+    const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects' || activeModule?.slug === 'stands' || baseSlug === 'stands'
     const base = activeModule?.slug ?? baseSlug
-    goTo(isProjects ? `/app/dashboard/projects/${slug}` : `/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/${activeModule?.slug ?? 'projects'}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {

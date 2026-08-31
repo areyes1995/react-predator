@@ -9,6 +9,7 @@ import {
   BadgeCheck,
   ShieldCheck,
   LayoutGrid,
+  Tent,
 } from 'lucide-react'
 import type { RecordColumn, RecordModule, RecordViewOption } from './types'
 
@@ -92,6 +93,14 @@ const permissionsColumns: RecordColumn[] = [
   { key: 'owner', header: 'Owner', type: 'text' },
 ]
 
+/** Columns for Stands. */
+const standsColumns: RecordColumn[] = [
+  { key: 'id', header: 'Stand', type: 'text' },
+  { key: 'category', header: 'Category', type: 'text', chartGroup: true },
+  { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
+  { key: 'owner', header: 'Owner', type: 'text' },
+]
+
 /** The record modules rendered in the sidebar dropdown + notes panel. */
 export const RECORD_MODULES: RecordModule[] = [
   { label: 'Records View', slug: 'records', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: RAG_VIEW_OPTIONS, columns: recordsViewColumns },
@@ -101,6 +110,7 @@ export const RECORD_MODULES: RecordModule[] = [
   { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
   { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
   { label: 'Projects', slug: 'projects', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: recordsViewColumns },
+  { label: 'Stands', slug: 'stands', color: 'cyan', icon: <Tent className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: standsColumns },
 ]
 
 /** Generic menu used for the Home overview (single view). */
