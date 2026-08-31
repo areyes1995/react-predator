@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   ScrollText,
   FileText,
+  Tent,
 } from 'lucide-react'
 import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
 
@@ -46,6 +47,12 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
       { icon: <KeyRound className="w-4 h-4" strokeWidth={1.5} />, label: 'Roles', slug: 'roles', path: '/app/dashboard/records/roles', permission: 'module:permissions' },
       { icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, label: 'Permissions', slug: 'permissions', path: '/app/dashboard/records/permissions', permission: 'module:permissions' },
       { icon: <ScrollText className="w-4 h-4" strokeWidth={1.5} />, label: 'Audit Logs', slug: 'logs', path: '/app/dashboard/admin' },
+    ],
+  },
+  {
+    title: 'Exhibition',
+    items: [
+      { icon: <Tent className="w-4 h-4" strokeWidth={1.5} />, label: 'Stands', slug: 'stands', path: '/app/dashboard/stands' },
     ],
   },
   {

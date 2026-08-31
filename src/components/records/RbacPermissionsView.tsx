@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Loader2, AlertCircle } from 'lucide-react'
-import ViewHeader from '../ui/ViewHeader'
+import ViewHeader from '../ui/layout/ViewHeader'
 import { buildDynamicTable } from '../../records/dynamicColumns'
 import { getPermissions } from '../../services/rbac'
 import type { PermissionDto } from '../../services/rbac'

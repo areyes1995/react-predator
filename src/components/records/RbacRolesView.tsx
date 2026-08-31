@@ -8,7 +8,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, Loader2, AlertCircle, KeyRound } from 'lucide-react'
-import ViewHeader from '../ui/ViewHeader'
+import ViewHeader from '../ui/layout/ViewHeader'
 import Expandable from '../ui/Expandable'
 import { buildDynamicTable } from '../../records/dynamicColumns'
 import { getRoles } from '../../services/rbac'

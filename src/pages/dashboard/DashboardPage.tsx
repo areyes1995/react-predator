@@ -5,12 +5,12 @@
 // ──────────────────────────────────────────────
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Search, Filter, ChevronDown, Plus } from 'lucide-react'
+import { Search, Filter, ChevronDown, Plus, FolderOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ProjectCard from './projects/components/ProjectCard'
-import ProjectCardSkeleton from './projects/components/ProjectCardSkeleton'
-import ProjectCardEmpty from './projects/components/ProjectCardEmpty'
-import ProjectCardError from './projects/components/ProjectCardError'
+import EntityCardSkeleton from '../../components/ui/cards/EntityCardSkeleton'
+import CardError from '../../components/ui/cards/CardError'
+import CardEmpty from '../../components/ui/cards/CardEmpty'
 import ProjectDetailModal from './projects/components/ProjectDetailModal'
 import type { ProjectRole, ProjectTab, ProjectSearchFilters, ProjectData } from './projects/types'
 import { PROJECTS_DATA, PROJECT_CATEGORIES } from './projects/data'
@@ -194,16 +194,20 @@ export default function DashboardPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <ProjectCardSkeleton key={i} />
+              <EntityCardSkeleton key={i} count={1} />
             ))}
           </div>
         ) : error ? (
           <div className="p-4 lg:p-6">
-            <ProjectCardError />
+            <CardError />
           </div>
         ) : projects.length === 0 ? (
           <div className="p-4 lg:p-6">
-            <ProjectCardEmpty role={role} />
+            <CardEmpty
+              icon={FolderOpen}
+              message={role === 'admin' ? 'No hay proyectos registrados. Haz clic en "+ New Project" para crear uno.' : role === 'expositor' ? 'Aún no tienes proyectos. ¡Comienza creando tu primer proyecto!' : 'No hay proyectos disponibles en este momento. Vuelve pronto.'}
+              role={role}
+            />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:p-6">

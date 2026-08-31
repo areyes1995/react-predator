@@ -3,7 +3,7 @@
 // for main-area views
 // ──────────────────────────────────────────────
 
-import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
 
 export interface ViewHeaderProps {
   title: string

@@ -22,10 +22,11 @@ export default function AppLayout() {
   const { user: authUser, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const segments = location.pathname.split('/').filter(Boolean)
 
   const isSettingsRoute = location.pathname.startsWith('/app/settings')
-  const segments = location.pathname.split('/').filter(Boolean)
   const isProjectsRoute = segments[1] === 'dashboard' && segments[2] === 'projects'
+  const isStandsRoute = segments[1] === 'dashboard' && segments[2] === 'stands'
 
   const {
     menuCollapsed,
@@ -65,7 +66,7 @@ export default function AppLayout() {
       items.push({ label: page?.label ?? segments[1] })
     }
     return items
-  }, [location.pathname, activeModule, isSettingsRoute, isProjectsRoute])
+  }, [location.pathname, activeModule, isSettingsRoute, isProjectsRoute, isStandsRoute])
 
   const handleLogout = async () => {
     await logout()
@@ -88,7 +89,7 @@ export default function AppLayout() {
     />
   )
 
-  const menuPanel = isSettingsRoute || isProjectsRoute ? null : (
+  const menuPanel = isSettingsRoute || isProjectsRoute || isStandsRoute ? null : (
     <MenuPanel
       title={menuTitle ?? 'Orchestrator'}
       items={menuItems ?? []}
