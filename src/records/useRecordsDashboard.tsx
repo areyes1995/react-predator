@@ -102,7 +102,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const allModules = useMemo<RecordModule[]>(() => {
-    return RECORD_MODULES.filter(m => m.slug === 'records' || m.slug === 'projects')
+    return RECORD_MODULES.filter(m => m.slug === 'projects')
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
