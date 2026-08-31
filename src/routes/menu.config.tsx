@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   ScrollText,
   FileText,
+  BarChart3,
 } from 'lucide-react'
 import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
 
@@ -52,6 +53,12 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
     title: 'Reports',
     items: [
       { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Attrition Report', slug: 'attrition-report', path: '/app/dashboard/reports/attrition' },
+    ],
+  },
+  {
+    title: 'Analytics',
+    items: [
+      { icon: <BarChart3 className="w-4 h-4 text-emerald-400" strokeWidth={1.5} />, label: 'Metrics & Analytics', slug: 'metrics', path: '/app/dashboard/metrics' },
     ],
   },
 ]

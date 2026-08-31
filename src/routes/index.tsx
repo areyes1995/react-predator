@@ -19,6 +19,7 @@ import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
 import SettingsView from '../components/settings/SettingsView'
 import KnowledgeBasePage from '../pages/dashboard/knowledge-base/KnowledgeBasePage'
+import MetricsPage from '../pages/dashboard/metrics/MetricsPage'
 
 export const router = createBrowserRouter([
   {
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
         { path: 'admin', element: <AdminPage /> },
         { path: 'settings', element: <SettingsView /> },
         { path: 'knowledge-base', element: <KnowledgeBasePage /> },
+        { path: 'metrics', element: <MetricsPage /> },
         { path: '*', element: <NotFound /> },
       ]},
       { path: 'records/:base?/:view?', element: <RecordsRoute /> },
@@ -67,6 +69,7 @@ export const router = createBrowserRouter([
       { path: 'admin', element: <AdminPage /> },
       { path: 'settings', element: <SettingsView /> },
       { path: 'knowledge-base', element: <KnowledgeBasePage /> },
+      { path: 'metrics', element: <MetricsPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -1,0 +1,367 @@
+// ──────────────────────────────────────────────
+// MetricsPage — Dashboard de Métricas y Analíticas
+// de Rendimiento para UAPAverse
+// ──────────────────────────────────────────────
+
+import { useEffect, useState, useCallback } from 'react'
+import { Users, Clock, MessageSquare, CheckCircle2, UserCheck, RefreshCw } from 'lucide-react'
+import { ViewHeader } from '../../../components/ui'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
+import TimeRangeFilter, { type TimeRange } from './TimeRangeFilter'
+import ExportDropdown from './ExportDropdown'
+import MetricCard from './MetricCard'
+import TrafficFlowChart from './TrafficFlowChart'
+import StandsVisitChart from './StandsVisitChart'
+import InteractionTypeChart from './InteractionTypeChart'
+import FrequentQuestions from './FrequentQuestions'
+import RagLatency from './RagLatency'
+import AuditLog, { type AuditEntry } from './AuditLog'
+
+// ──────────────────────────────────────────────
+// Mock data types
+// ──────────────────────────────────────────────
+
+export interface TrafficDataPoint {
+  time: string
+  unique: number
+  total: number
+}
+
+export interface StandDataPoint {
+  name: string
+  visitors: number
+  avgStay: number
+}
+
+export interface InteractionDataPoint {
+  name: string
+  value: number
+  color: string
+}
+
+export interface FAQItem {
+  question: string
+  count: number
+  satisfaction: number
+}
+
+export interface LatencyMetric {
+  label: string
+  value: number
+  max: number
+  status: 'good' | 'warning' | 'critical'
+}
+
+// ──────────────────────────────────────────────
+// Mock data (TODO: Reemplazar con llamadas al
+// endpoint backend /api/v1/analytics)
+// ──────────────────────────────────────────────
+
+const MOCK_TRAFFIC_DATA: TrafficDataPoint[] = [
+  { time: '08:00', unique: 12, total: 18 },
+  { time: '09:00', unique: 45, total: 72 },
+  { time: '10:00', unique: 120, total: 185 },
+  { time: '11:00', unique: 230, total: 340 },
+  { time: '12:00', unique: 310, total: 480 },
+  { time: '13:00', unique: 385, total: 560 },
+  { time: '14:00', unique: 420, total: 610 },
+  { time: '15:00', unique: 395, total: 580 },
+  { time: '16:00', unique: 350, total: 510 },
+  { time: '17:00', unique: 280, total: 420 },
+  { time: '18:00', unique: 190, total: 290 },
+  { time: '19:00', unique: 110, total: 170 },
+]
+
+const MOCK_STANDS_DATA: StandDataPoint[] = [
+  { name: 'Pab. A - Tech', visitors: 520, avgStay: 18 },
+  { name: 'Pab. B - Design', visitors: 480, avgStay: 22 },
+  { name: 'Pab. C - Media', visitors: 390, avgStay: 15 },
+  { name: 'Pab. D - AI', visitors: 360, avgStay: 20 },
+  { name: 'Pab. E - Startup', visitors: 280, avgStay: 12 },
+  { name: 'Pab. F - Edu', visitors: 210, avgStay: 25 },
+]
+
+const MOCK_INTERACTION_DATA: InteractionDataPoint[] = [
+  { name: 'Consultas Avatar', value: 3420, color: '#3b82f6' },
+  { name: 'Fichas Técnicas', value: 1240, color: '#10b981' },
+  { name: 'Formularios', value: 890, color: '#f59e0b' },
+  { name: 'Descargas', value: 270, color: '#8b5cf6' },
+]
+
+const MOCK_FAQ_DATA: FAQItem[] = [
+  { question: '¿Cuál es la duración del evento?', count: 342, satisfaction: 4.5 },
+  { question: '¿Cómo accedo al avatar virtual del stand?', count: 287, satisfaction: 4.2 },
+  { question: '¿Qué tipos de stands están disponibles?', count: 198, satisfaction: 3.8 },
+  { question: '¿Puedo descargar las fichas técnicas?', count: 156, satisfaction: 4.7 },
+  { question: '¿Hay límite de interacciones con el avatar?', count: 134, satisfaction: 4.0 },
+  { question: '¿Cómo registro mi empresa en el evento?', count: 112, satisfaction: 3.5 },
+  { question: '¿El avatar puede responder en inglés?', count: 89, satisfaction: 4.3 },
+  { question: '¿Puedo personalizar mi avatar?', count: 76, satisfaction: 4.1 },
+  { question: '¿Dónde encuentro el programa del evento?', count: 65, satisfaction: 4.6 },
+  { question: '¿Hay costo para participar?', count: 52, satisfaction: 4.8 },
+  { question: '¿Puedo conectar con otros visitantes?', count: 41, satisfaction: 3.9 },
+  { question: '¿Cómo contacto al equipo del evento?', count: 28, satisfaction: 4.4 },
+]
+
+const MOCK_LATENCY_DATA: LatencyMetric[] = [
+  { label: 'Parsing', value: 45, max: 200, status: 'good' },
+  { label: 'Retrieval', value: 120, max: 500, status: 'good' },
+  { label: 'Execution', value: 85, max: 300, status: 'good' },
+  { label: 'Generation', value: 210, max: 500, status: 'warning' },
+]
+
+const MOCK_AUDIT_ENTRIES: AuditEntry[] = [
+  { timestamp: '2026-08-31 14:32:15', event: 'Export report', user: 'admin@uapaverse.com', status: 'success', detail: 'PDF export completed' },
+  { timestamp: '2026-08-31 13:18:42', event: 'Knowledge document uploaded', user: 'editor@uapaverse.com', status: 'success', detail: 'Stand_A_TechSpec.pdf ingested' },
+  { timestamp: '2026-08-31 12:05:33', event: 'Login', user: 'admin@uapaverse.com', status: 'success' },
+  { timestamp: '2026-08-31 11:42:10', event: 'FAQ created', user: 'editor@uapaverse.com', status: 'success', detail: 'New FAQ added to Pab. A module' },
+  { timestamp: '2026-08-31 10:55:21', event: 'Change settings', user: 'admin@uapaverse.com', status: 'info', detail: 'Theme changed to dark' },
+  { timestamp: '2026-08-31 09:30:00', event: 'Document uploaded', user: 'editor@uapaverse.com', status: 'error', detail: 'File corrupted, processing failed' },
+  { timestamp: '2026-08-30 18:45:12', event: 'Logout', user: 'admin@uapaverse.com', status: 'info' },
+  { timestamp: '2026-08-30 17:20:35', event: 'Export report', user: 'admin@uapaverse.com', status: 'success', detail: 'CSV export completed' },
+  { timestamp: '2026-08-30 14:10:45', event: 'Login', user: 'admin@uapaverse.com', status: 'success' },
+  { timestamp: '2026-08-30 13:55:28', event: 'Knowledge document uploaded', user: 'moderator@uapaverse.com', status: 'success', detail: 'AI_Module_Docs.pdf ingested' },
+  { timestamp: '2026-08-30 10:00:00', event: 'System backup', user: 'system', status: 'success', detail: 'Daily backup completed successfully' },
+]
+
+// ──────────────────────────────────────────────
+// Skeleton loader
+// ──────────────────────────────────────────────
+
+function MetricsSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      {/* KPI cards skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-32">
+            <div className="h-3 bg-[var(--bg-surface-hover)] rounded w-2/3 mb-3" />
+            <div className="h-6 bg-[var(--bg-surface-hover)] rounded w-1/2" />
+          </div>
+        ))}
+      </div>
+      {/* Charts skeleton */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+        <div className="bg-[var(--bg-surface-soft)] border border-[var(--border)] rounded-xl p-5 h-80">
+          <div className="h-4 bg-[var(--bg-surface-hover)] rounded w-1/2 mb-4" />
+          <div className="h-full bg-[var(--bg-surface-hover)] rounded opacity-50" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────
+// Empty state
+// ──────────────────────────────────────────────
+
+function MetricsEmpty({ onRefresh }: { onRefresh: () => void }) {
+  const { t } = useAppTranslation()
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="w-16 h-16 rounded-full bg-[var(--bg-surface-hover)] flex items-center justify-center mb-4">
+        <RefreshCw className="w-8 h-8 text-[var(--text-muted)]" />
+      </div>
+      <p className="text-[var(--text-muted)] mb-4">{t('metrics.empty')}</p>
+      <button
+        onClick={onRefresh}
+        className="px-4 py-2 rounded-lg bg-[var(--bg-surface-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--border-active)] transition-colors"
+      >
+        {t('metrics.refresh')}
+      </button>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────
+// MetricsPage — Main dashboard component
+// ──────────────────────────────────────────────
+
+export default function MetricsPage() {
+  const { t } = useAppTranslation()
+
+  const [timeRange, setTimeRange] = useState<TimeRange>('today')
+  const [loading, setLoading] = useState(true)
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  const loadMetrics = useCallback(() => {
+    setLoading(true)
+    // TODO: Reemplazar con llamada al endpoint backend /api/v1/analytics?range={timeRange}
+    // fetch(`/api/v1/analytics?range=${timeRange}`)
+    //   .then(res => res.json())
+    //   .then(data => { setData(data); setLoading(false) })
+    //   .catch(() => { setLoading(false); setDataLoaded(true) })
+    setTimeout(() => {
+      setDataLoaded(true)
+      setLoading(false)
+    }, 1200)
+  }, [timeRange])
+
+  useEffect(() => {
+    loadMetrics()
+  }, [loadMetrics])
+
+  const handleExport = (format: 'pdf' | 'csv' | 'excel') => {
+    // TODO: Implementar exportación real
+    // window.open(`/api/v1/analytics/export?format=${format}`, '_blank')
+    console.log(`Exporting metrics as ${format}`)
+  }
+
+  // KPI data (mock)
+  const kpis = [
+    {
+      label: 'metrics.uniqueVisitors',
+      value: '2,450',
+      trend: 12,
+      icon: <Users className="w-5 h-5" />,
+      accentClass: 'text-blue-400',
+    },
+    {
+      label: 'metrics.avgStayTime',
+      value: '14 min 30s',
+      trend: 5,
+      icon: <Clock className="w-5 h-5" />,
+      accentClass: 'text-emerald-400',
+    },
+    {
+      label: 'metrics.aiInteractions',
+      value: '5,820',
+      trend: 18,
+      icon: <MessageSquare className="w-5 h-5" />,
+      accentClass: 'text-purple-400',
+    },
+    {
+      label: 'metrics.ragSuccessRate',
+      value: '96.4%',
+      trend: 2.1,
+      icon: <CheckCircle2 className="w-5 h-5" />,
+      accentClass: 'text-emerald-500',
+    },
+    {
+      label: 'metrics.leadsCaptured',
+      value: '340',
+      trend: -3,
+      icon: <UserCheck className="w-5 h-5" />,
+      accentClass: 'text-amber-400',
+    },
+  ]
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
+        <div className="border-b border-[var(--border)]">
+          <ViewHeader title={t('metrics.title')} subtitle={t('metrics.subtitle')} />
+
+          {/* Controls bar */}
+          <div className="px-4 lg:px-6 py-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <TimeRangeFilter
+                value={timeRange}
+                onChange={(val) => {
+                  setTimeRange(val)
+                  setLoading(true)
+                  setTimeout(() => {
+                    setDataLoaded(true)
+                    setLoading(false)
+                  }, 800)
+                }}
+              />
+              <ExportDropdown onExport={handleExport} />
+            </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6">
+          {loading ? (
+            <MetricsSkeleton />
+          ) : dataLoaded ? (
+            <div className="space-y-6">
+              {/* KPI Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+                {kpis.map((kpi, i) => (
+                  <MetricCard
+                    key={i}
+                    label={kpi.label}
+                    value={kpi.value}
+                    trend={kpi.trend}
+                    icon={kpi.icon}
+                    accentClass={kpi.accentClass}
+                  />
+                ))}
+              </div>
+
+              {/* Charts row 1: Traffic + Stands */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <TrafficFlowChart
+                  data={MOCK_TRAFFIC_DATA}
+                  title="metrics.trafficFlow"
+                  height={350}
+                />
+                <StandsVisitChart
+                  data={MOCK_STANDS_DATA}
+                  title="metrics.popularStands"
+                  height={350}
+                />
+              </div>
+
+              {/* Charts row 2: Interaction types + FAQ */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <InteractionTypeChart
+                  data={MOCK_INTERACTION_DATA}
+                  title="metrics.interactionTypes"
+                  className=""
+                />
+                <FrequentQuestions
+                  data={MOCK_FAQ_DATA}
+                  title="metrics.frequentQuestions"
+                  maxItems={8}
+                />
+              </div>
+
+              {/* AI Intelligence row: Latency */}
+              <RagLatency
+                avgResponseTime={460}
+                breakdown={MOCK_LATENCY_DATA}
+                title="metrics.ragLatency"
+              />
+
+              {/* Audit Log */}
+              <AuditLog
+                entries={MOCK_AUDIT_ENTRIES}
+                title="metrics.auditLog"
+                maxEntries={10}
+              />
+            </div>
+          ) : (
+            <MetricsEmpty onRefresh={loadMetrics} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
