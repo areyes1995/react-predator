@@ -363,7 +363,7 @@ export default function StandsView({ role }: { role: StandRole }) {
 
       {/* Detail Modal */}
       <StandsDetailModal
-        stand={selectedStand!}
+        stand={selectedStand}
         role={role}
         isOpen={!!selectedStand}
         onClose={() => setSelectedStand(null)}

@@ -31,7 +31,7 @@ export interface StandStats {
 }
 
 export interface StandDetailModalProps {
-  stand: StandData
+  stand: StandData | null
   role: StandRole
   isOpen: boolean
   onClose: () => void

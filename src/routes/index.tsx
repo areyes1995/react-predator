@@ -14,6 +14,7 @@ import ReportsPage from '../pages/dashboard/reports/ReportsPage'
 import AttritionReport from '../pages/dashboard/reports/AttritionReport'
 import AdminPage from '../pages/dashboard/AdminPage'
 import ConnectionsPage from '../pages/dashboard/integrations/ConnectionsPage'
+import StandsPage from '../pages/dashboard/stands/StandsPage'
 import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
 import SettingsView from '../components/settings/SettingsView'
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
       { path: 'dashboard', element: <DashboardLayout />, children: [
         { index: true, element: <Navigate to="projects" replace /> },
         { path: 'projects', element: <DashboardPage /> },
+        { path: 'stands', element: <StandsPage /> },
         { path: 'records/:base?/:view?', element: <RecordsRoute /> },
         { path: 'records/:base?', element: <RecordsRoute /> },
         { path: 'records', element: <RecordsPage /> },

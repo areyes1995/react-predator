@@ -159,14 +159,16 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     }
     const isStaticModule = RECORD_MODULES.some(m => m.slug === slug)
     const isModule = isStaticModule
-    const isProjects = slug === 'projects' || slug === 'stands'
-    goTo(isProjects ? '/app/dashboard/projects' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
+    const isProjects = slug === 'projects'
+    const isStands = slug === 'stands'
+    goTo(isProjects ? '/app/dashboard/projects' : isStands ? '/app/dashboard/stands' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
   }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
-    const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects' || activeModule?.slug === 'stands' || baseSlug === 'stands'
+    const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
+    const isStands = activeModule?.slug === 'stands' || baseSlug === 'stands'
     const base = activeModule?.slug ?? baseSlug
-    goTo(isProjects ? `/app/dashboard/${activeModule?.slug ?? 'projects'}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : isModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {
