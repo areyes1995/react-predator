@@ -1,18 +1,18 @@
 // ──────────────────────────────────────────────
-// AdminPage — placeholder for the administration
-// module (built out in Fase 2). Route: /app/admin
+// ConnectionsPage — placeholder for the integrations
+// module (built out in Fase 2). Route: /app/dashboard/connections
 // ──────────────────────────────────────────────
 
-import { ViewHeader } from '../../components/ui'
-import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { ViewHeader } from '../../../components/ui'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
 
-export default function AdminPage() {
+export default function ConnectionsPage() {
   const { t } = useAppTranslation()
   return (
     <div className="flex flex-col h-full">
-      <ViewHeader title={t('Administration')} />
+      <ViewHeader title={t('Connections')} />
       <div className="flex-1 flex items-center justify-center text-sm text-[var(--text-muted)]">
-        {t('Admin module coming soon')}
+        {t('Connections module coming soon')}
       </div>
     </div>
   )

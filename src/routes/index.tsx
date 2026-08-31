@@ -1,8 +1,5 @@
 // ──────────────────────────────────────────────
-// Router — tabla de rutas de la aplicación.
-// La lógica de acceso (guards y redirecciones por
-// permiso) vive en ./guards y ./records-route; aquí
-// solo se declara el árbol de rutas.
+// Router — application route table.
 // ──────────────────────────────────────────────
 
 import { createBrowserRouter, Navigate } from 'react-router-dom'
@@ -10,13 +7,15 @@ import Login from '../pages/Login'
 import NotFound from '../pages/NotFound'
 import { AppLayout } from '../components/layout'
 import HomePage from '../pages/home/HomePage'
-import ReportsPage from '../pages/reports/ReportsPage'
-import AttritionReport from '../pages/reports/AttritionReport'
-import ConnectionsPage from '../pages/integrations/ConnectionsPage'
-import AdminPage from '../pages/admin/AdminPage'
+import DashboardLayout from '../pages/dashboard/DashboardLayout'
+import DashboardPage from '../pages/dashboard/DashboardPage'
+import RecordsPage from '../pages/dashboard/records/RecordsPage'
+import ReportsPage from '../pages/dashboard/reports/ReportsPage'
+import AttritionReport from '../pages/dashboard/reports/AttritionReport'
+import AdminPage from '../pages/dashboard/AdminPage'
+import ConnectionsPage from '../pages/dashboard/integrations/ConnectionsPage'
 import { ProtectedRoute, GuestRoute, IndexRedirect } from './guards'
 import { RecordsRoute } from './records-route'
-import CreateModuleView from '../components/settings/CreateModuleView'
 import SettingsView from '../components/settings/SettingsView'
 
 export const router = createBrowserRouter([
@@ -42,14 +41,27 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/app/home" replace /> },
       { path: 'home', element: <HomePage /> },
+      { path: 'dashboard', element: <DashboardLayout />, children: [
+        { index: true, element: <Navigate to="projects" replace /> },
+        { path: 'projects', element: <DashboardPage /> },
+        { path: 'records/:base?/:view?', element: <RecordsRoute /> },
+        { path: 'records/:base?', element: <RecordsRoute /> },
+        { path: 'records', element: <RecordsPage /> },
+        { path: 'reports', element: <ReportsPage /> },
+        { path: 'reports/attrition', element: <AttritionReport /> },
+        { path: 'connections', element: <ConnectionsPage /> },
+        { path: 'admin', element: <AdminPage /> },
+        { path: 'settings', element: <SettingsView /> },
+        { path: '*', element: <NotFound /> },
+      ]},
       { path: 'records/:base?/:view?', element: <RecordsRoute /> },
+      { path: 'records/:base?', element: <RecordsRoute /> },
+      { path: 'records', element: <RecordsPage /> },
       { path: 'reports', element: <ReportsPage /> },
       { path: 'reports/attrition', element: <AttritionReport /> },
       { path: 'connections', element: <ConnectionsPage /> },
       { path: 'admin', element: <AdminPage /> },
-      { path: 'records/create', element: <CreateModuleView /> },
       { path: 'settings', element: <SettingsView /> },
-      { path: 'settings/create-module', element: <CreateModuleView /> },
       { path: '*', element: <NotFound /> },
     ],
   },

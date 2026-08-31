@@ -31,11 +31,7 @@ export const PERMISSIONS_VIEW_OPTIONS: RecordViewOption[] = [
   { label: 'Archived', slug: 'archived', description: 'Archived permissions', kind: 'archived' },
 ]
 
-/**
- * Records View: el módulo `records` renderiza el contenido RAG.
- * - Summary → búsqueda sobre la base vectorial (RagSearchView).
- * - Upload Document → sube un documento al índice.
- */
+/** View options for RAG Records. */
 export const RAG_VIEW_OPTIONS: RecordViewOption[] = [
   { label: 'Overview', slug: 'overview', description: 'RAG search over the vector store', kind: 'summary' },
   { label: 'Upload Document', slug: 'upload', description: 'Add a document to the index', kind: 'upload', permission: 'rag:upload-view' },
@@ -53,8 +49,7 @@ const recordsViewColumns: RecordColumn[] = [
 
 /** Columns for Coaching Forms. */
 const coachingColumns: RecordColumn[] = [
-  { key: 'id', header: 'ID', type: 'text' },
-  { key: 'title', header: 'Form', type: 'text' },
+  { key: 'id', header: 'Form', type: 'text' },
   { key: 'category', header: 'Category', type: 'text', chartGroup: true },
   { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
   { key: 'coach', header: 'Coach', type: 'text' },
@@ -63,8 +58,7 @@ const coachingColumns: RecordColumn[] = [
 
 /** Columns for Vacations. */
 const vacationsColumns: RecordColumn[] = [
-  { key: 'id', header: 'ID', type: 'text' },
-  { key: 'title', header: 'Request', type: 'text' },
+  { key: 'id', header: 'Request', type: 'text' },
   { key: 'leaveType', header: 'Leave Type', type: 'select', options: ['Summer', 'Short Leave', 'Medical', 'Holiday'], chartGroup: true },
   { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
   { key: 'days', header: 'Days', type: 'number' },
@@ -73,8 +67,7 @@ const vacationsColumns: RecordColumn[] = [
 
 /** Columns for Sales. */
 const salesColumns: RecordColumn[] = [
-  { key: 'id', header: 'ID', type: 'text' },
-  { key: 'title', header: 'Deal', type: 'text' },
+  { key: 'id', header: 'Deal', type: 'text' },
   { key: 'stage', header: 'Stage', type: 'select', options: ['Pipeline', 'Deals', 'Renewals', 'Campaigns', 'Referrals'], chartGroup: true },
   { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
   { key: 'amount', header: 'Amount', type: 'number' },
@@ -83,8 +76,7 @@ const salesColumns: RecordColumn[] = [
 
 /** Columns for Licenses. */
 const licensesColumns: RecordColumn[] = [
-  { key: 'id', header: 'ID', type: 'text' },
-  { key: 'title', header: 'License', type: 'text' },
+  { key: 'id', header: 'License', type: 'text' },
   { key: 'vendor', header: 'Vendor', type: 'select', options: ['Microsoft', 'Adobe', 'JetBrains', 'Sentinel', 'Norton'], chartGroup: true },
   { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
   { key: 'seats', header: 'Seats', type: 'number' },
@@ -93,8 +85,7 @@ const licensesColumns: RecordColumn[] = [
 
 /** Columns for Permissions. */
 const permissionsColumns: RecordColumn[] = [
-  { key: 'id', header: 'ID', type: 'text' },
-  { key: 'title', header: 'Permission', type: 'text' },
+  { key: 'id', header: 'Permission', type: 'text' },
   { key: 'scope', header: 'Scope', type: 'select', options: ['Admin', 'Finance', 'API', 'HR', 'Infra', 'Roles', 'Audit'], chartGroup: true },
   { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
   { key: 'role', header: 'Role', type: 'text' },
@@ -103,13 +94,13 @@ const permissionsColumns: RecordColumn[] = [
 
 /** The record modules rendered in the sidebar dropdown + notes panel. */
 export const RECORD_MODULES: RecordModule[] = [
-  // { label: 'Records View', slug: 'records', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: RAG_VIEW_OPTIONS, columns: recordsViewColumns },
-  // { label: 'Coaching Forms', slug: 'coaching', color: 'purple', icon: <ClipboardList className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: coachingColumns },
-  // { label: 'Vacations', slug: 'vacations', color: 'green', icon: <Plane className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: vacationsColumns },
-  // { label: 'Sales', slug: 'sales', color: 'amber', icon: <TrendingUp className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: salesColumns },
-  // { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
-  // { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
-  // { label: 'Projects', slug: 'projects', color: 'blue', icon: <FolderOpen className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: recordsViewColumns },
+  { label: 'Records View', slug: 'records', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: RAG_VIEW_OPTIONS, columns: recordsViewColumns },
+  { label: 'Coaching Forms', slug: 'coaching', color: 'purple', icon: <ClipboardList className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: coachingColumns },
+  { label: 'Vacations', slug: 'vacations', color: 'green', icon: <Plane className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: vacationsColumns },
+  { label: 'Sales', slug: 'sales', color: 'amber', icon: <TrendingUp className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: salesColumns },
+  { label: 'Licenses', slug: 'licenses', color: 'blue', icon: <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: licensesColumns },
+  { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
+  { label: 'Projects', slug: 'projects', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: recordsViewColumns },
 ]
 
 /** Generic menu used for the Home overview (single view). */

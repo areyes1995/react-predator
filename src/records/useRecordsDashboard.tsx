@@ -1,7 +1,7 @@
 // ──────────────────────────────────────────────
 // useRecordsDashboard — URL-driven state for the dashboard
 // Module + view are derived from the URL
-// (`/app/records/:base?/:view?`), so deep-linking
+// (`/app/dashboard/:base?/:view?`), so deep-linking
 // and reloads preserve the selection. Only the
 // menu-panel collapse persists to localStorage.
 // ──────────────────────────────────────────────
@@ -12,7 +12,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import type { MenuItemProps, MenuBadge } from '../components/menu/MenuItem'
 import type { SidebarSectionProps } from '../components/sidebar/SidebarSection'
 import { BarChart3, LayoutGrid } from 'lucide-react'
-import * as LucideIcons from 'lucide-react'
 import {
   RECORD_MODULES,
   GENERAL_MENU,
@@ -26,10 +25,8 @@ import type { RecordModule, RecordViewOption, RecordColumn, StaticSidebarItem } 
 import { useAppTranslation } from '../i18n/useAppTranslation'
 import { useAuth } from '../context/AuthContext'
 import { hasPermission } from '../services/auth'
-import { jsonConfig, type BaseModule, type ColumnType, type ViewOption } from '../services/json-config'
 
-
-/** Slugs de módulos visibles según permisos RBAC (`module:<slug>`). */
+/** Slugs of record modules visible according to RBAC (`module:<slug>`). */
 export function getVisibleRecordModules(
   permissions: string[] | undefined,
 ): RecordModule[] {
@@ -38,7 +35,7 @@ export function getVisibleRecordModules(
   )
 }
 
-/** Un item de menú es visible si no exige permiso o el usuario lo posee. */
+/** A menu item is visible if it has no permission or the user has it. */
 function isMenuItemVisible(
   item: Pick<StaticSidebarItem, 'permission'>,
   permissions: string[] | undefined,
@@ -53,51 +50,23 @@ const RBAC_BASES: Record<string, { title: string; options: RecordViewOption[] }>
 }
 
 /** Convert a JSON config column to a frontend RecordColumn. */
-function jsonColumnToRecordColumn(col: ColumnType): RecordColumn {
-  const base: RecordColumn = {
-    key: col.key,
-    header: col.header,
-    type: col.type.toLowerCase() as RecordColumn['type'],
-    chartGroup: col.chartGroup,
-  }
-  if (col.options && Array.isArray(col.options)) {
-    base.options = col.options as string[]
-  }
-  return base
+function jsonColumnToRecordColumn(col: RecordColumn): RecordColumn {
+  return col
 }
 
 /** Convert a JSON config view option to a frontend RecordViewOption. */
-function jsonViewToRecordView(vo: ViewOption): RecordViewOption {
-  const kind = (vo.kind ?? '').toLowerCase()
+function jsonViewToRecordView(vo: RecordViewOption): RecordViewOption {
+  return vo
+}
+
+/** Convert a system module to a frontend RecordModule. */
+export function dbModuleToRecordModule(mod: RecordModule): RecordModule {
   return {
-    label: vo.label,
-    slug: vo.slug,
-    description: vo.description ?? '',
-    kind: kind === 'summary' ? 'summary' : kind === 'table' ? 'table' : kind === 'archived' ? 'archived' : 'upload',
+    ...mod,
+    columns: (mod.columns ?? []).map(jsonColumnToRecordColumn),
+    viewOptions: (mod.viewOptions ?? []).map(jsonViewToRecordView),
   }
 }
-
-function resolveIconComponent(iconName: string): ReactNode {
-  const pascal = iconName.charAt(0).toUpperCase() + iconName.slice(1)
-  const Icon = (LucideIcons as Record<string, any>)[pascal]
-  const IconComponent = Icon || LayoutGrid
-  return <IconComponent className="w-4 h-4" strokeWidth={1.5} />
-}
-
-/** Convert a JSON config module to a frontend RecordModule. */
-export function dbModuleToRecordModule(baseMod: BaseModule): RecordModule {
-  const icon: RecordModule['icon'] = resolveIconComponent(baseMod.icon || 'LayoutGrid')
-  return {
-    label: baseMod.label,
-    slug: baseMod.slug,
-    color: baseMod.color,
-    icon,
-    viewOptions: (baseMod.viewOptions ?? []).map(jsonViewToRecordView),
-    columns: (baseMod.columns ?? []).map(jsonColumnToRecordColumn),
-    summaryChart: (baseMod as any).summaryChart,
-  }
-}
-
 
 interface UseRecordsDashboardResult {
   activeItemLabel: string
@@ -114,7 +83,7 @@ interface UseRecordsDashboardResult {
   handleSelectCard: (slug: string) => void
 }
 
-/** Lee el estado colapsado migrando la key legacy de "notas". */
+/** Read the collapsed state, migrating legacy key. */
 function readMenuCollapsed(): boolean {
   const current = localStorage.getItem(STORAGE_KEYS.menuCollapsed)
   if (current !== null) return current === 'true'
@@ -129,45 +98,9 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     readMenuCollapsed(),
   )
 
-  const [systemModules, setSystemModules] = useState<BaseModule[]>([])
-  const [customModules, setCustomModules] = useState<BaseModule[]>([])
-  const [systemModulesLoaded, setSystemModulesLoaded] = useState(false)
-  const [customModulesLoaded, setCustomModulesLoaded] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-    jsonConfig.getSystemModules()
-      .then(mods => {
-        if (!cancelled) {
-          setSystemModules(mods)
-          setSystemModulesLoaded(true)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setSystemModulesLoaded(true)
-      })
-    jsonConfig.getCustomModules()
-      .then(mods => {
-        if (!cancelled) {
-          setCustomModules(mods)
-          setCustomModulesLoaded(true)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setCustomModulesLoaded(true)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   const allModules = useMemo<RecordModule[]>(() => {
-    if (!systemModulesLoaded || !customModulesLoaded) {
-      return RECORD_MODULES
-    }
-    const combined = [...(systemModules ?? []), ...(customModules ?? [])]
-    return combined.map(dbModuleToRecordModule)
-  }, [systemModules, customModules, systemModulesLoaded, customModulesLoaded])
+    return RECORD_MODULES
+  }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
   const baseSlug = segments[1] === 'records' ? (segments[2] ?? 'records') : (segments[1] ?? 'records')
@@ -221,14 +154,13 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
       return
     }
     const isStaticModule = RECORD_MODULES.some(m => m.slug === slug)
-    const isCustomModule = (customModulesLoaded || systemModulesLoaded) && allModules.some(m => m.slug === slug)
-    const isModule = isStaticModule || isCustomModule
-    goTo(isModule ? `/app/records/${slug}/overview` : `/app/records/${slug}`)
-  }, [goTo, customModulesLoaded, systemModulesLoaded, allModules])
+    const isModule = isStaticModule
+    goTo(isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
+  }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
     const base = activeModule?.slug ?? baseSlug
-    goTo(`/app/records/${base}/${slug}`)
+    goTo(`/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {

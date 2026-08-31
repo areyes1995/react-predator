@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import { onConfigUpdate, emitConfigUpdate } from '../services/config-events'
+import { createContext, useContext, useCallback, useState } from 'react'
 
 interface ReloadNotificationState {
   visible: boolean
@@ -20,27 +19,22 @@ const ReloadNotificationContext = createContext<ReloadNotificationContextValue>(
 })
 
 export function ReloadNotificationProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<ReloadNotificationState>({ visible: false })
+  const [visible, setVisible] = useState<boolean>(false)
 
   const showReloadNotification = useCallback(() => {
-    setState({ visible: true })
+    setVisible(true)
   }, [])
 
   const dismissReloadNotification = useCallback(() => {
-    setState({ visible: false })
+    setVisible(false)
   }, [])
 
   const reloadPage = useCallback(() => {
     window.location.reload()
   }, [])
 
-  useEffect(() => {
-    const unsub = onConfigUpdate(showReloadNotification)
-    return unsub
-  }, [])
-
   return (
-    <ReloadNotificationContext.Provider value={{ state, showReloadNotification, dismissReloadNotification, reloadPage }}>
+    <ReloadNotificationContext.Provider value={{ state: { visible }, showReloadNotification, dismissReloadNotification, reloadPage }}>
       {children}
     </ReloadNotificationContext.Provider>
   )

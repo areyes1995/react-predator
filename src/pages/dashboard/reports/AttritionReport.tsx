@@ -1,14 +1,14 @@
 // ──────────────────────────────────────────────
 // AttritionReport — attrition analysis page
-// Route: /app/reports/attrition
+// Route: /app/dashboard/reports/attrition
 // ──────────────────────────────────────────────
 
 import { TrendingUp, Users, UserMinus, CalendarDays, BarChart2, PieChartIcon } from 'lucide-react'
-import { ViewHeader } from '../../components/ui'
-import { DynamicComponentRenderer } from '../../components/charts'
-import type { DynamicBlock, ChartDataPoint, ChartSeries, CategoryBarItem, DonutDataPoint, ComponentGroupProps } from '../../components/charts'
-import type { RecordColumn, RecordData } from '../../records'
-import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { ViewHeader } from '../../../components/ui'
+import { DynamicComponentRenderer } from '../../../components/charts'
+import type { DynamicBlock, ChartDataPoint, ChartSeries, CategoryBarItem, DonutDataPoint, ComponentGroupProps } from '../../../components/charts'
+import type { RecordColumn, RecordData } from '../../../records'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 

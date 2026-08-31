@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext'
 import type { RecordModule, RecordViewOption, RecordColumn, RecordData } from '../../records'
 import RagSearchView from './RagSearchView'
 import UploadDocumentView from './UploadDocumentView'
-import { ProjectsView } from '../../modules/projects/components'
+import { ProjectsView } from '../../pages/dashboard/projects/components'
 import { DynamicComponentRenderer } from '../charts'
 import type { DynamicBlock } from '../charts'
 

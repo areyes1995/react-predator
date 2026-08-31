@@ -1,13 +1,13 @@
 // ──────────────────────────────────────────────
 // RecordsPage — routed view of the records area.
 // Module + view come from the URL
-// (`/app/records/:base?/:view?`), deep-linkable.
+// (`/app/dashboard/records/:base?/:view?`), deep-linkable.
 // ──────────────────────────────────────────────
 
-import { useRecordsDashboard } from '../../records'
-import { RecordsView } from '../../components/records'
-import { HomeOverview } from '../../components/home'
-import { ViewHeader } from '../../components/ui'
+import { useRecordsDashboard } from '../../../records'
+import { RecordsView } from '../../../components/records'
+import { HomeOverview } from '../../../components/home'
+import { ViewHeader } from '../../../components/ui'
 
 export default function RecordsPage() {
   const { activeModule, activeView, selectedCard, menuTitle } = useRecordsDashboard()

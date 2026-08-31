@@ -13,7 +13,6 @@ import DashboardLayout from './DashboardLayout'
 import { Sidebar } from '../sidebar'
 import { MenuPanel } from '../menu'
 import SettingsView from '../settings/SettingsView'
-import CreateModuleView from '../settings/CreateModuleView'
 import { Breadcrumbs, type BreadcrumbItem } from '../ui'
 import ReloadNotificationBanner from '../ui/ReloadNotificationBanner'
 import { useRecordsDashboard } from '../../records'
@@ -24,8 +23,7 @@ export default function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const isCreateModuleRoute = location.pathname === '/app/settings/create-module'
-  const isSettingsRoute = !isCreateModuleRoute && location.pathname.startsWith('/app/settings')
+  const isSettingsRoute = location.pathname.startsWith('/app/settings')
 
   const {
     menuCollapsed,
@@ -39,31 +37,31 @@ export default function AppLayout() {
   const crumbs = useMemo<BreadcrumbItem[]>(() => {
     const segments = location.pathname.split('/').filter(Boolean)
     const items: BreadcrumbItem[] = [{ label: 'Home', to: '/app/home' }]
-    if (isCreateModuleRoute) {
+    if (isSettingsRoute) {
       items.push({ label: 'settings.title', to: '/app/settings' })
-      items.push({ label: 'settings.preferences.createModule' })
-    } else if (isSettingsRoute) {
-      items.push({ label: 'settings.title', to: '/app/settings' })
-    } else if (segments[1] === 'records') {
+    } else if (segments[1] === 'dashboard' && segments[2] === 'records') {
       const module = activeModule
       if (module) {
-        items.push({ label: module.label, to: `/app/records/${module.slug}/summary` })
-        const view = module.viewOptions.find(v => v.slug === segments[3])
+        items.push({ label: module.label, to: `/app/dashboard/records/${module.slug}/summary` })
+        const view = module.viewOptions.find(v => v.slug === segments[4])
         if (view && view.slug !== module.viewOptions[0]?.slug) {
           items.push({ label: view.label })
         }
       } else {
-        const securityItem = STATIC_SECTIONS.flatMap(s => s.items).find(i => i.slug === segments[2])
+        const securityItem = STATIC_SECTIONS.flatMap(s => s.items).find(i => i.slug === segments[3])
         if (securityItem) {
           items.push({ label: securityItem.label, to: securityItem.path })
         }
       }
+    } else if (segments[1] === 'dashboard') {
+      const pageLabel = segments[2] || 'Dashboard'
+      items.push({ label: pageLabel.charAt(0).toUpperCase() + pageLabel.slice(1).replace('-', ' ') })
     } else if (segments[1] && segments[1] !== 'home') {
       const page = QUICK_LINKS.find(q => q.slug === segments[1])
       items.push({ label: page?.label ?? segments[1] })
     }
     return items
-  }, [location.pathname, activeModule, isCreateModuleRoute, isSettingsRoute])
+  }, [location.pathname, activeModule, isSettingsRoute])
 
   const handleLogout = async () => {
     await logout()
@@ -102,9 +100,7 @@ export default function AppLayout() {
           <>
             <ReloadNotificationBanner />
             <Breadcrumbs items={crumbs} />
-            {isCreateModuleRoute ? (
-              <CreateModuleView />
-            ) : isSettingsRoute ? (
+            {isSettingsRoute ? (
               <SettingsView />
             ) : (
               <Outlet />

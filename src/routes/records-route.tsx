@@ -1,15 +1,6 @@
 // ──────────────────────────────────────────────
-// RecordsRoute — lógica de acceso al área de registros.
-//
-// Resuelve dos niveles de autorización sobre la URL
-// `/app/records/:base?/:view?`:
-//   1. El módulo base (`:base`) debe estar autorizado
-//      con el permiso `module:<slug>`.
-//   2. La vista (`:view`) puede exigir un permiso extra
-//      declarado en `RecordViewOption.permission`
-//      (ej. `rag:upload-view` para la subida de RAG).
-//
-// Sin módulos visibles se cae a /app/reports.
+// RecordsRoute — logic for the records area under
+// `/app/dashboard/records/:base?/:view?`
 // ──────────────────────────────────────────────
 
 import { Navigate, useLocation } from 'react-router-dom'
@@ -17,7 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { RECORD_MODULES, getVisibleRecordModules } from '../records'
 import { hasPermission } from '../services/auth'
 import { ROLES_VIEW_OPTIONS, PERMISSIONS_VIEW_OPTIONS } from '../records/records.config'
-import RecordsPage from '../pages/records/RecordsPage'
+import RecordsPage from '../pages/dashboard/records/RecordsPage'
 import RbacRolesView from '../components/records/RbacRolesView'
 import RbacPermissionsView from '../components/records/RbacPermissionsView'
 import { LoadingScreen } from './guards'
@@ -43,14 +34,13 @@ export function RecordsRoute() {
   if (rbac) {
     const validView = rbac.options.find(o => o.slug === viewSlug)
     if (!validView) {
-      return <Navigate to={`/app/records/${rbac.slug}/summary`} replace />
+      return <Navigate to={`/app/dashboard/records/${rbac.slug}/summary`} replace />
     }
     if (!segments[3]) {
-      return <Navigate to={`/app/records/${rbac.slug}/summary`} replace />
+      return <Navigate to={`/app/dashboard/records/${rbac.slug}/summary`} replace />
     }
-    // --- RBAC permission check: only admin (or users with module:permissions) ---
     if (user && !hasPermission(user, 'module:permissions')) {
-      return <Navigate to='/app/records' replace />
+      return <Navigate to='/app/dashboard/records' replace />
     }
     if (baseSlug === 'roles') {
       return <RbacRolesView view={viewSlug} />
@@ -65,17 +55,17 @@ export function RecordsRoute() {
   if (targetModule && !hasPermission(user, `module:${targetModule.slug}`)) {
     const visibleModules = getVisibleRecordModules(user?.permissions)
     if (visibleModules.length === 0) {
-      return <Navigate to="/app/reports" replace />
+      return <Navigate to="/app/dashboard/reports" replace />
     }
-    return <Navigate to={`/app/records/${visibleModules[0].slug}/summary`} replace />
+    return <Navigate to={`/app/dashboard/records/${visibleModules[0].slug}/summary`} replace />
   }
 
   if (targetModule && !segments[3]) {
-    return <Navigate to={`/app/records/${targetModule.slug}/summary`} replace />
+    return <Navigate to={`/app/dashboard/records/${targetModule.slug}/summary`} replace />
   }
 
   if (targetModule && targetModule.viewOptions?.find(v => v.slug === viewSlug)?.permission && !hasPermission(user, targetModule.viewOptions.find(v => v.slug === viewSlug)?.permission as string)) {
-    return <Navigate to={`/app/records/${targetModule.slug}/summary`} replace />
+    return <Navigate to={`/app/dashboard/records/${targetModule.slug}/summary`} replace />
   }
 
   return <RecordsPage />

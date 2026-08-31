@@ -36,22 +36,22 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
   {
     title: 'Management',
     items: [
-      { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/records/schedules' },
-      { icon: <Users className="w-4 h-4" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/records/users' },
+      { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/dashboard/records/schedules' },
+      { icon: <Users className="w-4 h-4" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/dashboard/records/users' },
     ],
   },
   {
     title: 'Security',
     items: [
-      { icon: <KeyRound className="w-4 h-4" strokeWidth={1.5} />, label: 'Roles', slug: 'roles', path: '/app/records/roles', permission: 'module:permissions' },
-      { icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, label: 'Permissions', slug: 'permissions', path: '/app/records/permissions', permission: 'module:permissions' },
-      { icon: <ScrollText className="w-4 h-4" strokeWidth={1.5} />, label: 'Audit Logs', slug: 'logs', path: '/app/admin' },
+      { icon: <KeyRound className="w-4 h-4" strokeWidth={1.5} />, label: 'Roles', slug: 'roles', path: '/app/dashboard/records/roles', permission: 'module:permissions' },
+      { icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, label: 'Permissions', slug: 'permissions', path: '/app/dashboard/records/permissions', permission: 'module:permissions' },
+      { icon: <ScrollText className="w-4 h-4" strokeWidth={1.5} />, label: 'Audit Logs', slug: 'logs', path: '/app/dashboard/admin' },
     ],
   },
   {
     title: 'Reports',
     items: [
-      { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Attrition Report', slug: 'attrition-report', path: '/app/reports/attrition' },
+      { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Attrition Report', slug: 'attrition-report', path: '/app/dashboard/reports/attrition' },
     ],
   },
 ]

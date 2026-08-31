@@ -1,18 +1,18 @@
 // ──────────────────────────────────────────────
-// ConnectionsPage — placeholder for the integrations
-// module (built out in Fase 2). Route: /app/connections
+// ReportsPage — placeholder for the reports module
+// (built out in Fase 2). Route: /app/dashboard/reports
 // ──────────────────────────────────────────────
 
-import { ViewHeader } from '../../components/ui'
-import { useAppTranslation } from '../../i18n/useAppTranslation'
+import { ViewHeader } from '../../../components/ui'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
 
-export default function ConnectionsPage() {
+export default function ReportsPage() {
   const { t } = useAppTranslation()
   return (
     <div className="flex flex-col h-full">
-      <ViewHeader title={t('Connections')} />
+      <ViewHeader title={t('Reports')} />
       <div className="flex-1 flex items-center justify-center text-sm text-[var(--text-muted)]">
-        {t('Connections module coming soon')}
+        {t('Reports module coming soon')}
       </div>
     </div>
   )
