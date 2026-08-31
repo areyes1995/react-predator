@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   LayoutGrid,
   Tent,
+  BookOpen,
 } from 'lucide-react'
 import type { RecordColumn, RecordModule, RecordViewOption } from './types'
 
@@ -111,6 +112,11 @@ export const RECORD_MODULES: RecordModule[] = [
   { label: 'Permissions', slug: 'permissions', color: 'pink', icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: permissionsColumns },
   { label: 'Projects', slug: 'projects', color: 'blue', icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: recordsViewColumns },
   { label: 'Stands', slug: 'stands', color: 'cyan', icon: <Tent className="w-4 h-4" strokeWidth={1.5} />, viewOptions: MODULE_VIEW_OPTIONS, columns: standsColumns },
+  { label: 'Knowledge Base', slug: 'knowledge-base', color: 'amber', icon: <BookOpen className="w-4 h-4" strokeWidth={1.5} />, viewOptions: [
+    { label: 'Overview', slug: 'overview', description: 'Documents and vector store overview', kind: 'summary' },
+    { label: 'Upload', slug: 'upload', description: 'Upload documents to the index', kind: 'upload' },
+    { label: 'Direct Knowledge', slug: 'faq', description: 'Manual FAQs and quick knowledge', kind: 'table' },
+  ], columns: [] },
 ]
 
 /** Generic menu used for the Home overview (single view). */

@@ -23,7 +23,6 @@ import {
   ShieldCheck,
   ScrollText,
   FileText,
-  BookOpen,
 } from 'lucide-react'
 import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
 
@@ -35,16 +34,10 @@ export const QUICK_LINKS: StaticSidebarItem[] = [
 /** Static sidebar sections — product areas grouping navigable links. */
 export const STATIC_SECTIONS: StaticSidebarSection[] = [
   {
-    title: 'Documents',
-    items: [
-      { icon: <BookOpen className="w-4 h-4 text-[#f2a93b]" strokeWidth={1.5} />, label: 'knowledgeBase.sidebar', slug: 'knowledge-base', path: '/app/dashboard/knowledge-base' },
-    ],
-  },
-  {
     title: 'Management',
     items: [
-      { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/dashboard/records/schedules' },
-      { icon: <Users className="w-4 h-4" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/dashboard/records/users' },
+      // { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/dashboard/records/schedules' },
+      { icon: <Users className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/dashboard/records/users' },
     ],
   },
   {

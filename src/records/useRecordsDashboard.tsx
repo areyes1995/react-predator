@@ -102,7 +102,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const allModules = useMemo<RecordModule[]>(() => {
-    return RECORD_MODULES.filter(m => m.slug === 'projects' || m.slug === 'stands')
+    return RECORD_MODULES.filter(m => m.slug === 'projects' || m.slug === 'stands' || m.slug === 'knowledge-base')
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
@@ -161,14 +161,16 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     const isModule = isStaticModule
     const isProjects = slug === 'projects'
     const isStands = slug === 'stands'
-    goTo(isProjects ? '/app/dashboard/projects' : isStands ? '/app/dashboard/stands' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
+    const isKnowledgeBase = slug === 'knowledge-base'
+    goTo(isProjects ? '/app/dashboard/projects' : isStands ? '/app/dashboard/stands' : isKnowledgeBase ? '/app/dashboard/knowledge-base' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
   }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
     const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
     const isStands = activeModule?.slug === 'stands' || baseSlug === 'stands'
+    const isKnowledgeBase = activeModule?.slug === 'knowledge-base' || baseSlug === 'knowledge-base'
     const base = activeModule?.slug ?? baseSlug
-    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : activeModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : isKnowledgeBase ? `/app/dashboard/knowledge-base/${slug}` : activeModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {
@@ -181,7 +183,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   /** Whether the current URL matches a page slug. */
   const activePageSlug = useMemo(() => {
     if (segments[1] === 'dashboard' && PAGE_SLUGS.includes(segments[2])) return segments[2]
-    if (segments[1] !== 'records') return PAGE_SLUGS.find(s => s === segments[1]) ?? null
+    if (segments[1] !== 'records' && PAGE_SLUGS.includes(segments[1])) return segments[1]
     return null
   }, [segments])
 
