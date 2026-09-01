@@ -104,7 +104,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   )
 
   const allModules = useMemo<RecordModule[]>(() => {
-    return RECORD_MODULES.filter(m => m.slug === 'projects' || m.slug === 'stands' || m.slug === 'knowledge-base')
+    return RECORD_MODULES.filter(m => m.slug === 'projects' || m.slug === 'stands' || m.slug === 'knowledge-base' || m.slug === 'metrics')
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
@@ -175,15 +175,17 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
     const isProjects = slug === 'projects'
     const isStands = slug === 'stands'
     const isKnowledgeBase = slug === 'knowledge-base'
-    goTo(isProjects ? '/app/dashboard/projects' : isStands ? '/app/dashboard/stands' : isKnowledgeBase ? '/app/dashboard/knowledge-base' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
+    const isMetrics = slug === 'metrics'
+    goTo(isProjects ? '/app/dashboard/projects' : isStands ? '/app/dashboard/stands' : isKnowledgeBase ? '/app/dashboard/knowledge-base' : isMetrics ? '/app/dashboard/metrics' : isModule ? `/app/dashboard/records/${slug}/overview` : `/app/dashboard/records/${slug}`)
   }, [goTo])
 
   const handleSelectCard = useCallback((slug: string) => {
     const isProjects = activeModule?.slug === 'projects' || baseSlug === 'projects'
     const isStands = activeModule?.slug === 'stands' || baseSlug === 'stands'
     const isKnowledgeBase = activeModule?.slug === 'knowledge-base' || baseSlug === 'knowledge-base'
+    const isMetrics = activeModule?.slug === 'metrics' || baseSlug === 'metrics'
     const base = activeModule?.slug ?? baseSlug
-    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : isKnowledgeBase ? `/app/dashboard/knowledge-base/${slug}` : activeModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
+    goTo(isProjects ? `/app/dashboard/projects/${slug}` : isStands ? `/app/dashboard/stands` : isKnowledgeBase ? `/app/dashboard/knowledge-base/${slug}` : isMetrics ? `/app/dashboard/metrics` : activeModule ? `/app/dashboard/records/${base}/${slug}` : `/app/dashboard/records/${base}/${slug}`)
   }, [goTo, activeModule, baseSlug])
 
   useEffect(() => {
@@ -191,7 +193,7 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   }, [menuCollapsed])
 
   /** Slugs that map to standalone pages (not records modules). */
-  const PAGE_SLUGS = ['knowledge-base']
+  const PAGE_SLUGS = ['knowledge-base', 'metrics']
 
   /** Whether the current URL matches a page slug. */
   const activePageSlug = useMemo(() => {
