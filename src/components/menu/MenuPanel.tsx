@@ -5,7 +5,7 @@
 // ──────────────────────────────────────────────
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ChevronsLeft, ChevronsRight, LayoutGrid } from 'lucide-react'
+import { ChevronsLeft, ChevronsRight, LayoutGrid, Orbit } from 'lucide-react'
 import MenuSearchBar, { type MenuSearchBarProps } from './MenuSearchBar'
 import MenuItem, { type MenuItemProps } from './MenuItem'
 import { type ReactNode } from 'react'
@@ -100,13 +100,9 @@ export default function MenuPanel({
           isCollapsed ? 'flex' : 'hidden'
         } flex-col items-center gap-5 py-4 h-full shrink-0 bg-gradient-to-b from-[var(--bg-panel)] to-[var(--bg-hover)]`}
       >
-        <button
-          onClick={() => updateCollapsed(false)}
-          className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[#f2a93b] hover:bg-[var(--bg-surface)] transition-all duration-200 active:scale-90"
-          title={t('Expand modules')}
-        >
-          <ChevronsRight className="w-5 h-5" />
-        </button>
+        <div className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[#f2a93b] transition-all duration-200">
+          <Orbit className="w-5 h-5" />
+        </div>
         <LayoutGrid className="w-4 h-4 text-[var(--text-muted-60)]" />
         <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-[var(--text-muted)] [writing-mode:vertical-rl] select-none">
           {t('Modules')}
