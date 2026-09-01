@@ -11,7 +11,6 @@ import DashboardLayout from '../pages/dashboard/DashboardLayout'
 import DashboardPage from '../pages/dashboard/DashboardPage'
 import RecordsPage from '../pages/dashboard/records/RecordsPage'
 import ReportsPage from '../pages/dashboard/reports/ReportsPage'
-import AttritionReport from '../pages/dashboard/reports/AttritionReport'
 import AdminPage from '../pages/dashboard/AdminPage'
 import ConnectionsPage from '../pages/dashboard/integrations/ConnectionsPage'
 import StandsPage from '../pages/dashboard/stands/StandsPage'
@@ -52,7 +51,6 @@ export const router = createBrowserRouter([
         { path: 'records/:base?', element: <RecordsRoute /> },
         { path: 'records', element: <RecordsPage /> },
         { path: 'reports', element: <ReportsPage /> },
-        { path: 'reports/attrition', element: <AttritionReport /> },
         { path: 'connections', element: <ConnectionsPage /> },
         { path: 'admin', element: <AdminPage /> },
         { path: 'settings', element: <SettingsView /> },
@@ -64,7 +62,6 @@ export const router = createBrowserRouter([
       { path: 'records/:base?', element: <RecordsRoute /> },
       { path: 'records', element: <RecordsPage /> },
       { path: 'reports', element: <ReportsPage /> },
-      { path: 'reports/attrition', element: <AttritionReport /> },
       { path: 'connections', element: <ConnectionsPage /> },
       { path: 'admin', element: <AdminPage /> },
       { path: 'settings', element: <SettingsView /> },

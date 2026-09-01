@@ -22,7 +22,6 @@ import {
   KeyRound,
   ShieldCheck,
   ScrollText,
-  FileText,
   BarChart3,
 } from 'lucide-react'
 import type { StaticSidebarItem, StaticSidebarSection } from '../records/types'
@@ -38,7 +37,7 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
     title: 'Management',
     items: [
       // { icon: <CalendarClock className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Schedules', slug: 'schedules', path: '/app/dashboard/records/schedules' },
-      { icon: <Users className="w-4 h-4 text-blue-400" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/dashboard/records/users' },
+      { icon: <Users className="w-4 h-4" strokeWidth={1.5} />, label: 'Users', slug: 'users', path: '/app/dashboard/records/users' },
     ],
   },
   {
@@ -47,12 +46,6 @@ export const STATIC_SECTIONS: StaticSidebarSection[] = [
       { icon: <KeyRound className="w-4 h-4" strokeWidth={1.5} />, label: 'Roles', slug: 'roles', path: '/app/dashboard/records/roles', permission: 'module:permissions' },
       { icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />, label: 'Permissions', slug: 'permissions', path: '/app/dashboard/records/permissions', permission: 'module:permissions' },
       { icon: <ScrollText className="w-4 h-4" strokeWidth={1.5} />, label: 'Audit Logs', slug: 'logs', path: '/app/dashboard/admin' },
-    ],
-  },
-  {
-    title: 'Reports',
-    items: [
-      { icon: <FileText className="w-4 h-4" strokeWidth={1.5} />, label: 'Attrition Report', slug: 'attrition-report', path: '/app/dashboard/reports/attrition' },
     ],
   },
   {
