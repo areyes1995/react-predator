@@ -134,7 +134,7 @@ export const RECORD_MODULES: RecordModule[] = [
     { label: 'Upload', slug: 'upload', description: 'Upload documents to the index', kind: 'upload' },
     { label: 'Direct Knowledge', slug: 'faq', description: 'Manual FAQs and quick knowledge', kind: 'table' },
   ], columns: [] },
-  { label: 'Metrics & Analytics', slug: 'metrics', color: 'emerald', icon: <BarChart3 className="w-4 h-4" strokeWidth={1.5} />, viewOptions: [
+  { label: 'Metrics & Analytics', slug: 'metrics', color: 'emerald', icon: <BarChart3 className="w-4 h-4 text-emerald-400" strokeWidth={1.5} />, viewOptions: [
     { label: 'Overview', slug: 'overview', description: 'Metrics and analytics dashboard', kind: 'summary' },
   ], columns: [] },
 ]
