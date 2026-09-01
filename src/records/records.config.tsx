@@ -94,6 +94,22 @@ const permissionsColumns: RecordColumn[] = [
   { key: 'owner', header: 'Owner', type: 'text' },
 ]
 
+/** View options for Users (Management) — Summary + Archived. */
+export const USERS_VIEW_OPTIONS: RecordViewOption[] = [
+  { label: 'Overview', slug: 'overview', description: 'All users overview', kind: 'summary' },
+  { label: 'Archived', slug: 'archived', description: 'Inactive/suspended users', kind: 'archived' },
+]
+
+/** Columns for Users. */
+const usersColumns: RecordColumn[] = [
+  { key: 'id', header: 'User ID', type: 'text' },
+  { key: 'title', header: 'Name', type: 'text', chartGroup: true },
+  { key: 'status', header: 'Status', type: 'select', options: ['Active', 'Pending', 'Archived'] },
+  { key: 'role', header: 'Role', type: 'select', options: ['admin', 'editor', 'viewer', 'inactive', 'suspended'] },
+  { key: 'department', header: 'Department', type: 'select', options: ['Engineering', 'Design', 'Marketing', 'HR', 'Finance'] },
+  { key: 'lastLogin', header: 'Last Login', type: 'date' },
+]
+
 /** Columns for Stands. */
 const standsColumns: RecordColumn[] = [
   { key: 'id', header: 'Stand', type: 'text' },

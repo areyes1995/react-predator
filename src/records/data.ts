@@ -116,6 +116,20 @@ export function getAllModuleRecords(): RecordData[] {
   return ALL_MODULE_DATA.flatMap(entry => entry.data)
 }
 
+export const USERS_DATA: RecordData[] = [
+  { id: 'USR-001', title: 'Ana López', email: 'ana.lopez@uapaverse.com', role: 'admin', status: 'Active', department: 'Engineering', lastLogin: '12/03/2024' },
+  { id: 'USR-002', title: 'Carlos Ruiz', email: 'carlos.ruiz@uapaverse.com', role: 'editor', status: 'Active', department: 'Design', lastLogin: '11/03/2024' },
+  { id: 'USR-003', title: 'María García', email: 'maria.garcia@uapaverse.com', role: 'viewer', status: 'Active', department: 'Marketing', lastLogin: '10/03/2024' },
+  { id: 'USR-004', title: 'Pedro Martínez', email: 'pedro.martinez@uapaverse.com', role: 'editor', status: 'Pending', department: 'HR', lastLogin: '09/03/2024' },
+  { id: 'USR-005', title: 'Laura Sánchez', email: 'laura.sanchez@uapaverse.com', role: 'viewer', status: 'Active', department: 'Finance', lastLogin: '08/03/2024' },
+  { id: 'USR-006', title: 'Jorge Pérez', email: 'jorge.perez@uapaverse.com', role: 'inactive', status: 'Archived', department: 'Engineering', lastLogin: '01/02/2024' },
+  { id: 'USR-007', title: 'Dra. Sofía Torres', email: 'sofia.torres@uapaverse.com', role: 'admin', status: 'Active', department: 'Engineering', lastLogin: '13/03/2024' },
+  { id: 'USR-008', title: 'Ing. Diego Morales', email: 'diego.morales@uapaverse.com', role: 'suspended', status: 'Archived', department: 'Design', lastLogin: '15/01/2024' },
+]
+
+/** Re-export as sampleUsersData for UsersView. */
+export const sampleUsersData: Record<string, unknown>[] = USERS_DATA as unknown as Record<string, unknown>[]
+
 export const RECORD_STATUSES: RecordStatus[] = ['Active', 'Pending', 'Archived']
 
 export interface StatusMeta {

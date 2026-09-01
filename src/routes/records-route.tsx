@@ -7,10 +7,11 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { RECORD_MODULES, getVisibleRecordModules } from '../records'
 import { hasPermission } from '../services/auth'
-import { ROLES_VIEW_OPTIONS, PERMISSIONS_VIEW_OPTIONS } from '../records/records.config'
+import { ROLES_VIEW_OPTIONS, PERMISSIONS_VIEW_OPTIONS, USERS_VIEW_OPTIONS } from '../records/records.config'
 import RecordsPage from '../pages/dashboard/records/RecordsPage'
 import RbacRolesView from '../components/records/RbacRolesView'
 import RbacPermissionsView from '../components/records/RbacPermissionsView'
+import UsersView from '../components/records/UsersView'
 import { LoadingScreen } from './guards'
 
 export function RecordsRoute() {
@@ -22,12 +23,24 @@ export function RecordsRoute() {
   }
 
   const segments = location.pathname.split('/').filter(Boolean)
-  const baseSlug = segments[2] ?? 'records'
-  const viewSlug = segments[3] ?? 'summary'
+
+  let baseSlug: string
+  let viewSlug: string
+  if (segments[1] === 'dashboard' && segments[2] === 'records') {
+    baseSlug = segments[3] ?? 'records'
+    viewSlug = segments[4] ?? 'summary'
+  } else if (segments[1] === 'records') {
+    baseSlug = segments[2] ?? 'records'
+    viewSlug = segments[3] ?? 'summary'
+  } else {
+    baseSlug = 'records'
+    viewSlug = 'summary'
+  }
 
   const rbacBases: Record<string, { slug: string; options: { slug: string }[] }> = {
     roles: { slug: 'roles', options: ROLES_VIEW_OPTIONS },
     permissions: { slug: 'permissions', options: PERMISSIONS_VIEW_OPTIONS },
+    users: { slug: 'users', options: USERS_VIEW_OPTIONS },
   }
 
   const rbac = rbacBases[baseSlug]
@@ -47,6 +60,9 @@ export function RecordsRoute() {
     }
     if (baseSlug === 'permissions') {
       return <RbacPermissionsView view={viewSlug} />
+    }
+    if (baseSlug === 'users') {
+      return <UsersView view={viewSlug} />
     }
   }
 

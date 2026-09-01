@@ -18,6 +18,7 @@ import {
   STORAGE_KEYS,
   ROLES_VIEW_OPTIONS,
   PERMISSIONS_VIEW_OPTIONS,
+  USERS_VIEW_OPTIONS,
 } from './records.config'
 import { QUICK_LINKS, STATIC_SECTIONS } from '../routes/menu.config'
 import { getRecordsForModule } from './data'
@@ -47,6 +48,7 @@ function isMenuItemVisible(
 const RBAC_BASES: Record<string, { title: string; options: RecordViewOption[] }> = {
   roles: { title: 'Roles', options: ROLES_VIEW_OPTIONS },
   permissions: { title: 'Permissions', options: PERMISSIONS_VIEW_OPTIONS },
+  users: { title: 'Users', options: USERS_VIEW_OPTIONS },
 }
 
 /** Convert a JSON config column to a frontend RecordColumn. */
@@ -106,8 +108,19 @@ export function useRecordsDashboard(): UseRecordsDashboardResult {
   }, [])
 
   const segments = location.pathname.split('/').filter(Boolean)
-  const baseSlug = segments[1] === 'records' ? (segments[2] ?? 'records') : (segments[1] ?? 'records')
-  const viewSlug = segments[3] ?? 'overview'
+
+  let baseSlug: string
+  let viewSlug: string
+  if (segments[1] === 'dashboard' && segments[2] === 'records') {
+    baseSlug = segments[3] ?? 'records'
+    viewSlug = segments[4] ?? 'overview'
+  } else if (segments[1] === 'records') {
+    baseSlug = segments[2] ?? 'records'
+    viewSlug = segments[3] ?? 'overview'
+  } else {
+    baseSlug = segments[1] ?? 'records'
+    viewSlug = segments[2] ?? 'overview'
+  }
   const isRecordsRoute = segments[1] === 'dashboard' && segments[2] === 'records'
 
   const visibleModules = useMemo<RecordModule[]>(
