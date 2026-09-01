@@ -1,0 +1,1471 @@
+REQUERIMIENTOS FUNCIONALES CONSOLIDADOS
+MÓDULO 3D, FERIAS, SALAS, STANDS Y PERSONAJE
+UAPAVERSE
+============================================================
+
+BASE DEL DOCUMENTO
+------------------
+Este documento consolida los requerimientos de la experiencia 3D
+identificados en los documentos proporcionados, incorporando además
+los requerimientos solicitados para el personaje 3D, cambio de cámara
+entre primera y tercera persona y sistema de emotes.
+
+IMPORTANTE
+----------
+Los puntos que los documentos identifican como existentes, parciales,
+pendientes o pertenecientes al estado objetivo deben conservar esa
+distinción. No se deben considerar automáticamente como funcionalidades
+ya implementadas.
+
+
+============================================================
+1. OBJETIVO DEL MÓDULO 3D
+============================================================
+
+UAPAverse debe proporcionar un entorno virtual 3D donde los usuarios
+puedan recorrer ferias, ingresar a salas temáticas, visitar stands y
+consultar/interactuar con los proyectos exhibidos.
+
+El entorno 3D debe integrarse con:
+
+    Autenticación
+         |
+         v
+    Roles y permisos
+         |
+         v
+       Lobby
+         |
+         v
+       Feria
+         |
+         v
+    Sala temática
+         |
+         v
+       Stand
+         |
+         v
+      Proyecto
+         |
+         +--> Multimedia
+         +--> DEMO
+         +--> Avatar IA
+         +--> Interacciones
+         |
+         v
+      Backend
+         |
+         v
+    Analytics / Dashboard
+
+
+============================================================
+2. JERARQUÍA DEL ENTORNO
+============================================================
+
+La estructura conceptual principal es:
+
+    UAPAverse
+       |
+       +-- Feria
+             |
+             +-- Sala temática
+                    |
+                    +-- Stand
+                           |
+                           +-- Proyecto
+
+Relación principal:
+
+    Fair
+      |
+      v
+    Room
+      |
+      v
+    Stand
+      |
+      v
+    Project
+
+
+============================================================
+3. ACCESO AL ENTORNO 3D
+============================================================
+
+RF-3D-01 — ACCESO AL ENTORNO
+
+El sistema deberá permitir que un usuario autenticado acceda al
+entorno virtual 3D de acuerdo con su rol y permisos.
+
+Debe permitir:
+
+- Acceder al lobby.
+- Acceder a ferias disponibles.
+- Acceder a salas autorizadas.
+- Acceder a stands publicados.
+- Mantener la sesión durante la navegación.
+
+El acceso deberá estar protegido por autenticación y autorización.
+
+
+============================================================
+4. LOBBY VIRTUAL
+============================================================
+
+RF-3D-02 — LOBBY VIRTUAL
+
+El sistema deberá proporcionar un lobby 3D como punto principal de
+entrada al entorno virtual.
+
+Debe permitir:
+
+- Identificar el entorno o feria.
+- Acceder a salas.
+- Acceder a recorridos.
+- Utilizar mecanismos de orientación.
+- Acceder a las funcionalidades disponibles para el usuario.
+
+
+============================================================
+5. GESTIÓN DE FERIAS
+============================================================
+
+RF-3D-03 — GESTIÓN DE FERIAS
+
+El administrador deberá poder:
+
+- Crear ferias.
+- Consultar ferias.
+- Editar ferias.
+- Eliminar ferias.
+- Activar/desactivar ferias.
+- Definir nombre.
+- Definir descripción.
+- Definir fecha de inicio.
+- Definir fecha de finalización.
+
+Una feria podrá contener múltiples salas.
+
+
+============================================================
+6. VISUALIZACIÓN DE FERIAS
+============================================================
+
+RF-3D-04 — VISUALIZACIÓN DE FERIAS
+
+El usuario deberá poder consultar las ferias disponibles y acceder
+a la feria seleccionada.
+
+Debe poder visualizar:
+
+- Nombre.
+- Descripción.
+- Estado.
+- Fechas.
+- Salas disponibles.
+
+
+============================================================
+7. GESTIÓN DE SALAS TEMÁTICAS
+============================================================
+
+RF-3D-05 — GESTIÓN DE SALAS
+
+El administrador deberá poder:
+
+- Crear sala.
+- Consultar sala.
+- Editar sala.
+- Eliminar sala.
+- Asociar sala a una feria.
+- Definir nombre.
+- Definir temática/categoría.
+- Organizar los stands dentro de la sala.
+
+Una sala pertenece a una feria.
+
+
+============================================================
+8. VISUALIZACIÓN DE SALAS 3D
+============================================================
+
+RF-3D-06 — SALAS 3D
+
+El sistema deberá representar las salas dentro del entorno 3D.
+
+El usuario deberá poder:
+
+- Entrar a una sala.
+- Recorrerla.
+- Visualizar los stands.
+- Identificar su temática.
+- Consultar información de la sala.
+- Salir de la sala.
+- Regresar a la feria.
+
+
+============================================================
+9. GESTIÓN DE STANDS
+============================================================
+
+RF-3D-07 — GESTIÓN DE STANDS VIRTUALES
+
+El sistema deberá permitir gestionar stands virtuales.
+
+Debe permitir:
+
+- Crear stand.
+- Consultar stand.
+- Editar stand.
+- Eliminar stand.
+- Publicar stand.
+- Deshabilitar stand.
+- Asociar stand a un proyecto.
+- Asociar stand a una sala.
+- Organizar espacialmente el stand dentro de la sala.
+
+
+============================================================
+10. STAND BASADO EN PROYECTO
+============================================================
+
+RF-3D-08 — PROYECTO -> STAND
+
+Un stand deberá estar asociado a un proyecto.
+
+Flujo esperado:
+
+    Proyecto aprobado
+          |
+          v
+       Stand 3D
+          |
+          v
+        Sala
+          |
+          v
+        Feria
+
+La información del proyecto deberá provenir del Backend y no depender
+exclusivamente de datos hardcodeados en el frontend.
+
+
+============================================================
+11. INFORMACIÓN DEL PROYECTO
+============================================================
+
+RF-3D-09 — INFORMACIÓN EN EL STAND
+
+El usuario deberá poder consultar desde el stand la información pública
+del proyecto.
+
+Cuando esté disponible, deberá incluir:
+
+- Nombre.
+- Descripción.
+- Categoría.
+- Responsable.
+- Integrantes.
+- Tecnologías.
+- Estado.
+- Información adicional.
+
+
+============================================================
+12. MULTIMEDIA DEL STAND
+============================================================
+
+RF-3D-10 — MULTIMEDIA
+
+El sistema deberá permitir asociar contenido multimedia al proyecto
+y mostrarlo dentro del stand.
+
+Tipos contemplados:
+
+- Imagen.
+- Video.
+- PDF.
+- DEMO.
+- Modelo 3D.
+
+El usuario deberá poder abrir o reproducir los recursos disponibles.
+
+
+============================================================
+13. DEMO DEL PROYECTO
+============================================================
+
+RF-3D-11 — DEMO
+
+El sistema deberá permitir acceder a la DEMO cuando el proyecto
+disponga de ella.
+
+Debe:
+
+- Indicar que existe una DEMO.
+- Permitir acceder a ella.
+- Informar cuando no exista.
+
+Si se requiere un mecanismo de acceso controlado, deberá existir el
+soporte correspondiente en Backend.
+
+
+============================================================
+14. PERSONALIZACIÓN DEL STAND
+============================================================
+
+RF-3D-12 — PERSONALIZACIÓN
+
+El expositor deberá poder personalizar los elementos visuales
+permitidos de su stand.
+
+Debe contemplar:
+
+- Configuración visual.
+- Configuración de elementos.
+- Recursos.
+- Distribución permitida.
+- Vista previa.
+- Guardado.
+- Aplicación de cambios.
+
+La configuración deberá persistirse.
+
+
+============================================================
+15. CONFIGURACIÓN DATA-DRIVEN DEL STAND
+============================================================
+
+RF-3D-13 — LAYOUT DEL STAND
+
+La representación del stand deberá poder construirse a partir de una
+configuración persistida.
+
+Conceptualmente:
+
+    Stand
+      |
+      +-- layoutConfig
+             |
+             +-- estructura
+             +-- elementos
+             +-- recursos
+             +-- configuración visual
+
+El frontend no debería requerir una escena independiente hardcodeada
+para cada stand.
+
+
+============================================================
+16. AVATAR INTELIGENTE DEL PROYECTO
+============================================================
+
+RF-3D-14 — AVATAR IA DEL STAND
+
+El sistema deberá permitir asociar un avatar inteligente a un proyecto
+o stand.
+
+El avatar deberá:
+
+- Aparecer dentro del stand.
+- Permitir interacción.
+- Responder preguntas sobre el proyecto.
+- Utilizar la información asociada al proyecto.
+- Permitir interacción por voz cuando esté habilitada.
+
+
+============================================================
+17. BASE DE CONOCIMIENTO
+============================================================
+
+RF-3D-15 — KNOWLEDGE BASE
+
+Cada proyecto podrá disponer de una base de conocimiento.
+
+Debe poder contener:
+
+- Temas.
+- Contenido.
+- Palabras clave.
+- Información técnica.
+- Información funcional.
+
+La base de conocimiento deberá estar asociada al proyecto.
+
+
+============================================================
+18. INTERACCIÓN CON EL AVATAR
+============================================================
+
+RF-3D-16 — PREGUNTAS AL AVATAR
+
+El usuario deberá poder realizar preguntas al avatar.
+
+Flujo:
+
+1. Recibir pregunta.
+2. Procesar pregunta.
+3. Consultar información disponible.
+4. Generar respuesta.
+5. Mostrar/reproducir respuesta.
+6. Registrar interacción.
+
+
+============================================================
+19. VOZ DEL AVATAR
+============================================================
+
+RF-3D-17 — INTERACCIÓN POR VOZ
+
+Cuando esté habilitada, el sistema deberá permitir interacción por voz.
+
+Debe contemplar:
+
+- Entrada de voz.
+- Procesamiento.
+- Generación de respuesta.
+- Reproducción de respuesta.
+
+
+============================================================
+20. PERSONAJE 3D DEL USUARIO
+============================================================
+
+RF-3D-18 — PERSONAJE DEL USUARIO
+
+El sistema deberá proporcionar un personaje 3D asociado al usuario.
+
+El personaje deberá:
+
+- Representar visualmente al usuario.
+- Estar disponible durante la navegación 3D.
+- Ser utilizado como representación del usuario en modo multiusuario.
+- Permitir visualizar movimientos.
+- Contar con animaciones.
+- Poder ejecutar emotes.
+
+
+============================================================
+21. VISTA EN PRIMERA PERSONA
+============================================================
+
+RF-3D-19 — PRIMERA PERSONA
+
+La experiencia deberá utilizar la primera persona como perspectiva
+principal del usuario.
+
+Debe permitir:
+
+- Observar el entorno desde la perspectiva del personaje.
+- Recorrer lobby, ferias, salas y stands.
+- Interactuar con elementos del entorno.
+- Mantener una navegación fluida.
+
+
+============================================================
+22. VISTA EN TERCERA PERSONA
+============================================================
+
+RF-3D-20 — TERCERA PERSONA
+
+El sistema deberá permitir cambiar de primera persona a tercera
+persona.
+
+En tercera persona:
+
+- El usuario podrá visualizar su propio personaje.
+- La cámara deberá seguir al personaje.
+- El personaje deberá permanecer visible durante el movimiento.
+- El usuario podrá observar sus movimientos y animaciones.
+- El cambio de cámara no deberá reiniciar la navegación.
+
+El usuario deberá poder alternar entre primera y tercera persona desde
+el entorno 3D.
+
+
+============================================================
+23. SISTEMA DE EMOTES
+============================================================
+
+RF-3D-21 — EMOTES
+
+El sistema deberá permitir que el personaje del usuario ejecute emotes
+mediante animaciones.
+
+Como mínimo deberá contar con 3 emotes:
+
+1. Saludar.
+2. Aplaudir.
+3. Celebrar.
+
+El usuario deberá poder:
+
+- Abrir el selector de emotes.
+- Seleccionar un emote.
+- Ejecutarlo.
+- Visualizar la animación.
+- Finalizar el emote y volver al estado normal.
+
+
+============================================================
+24. SELECTOR DE EMOTES
+============================================================
+
+RF-3D-22 — SELECTOR
+
+El sistema deberá proporcionar una interfaz para seleccionar emotes.
+
+Debe:
+
+- Mostrar emotes disponibles.
+- Permitir seleccionar un emote.
+- Ejecutar el emote.
+- Mostrar feedback de selección.
+- Permitir incorporar nuevos emotes posteriormente.
+
+
+============================================================
+25. ANIMACIONES DEL PERSONAJE
+============================================================
+
+RF-3D-23 — ANIMACIONES
+
+El personaje deberá contar como mínimo con:
+
+- Idle/reposo.
+- Caminar.
+- Correr, si está habilitado.
+- Saludar.
+- Aplaudir.
+- Celebrar.
+
+Las transiciones deberán evitar superposiciones o estados visuales
+incorrectos.
+
+
+============================================================
+26. EMOTES EN MULTIUSUARIO
+============================================================
+
+RF-3D-24 — SINCRONIZACIÓN DE EMOTES
+
+Cuando exista experiencia multiusuario, los demás usuarios deberán
+poder visualizar los emotes ejecutados por otros personajes.
+
+Debe:
+
+- Sincronizar la ejecución.
+- Mostrar la animación correspondiente.
+- Asociarla al usuario correcto.
+- Evitar afectar otros personajes.
+
+Los emotes deberán formar parte de la sincronización de presencia.
+
+
+============================================================
+27. NAVEGACIÓN 3D
+============================================================
+
+RF-3D-25 — NAVEGACIÓN
+
+El usuario deberá poder:
+
+- Moverse por el lobby.
+- Entrar a salas.
+- Recorrer salas.
+- Acercarse a stands.
+- Interactuar con stands.
+- Salir de stands.
+- Cambiar de sala.
+- Regresar al lobby.
+
+
+============================================================
+28. CONTROLES DEL ENTORNO
+============================================================
+
+RF-3D-26 — CONTROLES
+
+El sistema deberá proporcionar instrucciones sobre:
+
+- Movimiento.
+- Cámara.
+- Interacción.
+- Acciones disponibles.
+- Acceso a interfaces.
+- Salida del entorno.
+- Cambio de primera a tercera persona.
+- Uso de emotes.
+
+
+============================================================
+29. MINIMAPA
+============================================================
+
+RF-3D-27 — MINIMAPA
+
+El sistema deberá proporcionar un minimapa.
+
+Debe poder mostrar:
+
+- Ubicación del usuario.
+- Salas.
+- Stands relevantes.
+- Otros usuarios cuando exista multiusuario.
+
+Debe actualizarse durante el desplazamiento.
+
+
+============================================================
+30. PRESENCIA DE USUARIOS
+============================================================
+
+RF-3D-28 — PRESENCIA
+
+El sistema deberá permitir visualizar otros usuarios conectados.
+
+Debe mostrar:
+
+- Representación virtual.
+- Ubicación.
+- Presencia dentro de la sala.
+- Animaciones/emotes cuando corresponda.
+
+
+============================================================
+31. EXPERIENCIA MULTIUSUARIO
+============================================================
+
+RF-3D-29 — MULTIUSUARIO
+
+El sistema deberá permitir que múltiples usuarios estén presentes
+simultáneamente dentro de una sala.
+
+Debe permitir:
+
+- Conexión simultánea.
+- Presencia.
+- Actualización de posiciones.
+- Actualización de rotaciones.
+- Visualización de personajes.
+- Visualización de emotes.
+- Interacción según permisos.
+
+NOTA:
+Los documentos identifican esta funcionalidad como parte del estado
+objetivo y no como una funcionalidad completamente terminada.
+
+
+============================================================
+32. RECORRIDOS GUIADOS
+============================================================
+
+RF-3D-30 — TOURS
+
+El sistema deberá permitir recorridos virtuales guiados.
+
+Debe permitir:
+
+- Iniciar recorrido.
+- Definir recorrido.
+- Mostrar siguiente punto.
+- Guiar al usuario.
+- Recorrer salas.
+- Recorrer stands.
+- Finalizar recorrido.
+
+
+============================================================
+33. ASISTENTE DE ORIENTACIÓN
+============================================================
+
+RF-3D-31 — ORIENTACIÓN
+
+El sistema deberá proporcionar un asistente de orientación.
+
+Debe informar sobre:
+
+- Feria actual.
+- Sala actual.
+- Ubicación.
+- Stands.
+- Recorridos.
+- Controles.
+- Acciones disponibles.
+
+
+============================================================
+34. BÚSQUEDA DE PROYECTOS
+============================================================
+
+RF-3D-32 — BÚSQUEDA
+
+El sistema deberá permitir buscar proyectos dentro de la experiencia.
+
+Criterios:
+
+- Nombre.
+- Categoría.
+- Área temática.
+- Clasificación.
+
+
+============================================================
+35. FILTROS DE PROYECTOS
+============================================================
+
+RF-3D-33 — FILTROS
+
+El sistema deberá permitir:
+
+- Filtrar por categoría.
+- Filtrar por temática.
+- Filtrar por clasificación.
+- Combinar filtros.
+- Limpiar filtros.
+- Mostrar resultados actualizados.
+
+
+============================================================
+36. REGISTRO DE VISITAS A FERIAS
+============================================================
+
+RF-3D-34 — VISITAS A FERIAS
+
+El sistema deberá registrar:
+
+- Feria.
+- Usuario cuando corresponda.
+- Fecha.
+- Hora.
+
+Los datos deberán poder utilizarse para métricas.
+
+
+============================================================
+37. REGISTRO DE VISITAS A STANDS
+============================================================
+
+RF-3D-35 — VISITAS A STANDS
+
+El sistema deberá registrar:
+
+- Stand.
+- Proyecto.
+- Usuario cuando corresponda.
+- Fecha.
+- Hora.
+
+
+============================================================
+38. REGISTRO DE INTERACCIONES
+============================================================
+
+RF-3D-36 — INTERACCIONES
+
+El sistema deberá registrar interacciones relacionadas con:
+
+- Usuario.
+- Feria.
+- Sala.
+- Stand.
+- Proyecto.
+- Fecha.
+- Hora.
+- Tipo de interacción.
+
+Ejemplos:
+
+- Entrar a un stand.
+- Abrir multimedia.
+- Reproducir video.
+- Abrir DEMO.
+- Preguntar al avatar.
+- Marcar interés.
+- Solicitar contacto.
+- Ejecutar/interactuar con funcionalidades del entorno.
+
+
+============================================================
+39. MARCAR STAND COMO INTERESANTE
+============================================================
+
+RF-3D-37 — INTERÉS
+
+El usuario deberá poder:
+
+- Marcar un stand como interesante.
+- Retirar el interés.
+- Evitar registros duplicados.
+- Persistir la relación usuario-stand.
+
+
+============================================================
+40. HISTORIAL DE INTERESES
+============================================================
+
+RF-3D-38 — HISTORIAL
+
+El usuario deberá poder consultar los stands marcados como
+interesantes.
+
+Debe mostrar:
+
+- Stand.
+- Proyecto.
+- Información relevante.
+- Fecha cuando esté disponible.
+
+
+============================================================
+41. SOLICITUD DE CONTACTO
+============================================================
+
+RF-3D-39 — CONTACTO
+
+El usuario deberá poder solicitar contacto con el expositor desde
+el stand.
+
+La solicitud deberá identificar:
+
+- Usuario.
+- Expositor.
+- Proyecto.
+- Stand.
+- Fecha.
+- Estado.
+
+
+============================================================
+42. MENSAJERÍA
+============================================================
+
+RF-3D-40 — CHAT
+
+El usuario deberá poder comunicarse mediante:
+
+- Chat general de la sala.
+- Chat privado.
+
+El chat general deberá estar asociado a una sala.
+
+El chat privado deberá respetar las reglas de contacto y permisos.
+
+
+============================================================
+43. NOTIFICACIONES
+============================================================
+
+RF-3D-41 — NOTIFICACIONES
+
+El sistema deberá generar notificaciones relacionadas con:
+
+- Solicitudes de contacto.
+- Cambios en proyectos.
+- Incorporación de proyectos a stands.
+- Actividades relevantes.
+- Eventos relacionados con participación.
+
+
+============================================================
+44. REGISTRO DE PREGUNTAS A AVATARES
+============================================================
+
+RF-3D-42 — CONSULTAS IA
+
+El sistema deberá registrar:
+
+- Usuario.
+- Proyecto.
+- Avatar.
+- Pregunta.
+- Fecha.
+- Hora.
+
+Los datos podrán utilizarse para identificar preguntas frecuentes.
+
+
+============================================================
+45. MÉTRICAS DEL ENTORNO 3D
+============================================================
+
+RF-3D-43 — MÉTRICAS
+
+El entorno 3D deberá generar información para:
+
+- Visitas a ferias.
+- Visitas a stands.
+- Interacciones.
+- Consultas a avatares.
+- Intereses.
+- Solicitudes de contacto.
+- Actividad de proyectos.
+- Uso de emotes/presencia cuando corresponda.
+
+
+============================================================
+46. INTEGRACIÓN CON DASHBOARD ADMIN
+============================================================
+
+RF-3D-44 — DASHBOARD ADMIN
+
+Los datos generados por el entorno 3D deberán alimentar el Dashboard
+administrativo.
+
+Debe permitir consultar, según las métricas definidas:
+
+- Ferias más visitadas.
+- Salas con mayor actividad.
+- Stands más visitados.
+- Proyectos con mayor interacción.
+- Consultas a avatares.
+- Preguntas frecuentes.
+- Intereses.
+- Solicitudes de contacto.
+
+
+============================================================
+47. INTEGRACIÓN CON DASHBOARD DEL EXPOSITOR
+============================================================
+
+RF-3D-45 — DASHBOARD EXPOSITOR
+
+El expositor deberá poder consultar información de sus propios
+proyectos/stands.
+
+Debe incluir:
+
+- Visitas.
+- Interacciones.
+- Consultas al avatar.
+- Intereses.
+- Solicitudes de contacto.
+
+
+============================================================
+48. PERMISOS POR ROL
+============================================================
+
+RF-3D-46 — ROLES
+
+ADMIN:
+
+- Gestionar ferias.
+- Gestionar salas.
+- Gestionar stands.
+- Gestionar proyectos según permisos.
+- Consultar métricas globales.
+
+EXPOSITOR:
+
+- Gestionar sus proyectos.
+- Gestionar sus stands.
+- Personalizar sus stands.
+- Consultar sus métricas.
+- Gestionar solicitudes.
+
+VISITANTE/INVITADO:
+
+- Recorrer ferias.
+- Entrar a salas.
+- Visitar stands.
+- Consultar proyectos.
+- Interactuar con avatares.
+- Marcar intereses.
+- Solicitar contacto.
+- Utilizar emotes.
+
+
+============================================================
+49. DATOS QUE DEBEN PERSISTIR
+============================================================
+
+RF-3D-47 — PERSISTENCIA
+
+El entorno no deberá depender de mocks para los procesos principales.
+
+Deben persistirse, según corresponda:
+
+- Ferias.
+- Salas.
+- Stands.
+- Proyectos.
+- Configuración de stands.
+- Multimedia.
+- Avatares.
+- Base de conocimiento.
+- Visitas.
+- Interacciones.
+- Consultas IA.
+- Intereses.
+- Solicitudes de contacto.
+- Mensajes.
+- Notificaciones.
+- Datos de presencia cuando la arquitectura multiusuario lo requiera.
+
+
+============================================================
+50. MODELO DE DATOS CONCEPTUAL
+============================================================
+
+La estructura conceptual identificada es:
+
+Fair
+  |
+  +-- Room
+        |
+        +-- Stand
+              |
+              +-- Project
+                    |
+                    +-- ProjectMember
+                    +-- ProjectMedia
+                    +-- KnowledgeBase
+                    +-- AiAnalysis
+                    +-- ContactLead
+
+SystemUser
+  |
+  +-- ChatMessage
+  +-- Notification
+  +-- AuthLog
+  +-- visitas/interacciones
+
+Usuario
+  |
+  +-- Personaje 3D
+        |
+        +-- Cámara
+        |     +-- Primera persona
+        |     +-- Tercera persona
+        |
+        +-- Animaciones
+        |     +-- Idle
+        |     +-- Caminar
+        |     +-- Emotes
+        |
+        +-- Presencia
+
+
+============================================================
+51. API / BACKEND
+============================================================
+
+Los documentos contemplan endpoints para proyectos:
+
+GET:
+    /api/uapaverse/project/list
+
+GET / UPDATE / DELETE:
+    /api/uapaverse/project/{id}
+
+La experiencia 3D también requiere servicios para:
+
+- Ferias.
+- Salas.
+- Stands.
+- Configuración de stands.
+- Multimedia.
+- Avatares.
+- Base de conocimiento.
+- Visitas.
+- Interacciones.
+- Intereses.
+- Contactos.
+- Mensajería.
+- Notificaciones.
+- Métricas.
+- Presencia/multiusuario.
+- Sincronización de personajes y emotes.
+
+Si un endpoint no existe todavía, deberá marcarse como pendiente de
+Backend. No se deben inventar contratos de API.
+
+
+============================================================
+52. ESTADO ACTUAL Y ESTADO OBJETIVO
+============================================================
+
+SEGÚN LOS DOCUMENTOS, EXISTEN ELEMENTOS COMO:
+
+- Lobby.
+- Salas.
+- Stands generados desde proyectos aprobados.
+- HUD.
+- Minimapa.
+- Recorridos.
+- Multimedia.
+- Voz.
+- Gemini.
+
+SE IDENTIFICAN COMO PENDIENTES O PARCIALES:
+
+- Integración completa con autenticación.
+- Integración completa con roles.
+- Persistencia real de intereses/favoritos.
+- Registro de visitas.
+- Registro de interacciones.
+- Experiencia multiusuario.
+- Usuarios visibles.
+- Asistente de orientación completo.
+- Integración completa con Backend.
+
+REQUERIMIENTOS NUEVOS SOLICITADOS:
+
+- Personaje 3D del usuario.
+- Primera persona como vista principal.
+- Opción de tercera persona.
+- Visualización del propio personaje en tercera persona.
+- Sistema de emotes.
+- Mínimo 3 emotes.
+- Saludar.
+- Aplaudir.
+- Celebrar.
+- Selector de emotes.
+- Animaciones de personaje.
+- Visualización/sincronización de emotes en multiusuario.
+
+
+============================================================
+53. RENDIMIENTO DEL ENTORNO 3D
+============================================================
+
+RF-3D-48 — RENDIMIENTO
+
+El entorno deberá considerar:
+
+- Carga progresiva de assets.
+- Optimización de modelos 3D.
+- Optimización de texturas.
+- Reutilización de geometrías.
+- Control de cantidad de objetos.
+- Carga diferida de multimedia.
+- Evitar cargar innecesariamente todas las salas y stands.
+- Mantener navegación fluida.
+
+
+============================================================
+54. ESTADOS DE LA INTERFAZ 3D
+============================================================
+
+RF-3D-49 — ESTADOS DE UI
+
+El entorno deberá contemplar:
+
+LOADING:
+- Cargando feria.
+- Cargando sala.
+- Cargando stand.
+- Cargando proyecto.
+- Cargando assets.
+
+EMPTY:
+- Sin proyectos.
+- Sin stands.
+- Sin multimedia.
+- Sin DEMO.
+
+ERROR:
+- Error de carga.
+- Error de conexión.
+- Error de API.
+
+AI:
+- Avatar procesando.
+- Avatar respondiendo.
+- Error de respuesta.
+
+MEDIA:
+- Cargando.
+- Reproduciendo.
+- Error.
+
+
+============================================================
+55. CRITERIOS DE ACEPTACIÓN GENERALES
+============================================================
+
+1. El usuario autenticado puede acceder al entorno según su rol.
+
+2. El usuario puede entrar al lobby.
+
+3. El usuario puede acceder a una feria.
+
+4. El usuario puede entrar a las salas.
+
+5. Las salas muestran los stands correspondientes.
+
+6. Cada stand está asociado a un proyecto.
+
+7. La información del stand proviene del Backend.
+
+8. El proyecto puede mostrar información.
+
+9. El proyecto puede mostrar multimedia.
+
+10. La DEMO puede abrirse cuando está disponible.
+
+11. El stand puede tener configuración visual persistente.
+
+12. El avatar puede asociarse al proyecto.
+
+13. El avatar puede responder sobre el proyecto.
+
+14. Las preguntas al avatar pueden registrarse.
+
+15. El usuario puede desplazarse por el entorno.
+
+16. La primera persona funciona como perspectiva principal.
+
+17. El usuario puede cambiar a tercera persona.
+
+18. En tercera persona el usuario puede visualizar su propio personaje.
+
+19. El personaje puede ejecutar animaciones de locomoción.
+
+20. Existe un selector de emotes.
+
+21. Existen como mínimo 3 emotes funcionales:
+    - Saludar.
+    - Aplaudir.
+    - Celebrar.
+
+22. Cada emote reproduce una animación real del personaje.
+
+23. Al terminar un emote, el personaje vuelve correctamente a su
+    estado de animación normal.
+
+24. Los emotes no rompen la navegación ni la cámara.
+
+25. En modo multiusuario, otros usuarios pueden visualizar los emotes
+    cuando la sincronización multiusuario esté implementada.
+
+26. El minimapa muestra la ubicación del usuario.
+
+27. Los recorridos guiados pueden ejecutarse.
+
+28. El asistente proporciona orientación cuando está habilitado.
+
+29. Los proyectos pueden buscarse y filtrarse.
+
+30. Las visitas a ferias quedan registradas.
+
+31. Las visitas a stands quedan registradas.
+
+32. Las interacciones quedan registradas.
+
+33. Los intereses quedan persistidos.
+
+34. Las solicitudes de contacto quedan persistidas.
+
+35. Los mensajes quedan persistidos según la implementación definida.
+
+36. Las notificaciones se generan correctamente.
+
+37. Las métricas pueden alimentarse desde las interacciones del 3D.
+
+38. El administrador puede consultar métricas globales.
+
+39. El expositor solamente puede consultar métricas de sus proyectos.
+
+40. Las funcionalidades respetan los permisos del usuario.
+
+41. El entorno maneja estados loading, empty y error.
+
+42. El entorno no depende de mocks para los procesos principales.
+
+
+============================================================
+56. ORDEN RECOMENDADO DE IMPLEMENTACIÓN
+============================================================
+
+FASE 1 — BASE
+- Autenticación.
+- Roles.
+- Lobby.
+- Navegación.
+- Estado global.
+
+FASE 2 — ESTRUCTURA 3D
+- Ferias.
+- Salas.
+- Stands.
+- Posicionamiento.
+- Assets.
+
+FASE 3 — PROYECTOS
+- Carga de proyectos.
+- Asociación proyecto/stand.
+- Información.
+- Multimedia.
+- DEMO.
+
+FASE 4 — STANDS
+- Personalización.
+- layoutConfig.
+- Vista previa.
+- Persistencia.
+
+FASE 5 — PERSONAJE
+- Crear/importar personaje.
+- Rig/skeleton.
+- Idle.
+- Caminar.
+- Primera persona.
+- Tercera persona.
+- Cambio entre cámaras.
+- Seguimiento de cámara.
+
+FASE 6 — EMOTES
+- Sistema de animaciones.
+- Emote de saludo.
+- Emote de aplauso.
+- Emote de celebración.
+- Selector de emotes.
+- Integración con HUD.
+- Transiciones de animación.
+
+FASE 7 — AVATAR IA
+- Avatar por proyecto.
+- Base de conocimiento.
+- Chat.
+- Voz.
+- Registro de consultas.
+
+FASE 8 — NAVEGACIÓN
+- Controles.
+- HUD.
+- Minimapa.
+- Búsqueda.
+- Filtros.
+- Recorridos.
+
+FASE 9 — INTERACCIÓN
+- Visitas.
+- Interacciones.
+- Intereses.
+- Contactos.
+- Mensajería.
+- Notificaciones.
+
+FASE 10 — MULTIUSUARIO
+- Presencia.
+- Usuarios conectados.
+- Personajes visibles.
+- Sincronización de posiciones.
+- Sincronización de rotaciones.
+- Sincronización de animaciones.
+- Sincronización de emotes.
+
+FASE 11 — ANALYTICS
+- Métricas.
+- Dashboard Admin.
+- Dashboard Expositor.
+- Reportes.
+
+FASE 12 — CALIDAD
+- Eliminar mocks.
+- Validar APIs.
+- Validar permisos.
+- Optimizar assets.
+- Validar rendimiento.
+- Pruebas de integración.
+
+
+============================================================
+57. FLUJO FINAL ESPERADO
+============================================================
+
+Usuario
+   |
+   v
+Personaje 3D
+   |
+   +----> Primera persona
+   |
+   +----> Tercera persona
+   |
+   +----> Emotes
+   |        +-- Saludar
+   |        +-- Aplaudir
+   |        +-- Celebrar
+   |
+   v
+Lobby
+   |
+   v
+Feria
+   |
+   v
+Sala temática
+   |
+   v
+Stand
+   |
+   v
+Proyecto
+   |
+   +----> Información
+   +----> Multimedia
+   +----> DEMO
+   +----> Avatar IA
+   |
+   v
+Interacciones
+   |
+   +----> Interés
+   +----> Contacto
+   +----> Chat
+   |
+   v
+Backend
+   |
+   v
+Métricas
+   |
+   +----> Dashboard Admin
+   +----> Dashboard Expositor
+
+
+============================================================
+58. REGLAS ARQUITECTÓNICAS PRINCIPALES
+============================================================
+
+1. 3D = PRESENTACIÓN + INTERACCIÓN
+
+2. BACKEND = DATOS + PERSISTENCIA
+
+3. DASHBOARD = ADMINISTRACIÓN + ANALYTICS
+
+4. AUTH/ROLES = ACCESO + PERMISOS
+
+5. PERSONAJE = REPRESENTACIÓN DEL USUARIO
+
+6. CÁMARA = PRIMERA PERSONA + TERCERA PERSONA
+
+7. EMOTES = ANIMACIONES DEL PERSONAJE
+
+8. MULTIUSUARIO = PRESENCIA + POSICIÓN + ROTACIÓN + ANIMACIÓN
+
+9. STAND = PRESENTACIÓN INTERACTIVA DE UN PROYECTO
+
+10. FERIA -> SALA -> STAND -> PROYECTO debe mantenerse como relación
+    principal del entorno.
+
+11. El módulo 3D debe consumir datos reales del Backend.
+
+12. Las acciones relevantes del usuario deben generar eventos que
+    puedan alimentar las métricas.
+
+13. No se deben implementar endpoints inexistentes inventando contratos.
+
+14. Los mocks pueden utilizarse para desarrollo/prototipado, pero no
+    deben permanecer como fuente de datos de los procesos principales
+    en la versión final.
+
+
+============================================================
+FIN DEL DOCUMENTO
+============================================================
