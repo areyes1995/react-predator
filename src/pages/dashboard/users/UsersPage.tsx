@@ -11,9 +11,11 @@ import { buildDynamicTable } from '../../../records/dynamicColumns'
 import { DynamicComponentRenderer } from '../../../components/charts'
 import { sampleUsersData } from '../../../records/data'
 import { useAppTranslation } from '../../../i18n/useAppTranslation'
+import { useNavigate } from 'react-router-dom'
 
 export default function UsersPage({ view }: { view?: string }) {
   const { t } = useAppTranslation()
+  const navigate = useNavigate()
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -77,6 +79,12 @@ export default function UsersPage({ view }: { view?: string }) {
     [users, view],
   )
 
+  const viewOptions = [
+    { slug: 'overview', label: 'Overview' },
+    { slug: 'archived', label: 'Archived' },
+  ]
+  const activeView = view ?? 'overview'
+
   return (
     <div className="flex h-full flex-col">
       <ViewHeader title="Users" subtitle={t('rbac.management')} />
@@ -91,14 +99,35 @@ export default function UsersPage({ view }: { view?: string }) {
             {error}
           </div>
         ) : (
-          <DynamicComponentRenderer
-            items={[
-              {
-                type: 'RecordsTable',
-                props: { data, columns },
-              },
-            ]}
-          />
+          <div className="flex flex-col h-full">
+            <div className="px-4 lg:px-6 py-3 border-b border-[var(--border)] flex items-center gap-1">
+              {viewOptions.map(opt => (
+                <button
+                  key={opt.slug}
+                  onClick={() => {
+                    if (opt.slug !== activeView) {
+                      navigate(`/app/dashboard/records/users/${opt.slug}`, { replace: true })
+                    }
+                  }}
+                  className={`px-3 py-1 text-sm rounded-md transition ${
+                    opt.slug === activeView
+                      ? 'bg-blue-500/20 text-blue-400 font-medium'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <DynamicComponentRenderer
+              items={[
+                {
+                  type: 'RecordsTable',
+                  props: { data, columns },
+                },
+              ]}
+            />
+          </div>
         )}
       </div>
     </div>
