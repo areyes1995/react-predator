@@ -11,7 +11,7 @@ import { ROLES_VIEW_OPTIONS, PERMISSIONS_VIEW_OPTIONS, USERS_VIEW_OPTIONS } from
 import RecordsPage from '../pages/dashboard/records/RecordsPage'
 import RbacRolesView from '../components/records/RbacRolesView'
 import RbacPermissionsView from '../components/records/RbacPermissionsView'
-import UsersView from '../components/records/UsersView'
+import UsersPage from '../pages/dashboard/users/UsersPage'
 import { LoadingScreen } from './guards'
 
 export function RecordsRoute() {
@@ -47,10 +47,10 @@ export function RecordsRoute() {
   if (rbac) {
     const validView = rbac.options.find(o => o.slug === viewSlug)
     if (!validView) {
-      return <Navigate to={`/app/dashboard/records/${rbac.slug}/summary`} replace />
+      return <Navigate to={`/app/dashboard/records/${rbac.slug}/${rbac.options[0].slug}`} replace />
     }
     if (!segments[3]) {
-      return <Navigate to={`/app/dashboard/records/${rbac.slug}/summary`} replace />
+      return <Navigate to={`/app/dashboard/records/${rbac.slug}/${rbac.options[0].slug}`} replace />
     }
     if (user && !hasPermission(user, 'module:permissions')) {
       return <Navigate to='/app/dashboard/records' replace />
@@ -62,7 +62,7 @@ export function RecordsRoute() {
       return <RbacPermissionsView view={viewSlug} />
     }
     if (baseSlug === 'users') {
-      return <UsersView view={viewSlug} />
+      return <UsersPage view={viewSlug} />
     }
   }
 

@@ -1,0 +1,1450 @@
+REQUERIMIENTOS CONSOLIDADOS DEL DASHBOARD — UAPAVERSE
+============================================================
+
+DOCUMENTOS COMPARADOS
+---------------------
+1. Entrega Final, Pasantia.pdf
+2. modulo 1 asignacion 3.pdf
+
+OBJETIVO
+--------
+Este archivo consolida los requerimientos del Dashboard encontrados en
+ambos documentos y los convierte en una especificación práctica para
+implementar el Dashboard sin perder funcionalidades documentadas.
+
+Se diferencia entre:
+- Lo que el Dashboard debe hacer funcionalmente.
+- Lo que debe existir como navegación/routing.
+- Lo que debe conectarse al Backend.
+- Lo que actualmente existe pero está incompleto.
+- Lo que debe corregirse en la arquitectura propuesta.
+
+
+============================================================
+1. ESTRUCTURA GENERAL DE DASHBOARDS
+============================================================
+
+El sistema contempla dashboards separados por rol:
+
+ADMIN
+Ruta esperada:
+    /dashboard-admin
+
+Secciones principales:
+    - Pantalla Principal
+    - Gestión de Usuarios
+    - Gestión de Stands
+    - Métricas / Dashboard
+    - Reportes
+    - Notificaciones relacionadas con actividad administrativa
+    - Gestión de ferias y salas temáticas
+
+PRESENTADOR / EXPOSITOR
+Ruta esperada:
+    /dashboard-presentador
+
+Secciones:
+    - Mis Stands
+    - Crear Stand
+    - Solicitudes de Contacto
+    - Mensajería
+    - Configuración
+    - Métricas de sus proyectos/stands
+    - Historial de preguntas realizadas a sus avatares
+
+EMPRESARIAL
+Debe existir un dashboard empresarial separado e integrado a la
+navegación. El documento de arquitectura identifica que actualmente
+existen componentes empresariales pero no una ruta funcional.
+
+INVITADO / ACADÉMICO
+Ruta esperada:
+    /dashboard-invitado
+
+Secciones:
+    - Inicio
+    - Mis intereses
+    - Configuración
+    - Historial de proyectos visitados
+    - Historial de salas
+    - Historial de stands interesantes
+
+
+============================================================
+2. ARQUITECTURA DE NAVEGACIÓN
+============================================================
+
+REGLA PRINCIPAL:
+
+El Sidebar NO debe renderizar directamente el contenido de una página.
+
+El Sidebar solamente debe navegar hacia la URL correspondiente.
+
+Flujo:
+
+    Sidebar
+       |
+       v
+    Click en opción
+       |
+       v
+    Cambio de URL
+       |
+       v
+    Next.js App Router
+       |
+       v
+    Página correspondiente
+       |
+       v
+    Contenido del Dashboard
+
+Ejemplo:
+
+    Sidebar -> Users
+            -> /dashboard-admin/users
+            -> Router
+            -> Users Page
+            -> RecordTable + filtros
+
+La página debe poder abrirse directamente mediante URL y funcionar
+correctamente al recargar.
+
+REQUERIMIENTOS:
+
+- Mantener el layout del dashboard.
+- Mantener Sidebar visible.
+- Cambiar solamente el contenido principal según la ruta.
+- Marcar la opción activa del Sidebar según pathname.
+- No duplicar layouts.
+- No crear un sistema de routing paralelo.
+- Todas las rutas deben estar protegidas por rol/permisos.
+- Evitar rutas inexistentes.
+- Corregir redirecciones inconsistentes.
+
+
+============================================================
+3. AUTENTICACIÓN Y PROTECCIÓN DEL DASHBOARD
+============================================================
+
+El documento indica que actualmente existe login real, token y usuario
+en localStorage, pero no existe middleware global ni guards
+centralizados.
+
+ESTADO PROPUESTO:
+
+- Autenticación centralizada.
+- Sesión controlada.
+- Rutas protegidas.
+- Validación de rol.
+- Validación de permisos.
+- Redirección correcta según rol.
+
+ROLES:
+
+ADMIN
+    /dashboard-admin
+
+ACADEMICO / INVITADO
+    /dashboard-invitado
+
+EMPRESARIAL
+    /dashboard-empresarial
+    (debe existir una ruta funcional separada si se mantiene el
+     dashboard empresarial)
+
+EXPOSITOR
+    /dashboard-presentador
+
+
+============================================================
+4. DASHBOARD ADMIN — PANTALLA PRINCIPAL
+============================================================
+
+El Dashboard Admin debe servir como centro de monitoreo de la
+plataforma.
+
+Debe visualizar métricas e indicadores relacionados con:
+
+- Visitantes.
+- Proyectos consultados.
+- Stands consultados.
+- Intereses manifestados.
+- Interacciones con avatares inteligentes.
+- Preguntas realizadas a los avatares.
+- Preguntas frecuentes.
+- Solicitudes de contacto.
+- Actividad general.
+- Participación en ferias.
+- Participación en salas.
+- Proyectos/stands con mayor interacción.
+
+Las métricas deben alimentarse de datos reales, no de mocks.
+
+El documento identifica que actualmente las estadísticas y parte de la
+actividad del Dashboard Admin todavía utilizan datos simulados.
+
+
+============================================================
+5. MÉTRICAS DEL DASHBOARD
+============================================================
+
+HU33 / RF14
+
+Como administrador/expositor, se deben visualizar:
+
+- Visitas.
+- Interacciones.
+- Consultas.
+- Intereses.
+- Contactos / solicitudes de contacto.
+
+Los datos deben permitir filtros.
+
+REGLA DE PERMISOS:
+
+ADMIN:
+    Puede consultar métricas generales de la plataforma.
+
+EXPOSITOR:
+    Solo puede consultar métricas correspondientes a sus propios
+    proyectos/stands.
+
+El Dashboard debe impedir que un expositor consulte métricas de otros
+proyectos.
+
+
+============================================================
+6. VISITAS
+============================================================
+
+HU24
+
+El administrador debe poder consultar las visitas a las ferias.
+
+Debe registrarse:
+
+- Feria.
+- Fecha.
+- Hora.
+
+Debe permitir:
+
+- Consultar cantidad de visitas.
+- Identificar ferias más visitadas.
+- Filtrar información.
+
+HU25
+
+El administrador/expositor debe poder consultar las visitas a los
+stands.
+
+Debe registrarse:
+
+- Stand.
+- Usuario cuando corresponda.
+- Fecha/hora.
+- Tráfico.
+- Tiempo de permanencia, según el modelo de datos.
+
+El expositor solo debe visualizar visitas relacionadas con sus stands.
+
+
+============================================================
+7. INTERACCIONES
+============================================================
+
+HU26
+
+El administrador debe poder consultar las interacciones realizadas
+en ferias y stands.
+
+Cada interacción debe poder asociarse con:
+
+- Feria.
+- Sala.
+- Stand.
+- Fecha.
+- Hora.
+
+El Dashboard debe permitir identificar:
+
+- Stands con mayor participación.
+- Ferias con mayor participación.
+- Salas con mayor participación.
+- Proyectos con mayor interacción.
+
+
+============================================================
+8. INTERACCIONES CON AVATARES / IA
+============================================================
+
+HU34
+
+Debe existir un historial de preguntas realizadas a los avatares.
+
+Cada consulta debe identificar:
+
+- Proyecto.
+- Avatar.
+- Usuario cuando corresponda.
+- Fecha.
+- Pregunta.
+
+El Dashboard debe permitir:
+
+- Consultar historial.
+- Filtrar preguntas.
+- Detectar preguntas frecuentes.
+- Identificar proyectos con mayor cantidad de consultas.
+
+El modelo de datos contempla auditoría de consultas realizadas al
+avatar y relación con el proyecto.
+
+
+============================================================
+9. GESTIÓN DE USUARIOS — DASHBOARD ADMIN
+============================================================
+
+RF01
+
+El administrador debe poder:
+
+- Registrar usuarios.
+- Consultar usuarios.
+- Actualizar usuarios.
+- Eliminar usuarios.
+
+RF02
+
+Debe poder gestionar:
+
+- Roles.
+- Permisos.
+- Acceso según rol.
+
+LISTADO DE USUARIOS
+
+El documento de implementación existente contempla el endpoint:
+
+    /api/uapaverse/user/list
+
+La tabla de usuarios debe mostrar:
+
+- Nombre.
+- Correo.
+- Iniciales/avatar.
+- Rol.
+- Estado.
+- Última actividad.
+
+Si la fecha de última actividad no es válida:
+
+    No disponible
+
+DETALLE
+
+Endpoint:
+
+    /api/uapaverse/user/{id}
+
+Debe permitir consultar los datos del usuario seleccionado.
+
+CAMBIO DE ROL
+
+Endpoint:
+
+    /api/uapaverse/user/{id}
+
+Datos:
+
+- name_usuario
+- email_usuario
+- rol_id
+
+Debe:
+
+- Actualizar el rol en Backend.
+- Mostrar confirmación.
+- Actualizar la tabla.
+
+BAN / SUSPENSIÓN
+
+El documento de entrega indica que la acción de banear usuarios queda
+pendiente porque no existe un endpoint disponible.
+
+Por tanto:
+
+- NO inventar un endpoint de ban.
+- Mantenerlo como funcionalidad pendiente hasta disponer del contrato
+  Backend.
+
+
+============================================================
+10. USERS — NAVEGACIÓN
+============================================================
+
+La opción Users del Sidebar debe comportarse de esta manera:
+
+    Click Users
+        ->
+    URL de Users
+        ->
+    Router
+        ->
+    Users Page
+        ->
+    RecordTable
+        +
+    RecordTable Filter
+
+IMPORTANTE:
+
+No colocar el RecordTable dentro del Sidebar.
+
+No hacer que el Sidebar controle el contenido.
+
+La URL es la fuente de verdad para decidir qué página se muestra.
+
+La página Users debe funcionar también cuando el usuario accede
+directamente a su URL.
+
+
+============================================================
+11. RECORD TABLE DE USERS
+============================================================
+
+La página Users debe reutilizar el componente RecordTable existente
+en components, si ya está disponible.
+
+Debe reutilizar también el componente de filtros existente.
+
+NO:
+
+- Crear otra tabla innecesariamente.
+- Duplicar el componente RecordTable.
+- Crear un filtro nuevo si ya existe uno reutilizable.
+
+La tabla debe integrarse con:
+
+- Datos reales del Backend.
+- Filtros.
+- Loading.
+- Empty state.
+- Error state.
+- Paginación si el componente/backend la soporta.
+- Acciones por registro.
+
+Acciones esperadas:
+
+- Ver usuario.
+- Editar/cambiar rol.
+- Eliminar usuario.
+
+
+============================================================
+12. GESTIÓN DE STANDS — DASHBOARD ADMIN
+============================================================
+
+El Dashboard Admin debe permitir gestionar los stands/proyectos.
+
+Debe permitir:
+
+- Consultar.
+- Aprobar.
+- Editar.
+- Eliminar.
+- Seleccionar proyectos para participar en una feria.
+- Asociar stands a salas temáticas.
+
+LISTADO
+
+Endpoint documentado:
+
+    /api/uapaverse/project/list
+
+Debe mostrar los proyectos registrados.
+
+NORMALIZACIÓN DE ESTADOS DEL FRONTEND:
+
+    APROBADO -> Activo
+    ACTIVO   -> Activo
+    PENDIENTE -> Pendiente
+
+
+============================================================
+13. DETALLE DE STAND
+============================================================
+
+Endpoint:
+
+    /api/uapaverse/project/{id}
+
+Debe:
+
+- Cargar el proyecto seleccionado.
+- Mostrar sus datos.
+- Mostrar confirmación de carga correcta.
+- Manejar errores.
+- Manejar registros inexistentes.
+
+
+============================================================
+14. APROBACIÓN DE STAND
+============================================================
+
+Endpoint:
+
+    /api/uapaverse/project/{id}
+
+Dato:
+
+    estado_proyecto = APROBADO
+
+Resultado:
+
+- Proyecto aprobado.
+- Stand preparado para publicación.
+- Puede aparecer en el metaverso cuando cumpla las condiciones
+  necesarias.
+
+
+============================================================
+15. EDICIÓN DE STAND
+============================================================
+
+Datos contemplados:
+
+- name_proyecto
+- nombre_grupo
+- id_categoria
+
+Debe:
+
+- Permitir editar.
+- Validar datos.
+- Guardar en Backend.
+- Actualizar la información visible.
+
+
+============================================================
+16. ELIMINACIÓN DE STAND
+============================================================
+
+Endpoint:
+
+    /api/uapaverse/project/{id}
+
+Debe:
+
+- Solicitar confirmación.
+- Eliminar el stand/proyecto.
+- Actualizar la tabla.
+- Mostrar mensaje de éxito.
+- Manejar errores.
+
+
+============================================================
+17. GESTIÓN DE PROYECTOS RELACIONADA AL DASHBOARD
+============================================================
+
+RF04
+
+El sistema debe permitir:
+
+- Crear proyectos.
+- Consultar proyectos.
+- Actualizar proyectos.
+- Eliminar proyectos.
+- Publicar proyectos.
+
+Información estructurada del proyecto:
+
+- Título/nombre.
+- Descripción.
+- Categoría.
+- Responsable.
+- Participantes.
+- Tecnologías.
+- Estado.
+- Recursos multimedia.
+- DEMO.
+- Base de conocimiento.
+
+El Dashboard debe consumir esta información para administrar y
+visualizar los proyectos.
+
+
+============================================================
+18. FERIAS Y SALAS TEMÁTICAS
+============================================================
+
+RF19
+
+El administrador debe poder:
+
+- Crear ferias.
+- Consultar ferias.
+- Actualizar ferias.
+- Eliminar ferias.
+- Crear salas temáticas.
+- Consultar salas.
+- Actualizar salas.
+- Eliminar salas.
+- Asociar salas a una feria.
+- Distribuir stands dentro de las salas.
+- Seleccionar proyectos que participan en una feria.
+- Retirar proyectos.
+- Confirmar asociaciones.
+
+Un mismo proyecto puede participar en diferentes ferias.
+
+
+============================================================
+19. DASHBOARD DEL PRESENTADOR / EXPOSITOR
+============================================================
+
+El dashboard del presentador debe permitir:
+
+MIS STANDS
+
+- Consultar sus stands.
+- Consultar sus proyectos.
+- Editar información.
+- Gestionar contenido.
+
+CREAR STAND
+
+- Crear/administrar el stand asociado al proyecto.
+- Configurar información.
+- Configurar recursos.
+
+SOLICITUDES DE CONTACTO
+
+- Consultar solicitudes recibidas.
+- Identificar usuario/interesado.
+- Identificar proyecto relacionado.
+- Gestionar la solicitud.
+
+MENSAJERÍA
+
+- Chat general de sala.
+- Chat privado.
+- Mostrar mensajes cronológicamente.
+- Recibir notificaciones de nuevos mensajes.
+
+CONFIGURACIÓN
+
+- Configuración del perfil.
+- Configuración relacionada con el usuario.
+
+MÉTRICAS
+
+El expositor debe consultar únicamente:
+
+- Visitas de sus stands.
+- Interacciones de sus proyectos.
+- Consultas a sus avatares.
+- Intereses.
+- Solicitudes de contacto.
+
+No debe acceder a métricas globales de otros expositores.
+
+
+============================================================
+20. DASHBOARD DEL VISITANTE / INVITADO
+============================================================
+
+Debe incluir:
+
+- Inicio.
+- Mis intereses.
+- Configuración.
+- Historial de proyectos visitados.
+- Historial de salas.
+- Historial de stands marcados como interesantes.
+
+HU27
+
+Historial de proyectos visitados:
+
+- Proyecto.
+- Fecha.
+- Acceso nuevamente si está disponible.
+
+HU28
+
+Historial de salas visitadas/participadas.
+
+HU29
+
+Marcar stands como interesantes.
+
+Debe:
+
+- Marcar interés.
+- Retirar interés.
+- Evitar duplicados.
+- Persistir relación usuario-stand.
+
+HU30
+
+Consultar historial de stands marcados como interesantes.
+
+
+============================================================
+21. INTERESES Y SOLICITUDES DE CONTACTO
+============================================================
+
+RF13
+
+El sistema debe permitir:
+
+- Manifestar interés en stands.
+- Retirar interés.
+- Solicitar contacto con otros usuarios.
+- Solicitar contacto directo con expositores.
+- Identificar proyecto asociado.
+- Registrar la solicitud.
+- Generar mensaje inicial cuando corresponda.
+- Notificar al expositor.
+
+Estas acciones deben generar datos consumibles por el Dashboard.
+
+
+============================================================
+22. MENSAJERÍA
+============================================================
+
+RF16
+
+CHAT GENERAL
+
+- Asociado a una sala.
+- Enviar mensajes.
+- Recibir mensajes.
+- Orden cronológico.
+- Solo usuarios de la sala pueden verlo.
+
+CHAT PRIVADO
+
+- Solo entre usuarios que hayan establecido contacto.
+- Mensajes enviados/recibidos.
+- Notificación de nuevos mensajes.
+- Acceso restringido a participantes.
+
+
+============================================================
+23. NOTIFICACIONES
+============================================================
+
+RF18
+
+El sistema debe generar notificaciones por eventos relevantes.
+
+Para ADMIN:
+
+- Cambios relevantes de proyectos.
+- Cambios de stands.
+- Actividades.
+- Proyectos deshabilitados.
+
+Para EXPOSITOR:
+
+- Proyecto incorporado a un stand.
+- Proyecto deshabilitado.
+- Información del proyecto actualizada.
+- Solicitud de contacto.
+
+Las notificaciones deben poder distinguir:
+
+- Leídas.
+- No leídas.
+- Evento relacionado.
+
+
+============================================================
+24. REPORTES
+============================================================
+
+RF15 / HU35
+
+El Dashboard debe permitir generar reportes exportables.
+
+Los reportes deben incluir:
+
+- Visitas.
+- Intereses.
+- Interacciones.
+- Consultas.
+- Solicitudes de contacto.
+- Actividad.
+- Estadísticas de proyectos/stands.
+
+Debe permitir:
+
+- Seleccionar información.
+- Aplicar filtros.
+- Generar datos actualizados.
+- Exportar reportes.
+
+Para ADMIN:
+    información general de la plataforma.
+
+Para EXPOSITOR:
+    solamente información de sus proyectos/stands.
+
+
+============================================================
+25. FILTROS
+============================================================
+
+Los módulos del Dashboard deben utilizar filtros cuando corresponda.
+
+MÉTRICAS:
+
+- Período.
+- Feria.
+- Sala.
+- Stand.
+- Proyecto.
+- Categoría.
+- Tipo de interacción.
+- Tipo de interesado.
+
+USUARIOS:
+
+- Nombre.
+- Email.
+- Rol.
+- Estado.
+- Actividad.
+
+PROYECTOS/STANDS:
+
+- Nombre.
+- Categoría.
+- Estado.
+- Feria.
+- Sala.
+
+PREGUNTAS IA:
+
+- Proyecto.
+- Avatar.
+- Fecha.
+- Pregunta.
+- Frecuencia.
+
+
+============================================================
+26. DATOS QUE DEBEN SER PERSISTENTES
+============================================================
+
+El Dashboard no debe depender de mocks para procesos principales.
+
+Deben persistirse y estar disponibles para consulta:
+
+- Usuarios.
+- Roles.
+- Proyectos.
+- Stands.
+- Ferias.
+- Salas.
+- Visitas.
+- Interacciones.
+- Preguntas a avatares.
+- Intereses.
+- Solicitudes de contacto.
+- Mensajes.
+- Notificaciones.
+- Historiales.
+
+
+============================================================
+27. MODELO DE DATOS RELACIONADO CON DASHBOARD
+============================================================
+
+El modelo propuesto contempla relaciones importantes:
+
+SystemUser
+    |
+    +-- AuthLog
+    +-- ChatMessage
+    +-- Notification
+    +-- AiAnalysis
+    +-- visitas/interacciones
+    +-- intereses/contactos
+
+Project
+    |
+    +-- ProjectMember
+    +-- ProjectMedia
+    +-- KnowledgeBase
+    +-- Stand
+    +-- AiAnalysis
+    +-- ContactLead
+
+Fair
+    |
+    +-- Room
+         |
+         +-- Stand
+
+Stand
+    |
+    +-- StandVisit
+    +-- ChatMessage
+
+Estas relaciones son necesarias para que el Dashboard pueda generar
+métricas reales.
+
+
+============================================================
+28. API / BACKEND NECESARIO
+============================================================
+
+Endpoints ya identificados en el documento de entrega:
+
+USUARIOS
+
+GET:
+    /api/uapaverse/user/list
+
+GET / UPDATE:
+    /api/uapaverse/user/{id}
+
+PROYECTOS / STANDS
+
+GET:
+    /api/uapaverse/project/list
+
+GET / UPDATE / DELETE:
+    /api/uapaverse/project/{id}
+
+El Backend adicionalmente debe disponer o desarrollar servicios para:
+
+- Métricas.
+- Visitas.
+- Interacciones.
+- Consultas IA.
+- Intereses.
+- Solicitudes de contacto.
+- Reportes.
+- Notificaciones.
+- Mensajería.
+- Ferias.
+- Salas.
+
+NO inventar contratos de API que no estén definidos.
+
+Si un endpoint no existe, identificarlo como pendiente de Backend.
+
+
+============================================================
+29. ESTADO ACTUAL VS ESTADO NECESARIO
+============================================================
+
+ACTUALMENTE DOCUMENTADO:
+
+Dashboard Admin:
+- Usuarios reales.
+- Proyectos/stands reales.
+- Cambio de roles real.
+- Aprobar stands real.
+- Editar stands real.
+- Eliminar stands real.
+- Estadísticas parcialmente simuladas.
+- Actividad parcialmente simulada.
+
+Dashboard Presentador:
+- CRUD de proyectos real.
+- Categorías desde Backend.
+- Asociación del proyecto con usuario autenticado.
+- Estadísticas locales/mock.
+- Propuestas/mensajes/notificaciones parcialmente mock.
+
+Dashboard Visitante:
+- Proyectos reales.
+- Intereses simulados.
+- Historial simulado.
+- Mensajes simulados.
+- Configuración simulada.
+
+Dashboard Empresarial:
+- Componentes existentes.
+- Falta ruta activa funcional.
+
+ESTADO OBJETIVO:
+
+- Todos los dashboards separados por rol.
+- Todas las rutas protegidas.
+- Datos reales.
+- Sin mocks en procesos principales.
+- API centralizada.
+- Métricas reales.
+- Reportes reales.
+- Intereses persistentes.
+- Historial persistente.
+- Mensajería persistente.
+- Notificaciones persistentes.
+
+
+============================================================
+30. REQUERIMIENTOS TÉCNICOS DEL FRONTEND
+============================================================
+
+Tecnologías documentadas:
+
+- Next.js 14.
+- App Router.
+- React 18.
+- TypeScript.
+- Tailwind CSS.
+- Zustand.
+- Framer Motion.
+- Three.js.
+- React Three Fiber.
+- Drei.
+- Postprocessing.
+
+Arquitectura:
+
+    app/
+    features/
+
+Debe mantenerse una separación clara entre:
+
+- Routes/pages.
+- Components.
+- Services.
+- Types.
+- Hooks.
+- Utilities.
+
+Debe existir un cliente API centralizado.
+
+Evitar:
+
+- URLs duplicadas.
+- Lógica API duplicada.
+- Transformaciones inconsistentes.
+- Manejo de errores diferente por módulo.
+- Uso innecesario de any.
+
+
+============================================================
+31. CALIDAD TÉCNICA
+============================================================
+
+Antes de continuar con nuevas funcionalidades:
+
+- Corregir errores TypeScript.
+- Corregir errores JSX.
+- Corregir errores Tailwind.
+- Corregir imports.
+- Revisar dependencias.
+- Corregir lint.
+- Reducir/eliminar any.
+- Eliminar duplicaciones.
+- Unificar manejo de errores.
+- Revisar rutas inexistentes.
+- Revisar botones que actualmente no ejecutan acciones reales.
+
+Después:
+
+- Ejecutar lint.
+- Ejecutar type-check.
+- Ejecutar build.
+- Validar navegación.
+- Validar permisos.
+- Validar integración con Backend.
+
+
+============================================================
+32. RESPONSIVE Y ACCESIBILIDAD
+============================================================
+
+El Dashboard debe ser:
+
+- Responsivo.
+- Utilizable en desktop.
+- Utilizable en tablet.
+- Utilizable en móvil.
+- Intuitivo.
+- Accesible.
+
+Debe mantenerse consistencia visual entre:
+
+- Sidebar.
+- Header.
+- Cards.
+- Tablas.
+- Filtros.
+- Modales.
+- Formularios.
+- Estados de carga.
+- Estados vacíos.
+- Mensajes de error.
+
+
+============================================================
+33. ESTADOS DE UI
+============================================================
+
+Cada módulo conectado al Backend debe contemplar:
+
+LOADING
+    Mostrar indicador mientras se obtiene información.
+
+SUCCESS
+    Mostrar información.
+
+EMPTY
+    Mostrar mensaje cuando no existan registros.
+
+ERROR
+    Mostrar mensaje entendible y permitir reintento cuando aplique.
+
+MUTATION
+    Mostrar feedback durante:
+    - Crear.
+    - Editar.
+    - Eliminar.
+    - Aprobar.
+    - Cambiar rol.
+    - Marcar interés.
+    - Solicitar contacto.
+
+
+============================================================
+34. HISTORIAS DE USUARIO DIRECTAMENTE RELACIONADAS CON DASHBOARD
+============================================================
+
+HU22
+Como administrador, quiero un reporte con las estadísticas y
+actividades de la plataforma.
+
+HU24
+Como administrador, quiero consultar las visitas a las ferias.
+
+HU25
+Como administrador/expositor, quiero consultar las visitas a los
+stands.
+
+HU26
+Como administrador, quiero consultar las interacciones realizadas
+dentro de las ferias y stands.
+
+HU27
+Como invitado/empresarial, quiero ver el historial de los proyectos
+que he visitado.
+
+HU28
+Como invitado/empresarial, quiero ver el historial de las salas en
+las que he participado.
+
+HU29
+Como invitado/empresarial, quiero marcar como interesantes los stands
+que me gustan.
+
+HU30
+Como invitado/empresarial, quiero consultar el historial de los
+stands que he marcado como interesantes.
+
+HU31
+Como usuario, quiero solicitar contacto con otros usuarios presentes
+en el entorno virtual.
+
+HU32
+Como usuario, quiero solicitar contacto directo con los expositores.
+
+HU33
+Como administrador/expositor, quiero visualizar métricas de visitas,
+interacciones, consultas, intereses y solicitudes de contacto.
+
+HU34
+Como administrador/expositor, quiero consultar el historial de
+preguntas realizadas a los avatares inteligentes.
+
+HU35
+Como administrador/expositor, quiero generar reportes exportables.
+
+HU36
+Como usuario, quiero comunicarme mediante un chat general dentro de
+una sala.
+
+HU37
+Como usuario, quiero comunicarme mediante un chat privado.
+
+HU39-HU44
+Gestión de notificaciones.
+
+HU45-HU49
+Gestión de ferias y salas temáticas.
+
+
+============================================================
+35. REQUERIMIENTOS FUNCIONALES RELACIONADOS
+============================================================
+
+RF01
+Gestión de usuarios.
+
+RF02
+Gestión de roles y permisos.
+
+RF03
+Autenticación de usuarios.
+
+RF04
+Gestión de proyectos institucionales.
+
+RF06
+Gestión de información de proyectos.
+
+RF07
+Gestión de contenido multimedia.
+
+RF08
+Acceso a demos.
+
+RF09
+Filtrado de proyectos.
+
+RF10
+Gestión de stands virtuales.
+
+RF11
+Gestión de avatar inteligente.
+
+RF12
+Gestión de datos de visitas e interacciones.
+
+RF13
+Gestión de intereses y solicitudes de contacto.
+
+RF14
+Dashboard.
+
+RF15
+Generación de reportes.
+
+RF16
+Sistema de mensajería.
+
+RF18
+Gestión de notificaciones.
+
+RF19
+Gestión de ferias y salas temáticas.
+
+
+============================================================
+36. PRIORIDAD
+============================================================
+
+ALTA:
+
+- Gestión de usuarios.
+- Roles y permisos.
+- Autenticación.
+- Gestión de proyectos.
+- Gestión de stands.
+- Visitas e interacciones.
+- Intereses y contactos.
+- Ferias y salas.
+
+MEDIA:
+
+- Dashboard.
+- Reportes.
+- Mensajería.
+- Notificaciones.
+- Avatar inteligente.
+- Recorridos.
+- Minimapa.
+- Interacción multiusuario.
+
+
+============================================================
+37. CRITERIOS DE ACEPTACIÓN GENERALES DEL DASHBOARD
+============================================================
+
+1. El usuario solamente puede acceder al dashboard autorizado para
+   su rol.
+
+2. Una URL directa no debe permitir acceso no autorizado.
+
+3. Al hacer click en una opción del Sidebar debe cambiar la URL.
+
+4. El Router debe determinar qué contenido se muestra.
+
+5. El contenido no debe ser controlado directamente por el Sidebar.
+
+6. La página Users debe funcionar al acceder directamente a su URL.
+
+7. Users debe utilizar RecordTable existente.
+
+8. Users debe utilizar el filtro existente.
+
+9. Los usuarios deben cargarse desde Backend.
+
+10. Los roles deben poder actualizarse desde el Dashboard Admin.
+
+11. Los stands deben cargarse desde Backend.
+
+12. Los stands deben poder aprobarse.
+
+13. Los stands deben poder editarse.
+
+14. Los stands deben poder eliminarse.
+
+15. Las métricas deben utilizar datos reales.
+
+16. El expositor solo puede ver métricas de sus propios proyectos.
+
+17. El administrador puede ver métricas generales.
+
+18. Las preguntas de los avatares deben quedar registradas.
+
+19. Deben poder identificarse preguntas frecuentes.
+
+20. Los reportes deben poder filtrarse.
+
+21. Los reportes deben poder exportarse.
+
+22. Los intereses deben persistir.
+
+23. Las solicitudes de contacto deben persistir.
+
+24. Los mensajes deben persistir.
+
+25. Las notificaciones deben persistir.
+
+26. Las ferias y salas deben poder administrarse.
+
+27. No deben existir mocks en los procesos principales.
+
+28. Debe existir manejo de loading, empty y error states.
+
+29. Debe funcionar responsive.
+
+30. Debe pasar lint, type-check y build.
+
+
+============================================================
+38. ORDEN RECOMENDADO DE IMPLEMENTACIÓN
+============================================================
+
+FASE 1 — BASE DEL DASHBOARD
+- Layout.
+- Sidebar.
+- Routing.
+- Rutas por rol.
+- Middleware/guards.
+- Sesión.
+- Permisos.
+- Cliente API centralizado.
+
+FASE 2 — ADMIN
+- Dashboard principal.
+- Users.
+- RecordTable.
+- Filtros.
+- Detalle de usuario.
+- Cambio de rol.
+- Stands.
+- Detalle de stand.
+- Aprobar.
+- Editar.
+- Eliminar.
+
+FASE 3 — DATOS Y ANALÍTICA
+- Registro de visitas.
+- Registro de interacciones.
+- Registro de consultas IA.
+- Métricas.
+- Filtros.
+- Historial.
+
+FASE 4 — REPORTES
+- Selección de información.
+- Filtros.
+- Generación.
+- Exportación.
+
+FASE 5 — PRESENTADOR
+- Mis Stands.
+- Crear/editar stand.
+- Solicitudes.
+- Mensajería.
+- Métricas propias.
+- Preguntas IA.
+
+FASE 6 — VISITANTE / EMPRESARIAL
+- Inicio.
+- Intereses.
+- Historial.
+- Configuración.
+- Dashboard empresarial.
+- Rutas funcionales.
+
+FASE 7 — COMUNICACIÓN
+- Mensajería.
+- Notificaciones.
+- Solicitudes de contacto.
+
+FASE 8 — FERIAS
+- Ferias.
+- Salas.
+- Asociación de stands.
+- Organización.
+
+FASE 9 — CALIDAD
+- Eliminar mocks.
+- Corregir TypeScript.
+- Corregir lint.
+- Unificar errores.
+- Revisar permisos.
+- Revisar rutas.
+- Build final.
+- Pruebas de integración.
+
+
+============================================================
+39. RESULTADO FINAL ESPERADO
+============================================================
+
+El Dashboard de UAPAverse debe convertirse en una plataforma
+administrativa y de seguimiento completamente conectada al Backend.
+
+Debe permitir:
+
+ADMIN:
+    Administrar usuarios, roles, proyectos, stands, ferias y salas;
+    consultar métricas globales; revisar preguntas e interacciones;
+    administrar notificaciones y generar reportes.
+
+EXPOSITOR:
+    Administrar sus proyectos/stands; consultar solicitudes,
+    mensajes y métricas únicamente de sus propios proyectos.
+
+EMPRESARIAL:
+    Disponer de su dashboard funcional y conectado a la navegación,
+    con las funcionalidades correspondientes al perfil empresarial.
+
+INVITADO:
+    Consultar sus intereses, historial y configuración.
+
+Toda la navegación debe estar basada en URL + App Router.
+
+El Sidebar navega.
+El Router decide.
+La Page renderiza.
+Los componentes presentan la información.
+Los servicios consumen el Backend.
+Los permisos controlan el acceso.
+Los datos reales alimentan el Dashboard.
+
+NO debe existir dependencia de mocks para los procesos principales.

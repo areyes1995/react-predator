@@ -1,18 +1,18 @@
 // ──────────────────────────────────────────────
-// UsersView — Table grid de Users (Management).
+// UsersPage — Page de Users (Management).
 // Renderiza los registros de usuarios con
 // RecordsTable + filtro existente.
 // ──────────────────────────────────────────────
 
 import { useEffect, useMemo, useState } from 'react'
 import { Loader2, AlertCircle } from 'lucide-react'
-import ViewHeader from '../ui/layout/ViewHeader'
-import { buildDynamicTable } from '../../records/dynamicColumns'
-import { DynamicComponentRenderer } from '../charts'
-import { sampleUsersData } from '../../records/data'
-import { useAppTranslation } from '../../i18n/useAppTranslation'
+import ViewHeader from '../../../components/ui/layout/ViewHeader'
+import { buildDynamicTable } from '../../../records/dynamicColumns'
+import { DynamicComponentRenderer } from '../../../components/charts'
+import { sampleUsersData } from '../../../records/data'
+import { useAppTranslation } from '../../../i18n/useAppTranslation'
 
-export default function UsersView({ view }: { view?: string }) {
+export default function UsersPage({ view }: { view?: string }) {
   const { t } = useAppTranslation()
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
